@@ -45,7 +45,7 @@ namespace Fuzzers
             DumpSeedIntoTestContext(seed.Value, seedWasProvided, name);
         }
 
-        public decimal GeneratePositiveDecimal(int? seed = null)
+        public decimal GeneratePositiveDecimal()
         {
             return Convert.ToDecimal(GenerateInteger(0, int.MaxValue));
         }

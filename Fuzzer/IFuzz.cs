@@ -8,9 +8,9 @@ namespace Fuzzers
     public interface IFuzz
     {
         Random Random { get; set; }
-        decimal GeneratePositiveDecimal(int? seed = null);
         int GenerateInteger(int minValue, int maxValue);
         int GenerateInteger();
         int GeneratePositiveInteger();
+        decimal GeneratePositiveDecimal();
     }
 }
