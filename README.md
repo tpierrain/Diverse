@@ -2,6 +2,6 @@
 
 thomas@42skillz.com
 
-Use extensible Fuzzers that randomize values for you, but that can also be replayed in a deterministic manner.
+Use extensible fuzzers that randomize the values for you, but can be replayed deterministically if any of your tests ever fail one day in a specific configuration.
 
 
