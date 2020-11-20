@@ -66,5 +66,6 @@ namespace Diverse.Tests
             var otherFuzzer = new Fuzzer();
             Check.That(fuzzer.Seed).IsNotEqualTo(otherFuzzer.Seed);
         }
+        
     }
 }
