@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -22,7 +24,7 @@ namespace Diverse
         /// Exposes the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
         /// <remarks>The use of explicit interface implementation for this property hide this internal mechanic details from the Fuzzer end-users ;-)</remarks>
         /// </summary>
-        Random IFuzz.Random { get; set; } 
+        Random IFuzz.Random { get; set; }
 
         /// <summary>
         /// Gives easy access to the <see cref="IFuzz.Random"/> explicit implementation.
@@ -154,6 +156,27 @@ namespace Diverse
             var index = new Random().Next(0, 1500);
 
             return $"fuzzer{index}";
+        }
+
+        public string GenerateFirstName(Genders? gender = null)
+        {
+            var maleFirstNames = Male.FirstNames.Select(m => m.FirstName).ToArray();
+            var femaleFirstNames = Female.FirstNames.Select(f => f.FirstName).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
+
+            string[] firstNameCandidates;
+            if (gender == null)
+            {
+                var isShe = InternalRandom.Next(0, 2);
+                firstNameCandidates = isShe == 1 ? femaleFirstNames : maleFirstNames;
+            }
+            else
+            {
+                firstNameCandidates = gender == Genders.Female ? femaleFirstNames : maleFirstNames;
+            }
+
+            var randomLocaleIndex = InternalRandom.Next(0, firstNameCandidates.Length);
+
+            return firstNameCandidates[randomLocaleIndex];
         }
     }
 }

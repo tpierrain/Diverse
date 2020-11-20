@@ -66,6 +66,48 @@ namespace Diverse.Tests
             var otherFuzzer = new Fuzzer();
             Check.That(fuzzer.Seed).IsNotEqualTo(otherFuzzer.Seed);
         }
-        
+
+        [Test]
+        public void Be_able_to_Fuzz_FirstNames_for_male()
+        {
+            var fuzzer = new Fuzzer(381025586);
+
+            var firstNames = new List<string>();
+            for (var i = 0; i < 10; i++)
+            {
+                firstNames.Add( fuzzer.GenerateFirstName(Genders.Male));
+            }
+
+            Check.That(firstNames).ContainsExactly("Khaled", "Lukas", "Aylan", "Espen", "Jerry", "Mehmet", "Alexei", "Djibril", "Enok", "Hoà");
+        }
+
+        [Test]
+        public void Be_able_to_Fuzz_FirstNames_for_female()
+        {
+            var fuzzer = new Fuzzer(1834164083);
+
+            var firstNames = new List<string>();
+            for (var i = 0; i < 10; i++)
+            {
+                firstNames.Add(fuzzer.GenerateFirstName(Genders.Female));
+            }
+
+            Check.That(firstNames).ContainsExactly("Keisha", "Jung-sook", "Liv", "Lin", "Laila", "Marie", "Christine", "Makeba", "Mette", "Nichelle");
+        }
+
+        [Test]
+        public void Be_able_to_Fuzz_FirstNames_for_every_genders()
+        {
+            var fuzzer = new Fuzzer(1340516487);
+
+            var firstNames = new List<string>();
+            for (var i = 0; i < 10; i++)
+            {
+                firstNames.Add(fuzzer.GenerateFirstName());
+            }
+
+            Check.That(firstNames).ContainsExactly("Zayneb", "Koffi", "Jian", "David", "Jasmine", "Héctor", "Vinh", "Aata", "Noëlla", "Bintu");
+        }
+
     }
 }
