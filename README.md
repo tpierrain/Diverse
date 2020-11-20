@@ -48,7 +48,7 @@ Use extensible fuzzers that randomize the values for you, but that can be replay
 
 I explained this here in that thread: [twitter thread](https://twitter.com/tpierrain/status/1328962675074850819)
 
-![twitter screen](https://github.com/42skillz/Diverse/blob/master/TwitterThread.jpg?raw=true)
+![twitter screen](https://github.com/42skillz/Diverse/blob/main/TwitterThread.jpg?raw=true)
 
 
 #### Now, here how to proceed with *Diverse*:
