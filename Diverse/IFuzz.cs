@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Fuzzers
+namespace Diverse
 {
     /// <summary>
     /// Interface to build your own <see cref="Fuzzer"/> through extension methods.

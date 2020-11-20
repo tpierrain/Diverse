@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Fuzzers
+namespace Diverse
 {
     public class FuzzerException : Exception
     {

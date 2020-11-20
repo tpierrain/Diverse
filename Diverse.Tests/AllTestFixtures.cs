@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Fuzzers.Tests
+namespace Diverse.Tests
 {
     [SetUpFixture]
     public class AllTestFixtures
@@ -8,7 +8,7 @@ namespace Fuzzers.Tests
         [OneTimeSetUp]
         public void Init()
         {
-            Fuzzers.Fuzzer.Log = TestContext.WriteLine;
+            Fuzzer.Log = TestContext.WriteLine;
         }
     }
 }

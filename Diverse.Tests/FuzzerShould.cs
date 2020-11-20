@@ -2,7 +2,7 @@
 using NFluent;
 using NUnit.Framework;
 
-namespace Fuzzers.Tests
+namespace Diverse.Tests
 {
     [TestFixture]
     public class FuzzerShould
