@@ -41,11 +41,12 @@ Just pick the primitives you want.
 
 ## How to deterministically reproduce a test that has failed but only in a very specific case (picked randomly)?
 
+Use extensible fuzzers that randomize the values for you, but can be replayed deterministically if any of your tests ever fail one day in a specific configuration. 
+
 Easy. First thing
 
 Link toward my tweet thread on that topic.
 
--- Use extensible fuzzers that randomize the values for you, but can be replayed deterministically if any of your tests ever fail one day in a specific configuration.
 
 
 ## Code Sample
