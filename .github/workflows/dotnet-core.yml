@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: 
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest ]
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -33,4 +33,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: nupkg
-        path: ./src/${{ env.PROJECT_NAME }}/bin/Release/*.nupkg
+        path: /home/runner/work/Diverse/Diverse/Diverse/bin/Release/*.nupkg
