@@ -50,10 +50,12 @@ Just pick the primitives you want and check by yourself ;-)
 
 Use extensible fuzzers that randomize the values for you, but that can be replayed deterministically if any of your tests failed one day in a specific configuration. 
 
-I explained this here in that thread: [twitter thread](https://twitter.com/tpierrain/status/1328962675074850819)
+I explained this here in that thread: 
 
-![twitter screen](https://github.com/42skillz/Diverse/blob/main/TwitterThread.jpg?raw=true)
+![twitter screen](https://github.com/42skillz/Diverse/blob/main/Images/DiverseThread1.png?raw=true)
+![twitter screen](https://github.com/42skillz/Diverse/blob/main/Images/DiverseThread2.png?raw=true)
 
+[twitter thread](https://twitter.com/tpierrain/status/1328962675074850819)
 
 #### Now, here how to proceed with *Diverse*:
 
