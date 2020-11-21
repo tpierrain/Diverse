@@ -85,7 +85,7 @@ namespace Diverse.Tests
                 firstNames.Add( fuzzer.GenerateFirstName(Gender.Male));
             }
 
-            Check.That(firstNames).ContainsExactly("Khaled", "Lukas", "Aylan", "Espen", "Jerry", "Mehmet", "Alexei", "Djibril", "Enok", "Hoà");
+            Check.That(firstNames).ContainsExactly("Einar", "Rajiv", "Abraham", "Olle", "George", "Elias", "Anton", "Djibril", "Gjurd", "Jin");
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName(Gender.Female));
             }
 
-            Check.That(firstNames).ContainsExactly("Keisha", "Jung-sook", "Liv", "Lin", "Laila", "Marie", "Christine", "Makeba", "Mette", "Nichelle");
+            Check.That(firstNames).ContainsExactly("Malika", "Akshara", "My Lê", "Eve", "Nzinga", "Ella", "Zoe", "Nichelle", "Mây", "Noûr");
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName());
             }
 
-            Check.That(firstNames).ContainsExactly("Zayneb", "Koffi", "Jian", "David", "Jasmine", "Héctor", "Vinh", "Aata", "Noëlla", "Bintu");
+            Check.That(firstNames).ContainsExactly("Kyeol", "Koffi", "Ba-Thong", "Mikhail", "Johanna", "Diego", "Zhen", "Aata", "Ximena", "Jemila");
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace Diverse.Tests
                 lastNames.Add($"{firstName} {fuzzer.GenerateLastName(firstName)}");
             }
 
-            Check.That(lastNames).ContainsExactly("Maëla Di Maria", "Drell Thompson", "Ida Johnsen", "Demba Belkhodja", "Liam Brown", "Maja Eriksen", "Li Wú", "Oluf Johnsen", "Mahdi Smah", "Bintu Kasongo");
+            Check.That(lastNames).ContainsExactly("Beatriz González", "Drell Chen", "Mei Laghari", "Mamadou Diop", "David Sanchez", "Xuân Madan", "Tanja Brandolini", "Bao Laghari", "Demba Ibrahim", "Jemila Nwadike");
         }
 
         [Test]
@@ -143,17 +143,16 @@ namespace Diverse.Tests
             }
 
             Check.That(persons.Select(x => x.ToString()))
-                .ContainsExactly(
-                    "Ms. Nakeisha BEN ACHOUR (Female) nben-achour@kolab.com (is married: False - age: 92 yrs)", 
-                    "Mrs. Bayla CHÉN (Female) bchen@aol.com (is married: True - age: 26 yrs)", 
-                    "Mx. Julien SCHNEIDER (NonBinary) julien.schneider@aol.com (is married: True - age: 65 yrs)", 
-                    "Ms. Chan HAN (Female) chan.han@louvre-hotels.com (is married: False - age: 34 yrs)", 
-                    "Mrs. Nora BEN AYED (Female) nora.ben-ayed@aol.com (is married: True - age: 82 yrs)", 
-                    "Mrs. Ja-kyung CHÉN (Female) ja-kyung.chen@yopmail.com (is married: True - age: 61 yrs)", 
-                    "Mr. Sergio RODRÍGUEZ (Male) srodriguez@yahoo.fr (is married: False - age: 65 yrs)", 
-                    "Mx. Esteban ROJAS (NonBinary) esteban.rojas@louvre-hotels.com (is married: False - age: 75 yrs)", 
-                    "Ms. Eve MÜLLER (Female) emuller@microsoft.com (is married: False - age: 85 yrs)", 
-                    "Ms. Solveig IVERSEN (Female) siversen@ibm.com (is married: False - age: 43 yrs)");
+                .ContainsExactly("Ms. Fatima BA (Female) fba@gmail.com (is married: False - age: 92 yrs)", 
+                    "Mrs. Sofie MOREAU (Female) smoreau@microsoft.com (is married: True - age: 26 yrs)", 
+                    "Mx. Jeremie MATEUDI (NonBinary) jeremie.mateudi@yopmail.com (is married: True - age: 65 yrs)", 
+                    "Ms. Marija DUPONT (Female) marija.dupont@yahoo.fr (is married: False - age: 34 yrs)", 
+                    "Mrs. Mériem MWANGI (Female) meriem.mwangi@yopmail.com (is married: True - age: 82 yrs)", 
+                    "Mrs. Esther CHAKRABARTI (Female) esther.chakrabarti@ibm.com (is married: True - age: 61 yrs)", 
+                    "Mr. Javier MUÑOZ (Male) jmunoz@gmail.com (is married: False - age: 65 yrs)", 
+                    "Mx. Alejandro QUISPE (NonBinary) alejandro.quispe@yahoo.fr (is married: False - age: 75 yrs)", 
+                    "Ms. Francesca ARELLANO (Female) farellano@ibm.com (is married: False - age: 85 yrs)", 
+                    "Ms. Ji-yeon WANG (Female) jwang@42skillz.com (is married: False - age: 43 yrs)");
         }
 
         [Test]
@@ -165,9 +164,9 @@ namespace Diverse.Tests
             var email2 = fuzzer.GenerateEMail();
             var email3 = fuzzer.GenerateEMail();
 
-            Check.That(email).IsEqualTo("mamadou.chedjou@aol.com");
-            Check.That(email2).IsEqualTo("eesposito@gmail.com");
-            Check.That(email3).IsEqualTo("dimitri.dupuy@yopmail.com");
+            Check.That(email).IsEqualTo("atef.ben-achour@yopmail.com");
+            Check.That(email2).IsEqualTo("abak@protonmail.com");
+            Check.That(email3).IsEqualTo("wolfgang.hendricks@gmail.com");
         }
 
         [Test]
@@ -177,7 +176,7 @@ namespace Diverse.Tests
 
             var email = fuzzer.GenerateEMail("Saïd Ef", "Ben Achour");
 
-            Check.That(email).IsEqualTo("said-ef.ben-achour@kolab.com");
+            Check.That(email).IsEqualTo("said-ef.ben-achour@microsoft.com");
         }
     }
 

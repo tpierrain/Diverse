@@ -186,7 +186,7 @@ namespace Diverse
                 lastName = GenerateLastName(firstName);
             }
 
-            var domainNames = new string[] { "gmail.com", "yahoo.fr", "louvre-hotels.com", "ibm.com", "yopmail.com", "microsoft.com", "aol.com", "kolab.com", "protonmail.com" };
+            var domainNames = new string[] { "kolab.com", "protonmail.com", "gmail.com", "yahoo.fr", "42skillz.com", "gmail.com", "ibm.com", "gmail.com", "yopmail.com", "microsoft.com", "gmail.com", "aol.com" };
             var index = InternalRandom.Next(0, domainNames.Length);
 
             var domainName = domainNames[index];

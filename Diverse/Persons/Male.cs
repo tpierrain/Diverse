@@ -97,6 +97,22 @@ namespace Diverse
             new ContextualizedFirstName("Abraham", Continent.Asia),
             new ContextualizedFirstName("Elias", Continent.Asia),
 
+            new ContextualizedFirstName("Kumar", Continent.Asia),
+            new ContextualizedFirstName("Arjun", Continent.Asia),
+            new ContextualizedFirstName("Aadesh", Continent.Asia),
+            new ContextualizedFirstName("Abhimanyu", Continent.Asia),
+            new ContextualizedFirstName("Adrith", Continent.Asia),
+            new ContextualizedFirstName("Akshay", Continent.Asia),
+            new ContextualizedFirstName("Kamal", Continent.Asia),
+            new ContextualizedFirstName("Lavish", Continent.Asia),
+            new ContextualizedFirstName("Krishna", Continent.Asia),
+            new ContextualizedFirstName("Rajiv", Continent.Asia),
+            new ContextualizedFirstName("Sumedh", Continent.Asia),
+            new ContextualizedFirstName("Jaycarran", Continent.Asia),
+            new ContextualizedFirstName("Ashok", Continent.Asia),
+
+
+
 
             new ContextualizedFirstName("Achille", Continent.Europe),
             new ContextualizedFirstName("Markus", Continent.Europe),
