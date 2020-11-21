@@ -25,4 +25,9 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: Package nuget
       run: dotnet pack --configuration Release
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+        with:
+          name: nupkg
+          path: ./src/${{ env.PROJECT_NAME }}/bin/Release/*.nupkg
       
