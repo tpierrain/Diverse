@@ -35,9 +35,10 @@ The whole idea of a good *Fuzzer* is to be as easy to use as putting an hard-cod
 
 ## Why the name Diverse?
 
-Thanks to ask ;-) It's a matter of fact that the software industry is still not really an inclusive place right now.
+Thanks to ask ;-) Well... It is a matter of fact that the software industry is still not really a super inclusive place right now.
 
-Diverse will help you to make your test more inclusive and diverse by picking other things that *Karen* of *John* as default first names for instance.
+### *Karens* are in minority here ;-)
+Indded, Diverse will help you to make your tests more inclusive and more diverse by picking other things that *Karen* of *John* as default first names for instance.
 
 Diverse will help you to quickly generate diverse names or persons from various genders, countries, cultures, etc.
 
@@ -46,7 +47,7 @@ Diverse will help you to quickly generate diverse names or persons from various 
 Just pick the primitives you want and check by yourself ;-)
 
 
-## How to deterministically reproduce a test that has failed but only in a very specific case (picked randomly)?
+## A (possibly) deterministic Fuzzer?!?
 
 Use extensible fuzzers that randomize the values for you, but that can be replayed deterministically if any of your tests failed one day in a specific configuration. 
 
@@ -57,11 +58,10 @@ I explained this here in that thread:
 
 [see the thread on twitter here](https://twitter.com/tpierrain/status/1328962675074850819)
 
-#### Now, here how to proceed with *Diverse*:
+#### How to deterministically reproduce a test that has failed but only in a very specific case (picked randomly)
 
  1. Do ...
  1. Do ...
-
 
 
 ## Code Sample
