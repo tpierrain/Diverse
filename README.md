@@ -4,7 +4,7 @@ thomas@42skillz.com - ![twitter icon](https://github.com/42skillz/Diverse/blob/m
 
 Diverse, the pico .NET Fuzzer you need to make your tests more *Diverse*.
 
-![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon.jpg?raw=true)
+![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-small.jpg?raw=true)
 
 ## Diverse added-value
 
@@ -40,6 +40,8 @@ Thanks to ask ;-) It's a matter of fact that the software industry is still not 
 Diverse will help you to make your test more inclusive and diverse by picking other things that *Karen* of *John* as default first names for instance.
 
 Diverse will help you to quickly generate diverse names or persons from various genders, countries, cultures, etc.
+
+![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-small.jpg?raw=true)
 
 Just pick the primitives you want and check by yourself ;-)
 
