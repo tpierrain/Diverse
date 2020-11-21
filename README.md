@@ -1,6 +1,6 @@
 # Diverse
 
-thomas@42skillz.com
+thomas@42skillz.com - ![twitter icon](https://github.com/42skillz/Diverse/blob/main/Images/Twitter_icon.gif?raw=true) [use case driven on twitter](https://twitter.com/tpierrain)
 
 Diverse, the pico .NET Fuzzer you need to make your tests more *Diverse*.
 
