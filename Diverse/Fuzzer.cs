@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Diverse
 {
@@ -160,23 +161,55 @@ namespace Diverse
 
         public string GenerateFirstName(Genders? gender = null)
         {
-            var maleFirstNames = Male.FirstNames.Select(m => m.FirstName).ToArray();
-            var femaleFirstNames = Female.FirstNames.Select(f => f.FirstName).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
-
             string[] firstNameCandidates;
             if (gender == null)
             {
                 var isShe = InternalRandom.Next(0, 2);
-                firstNameCandidates = isShe == 1 ? femaleFirstNames : maleFirstNames;
+                firstNameCandidates = isShe == 1 ? Female.FirstNames : Male.FirstNames;
             }
             else
             {
-                firstNameCandidates = gender == Genders.Female ? femaleFirstNames : maleFirstNames;
+                firstNameCandidates = gender == Genders.Female ? Female.FirstNames : Male.FirstNames;
             }
 
             var randomLocaleIndex = InternalRandom.Next(0, firstNameCandidates.Length);
 
             return firstNameCandidates[randomLocaleIndex];
+        }
+
+        public string GenerateLastName(string firstName)
+        {
+            Continent continent = FindContinent(firstName);
+
+            var lastNames = LastNames.GetNames(continent);
+
+            var randomLocaleIndex = InternalRandom.Next(0, lastNames.Length);
+
+            return lastNames[randomLocaleIndex];
+        }
+
+        private static Continent FindContinent(string firstName)
+        {
+            Continent continent;
+            var contextualizedFirstName = Male.ContextualizedFirstNames.FirstOrDefault(c => c.FirstName == firstName);
+            if (contextualizedFirstName != null)
+            {
+                continent = contextualizedFirstName.Origin;
+            }
+            else
+            {
+                contextualizedFirstName = Female.ContextualizedFirstNames.FirstOrDefault(c => c.FirstName == firstName);
+                if (contextualizedFirstName != null)
+                {
+                    continent = contextualizedFirstName.Origin;
+                }
+                else
+                {
+                    continent = Continent.Africa;
+                }
+            }
+
+            return continent;
         }
     }
 }

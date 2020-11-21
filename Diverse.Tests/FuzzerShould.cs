@@ -109,5 +109,19 @@ namespace Diverse.Tests
             Check.That(firstNames).ContainsExactly("Zayneb", "Koffi", "Jian", "David", "Jasmine", "Héctor", "Vinh", "Aata", "Noëlla", "Bintu");
         }
 
+        [Test]
+        public void Be_able_to_Fuzz_LastName_for_every_FirstName()
+        {
+            var fuzzer = new Fuzzer(2000210944);
+
+            var lastNames = new List<string>();
+            for (var i = 0; i < 10; i++)
+            {
+                var firstName = fuzzer.GenerateFirstName();
+                lastNames.Add($"{firstName} {fuzzer.GenerateLastName(firstName)}");
+            }
+
+            Check.That(lastNames).ContainsExactly("Maëla Di Maria", "Drell Thompson", "Ida Johnsen", "Demba Belkhodja", "Liam Brown", "Maja Eriksen", "Li Wú", "Oluf Johnsen", "Mahdi Smah", "Bintu Kasongo");
+        }
     }
 }

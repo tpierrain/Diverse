@@ -1,11 +1,31 @@
-﻿namespace Diverse
+﻿using System.Linq;
+
+namespace Diverse
 {
     /// <summary>
     /// Information related to female persons.
     /// </summary>
     public static class Female
     {
-        public static ContextualizedFirstName[] FirstNames => _contextualizedFirstNames;
+        public static ContextualizedFirstName[] ContextualizedFirstNames => _contextualizedFirstNames;
+
+        private static string[] _firstNames = null;
+
+        public static string[] FirstNames
+        {
+            get
+            {
+                if (_firstNames == null)
+                {
+                    _firstNames = Female.ContextualizedFirstNames
+                                            .Where(x => !string.IsNullOrWhiteSpace(x.FirstName))
+                                            .Select(m => m.FirstName)
+                                            .ToArray();
+                }
+
+                return _firstNames;
+            }
+        }
 
         private static readonly ContextualizedFirstName[] _contextualizedFirstNames = new ContextualizedFirstName[]
         {
