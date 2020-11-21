@@ -55,7 +55,7 @@ I explained this here in that thread:
 ![twitter screen](https://github.com/42skillz/Diverse/blob/main/Images/DiverseThread1-550.png?raw=true)
 ![twitter screen](https://github.com/42skillz/Diverse/blob/main/Images/DiverseThread2-550.png?raw=true)
 
-[twitter thread](https://twitter.com/tpierrain/status/1328962675074850819)
+[see the thread on twitter here](https://twitter.com/tpierrain/status/1328962675074850819)
 
 #### Now, here how to proceed with *Diverse*:
 
