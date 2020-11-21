@@ -21,7 +21,6 @@ namespace Diverse
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
         /// </summary>
         public int Seed { get; }
-
         public string Name { get; }
 
         /// <summary>
@@ -34,6 +33,11 @@ namespace Diverse
         /// Gives easy access to the <see cref="IFuzz.Random"/> explicit implementation.
         /// </summary>
         private Random InternalRandom => ((IFuzz)this).Random;
+
+        /// <summary>
+        /// Sets the way you want to log or receive what the <see cref="Fuzzer"/> has to say about every generated seeds used for every fuzzer instance & test.
+        /// </summary>
+        public static Action<string> Log { get; set; }
 
         /// <summary>
         /// Instantiates a <see cref="Fuzzer"/>.
@@ -56,17 +60,10 @@ namespace Diverse
         }
 
         /// <summary>
-        /// Generates a random positive decimal value.
+        /// Generates a random integer value between a min (inclusive) and a max (exclusive) value.
         /// </summary>
-        /// <returns>A positive decimal value generated randomly.</returns>
-        public decimal GeneratePositiveDecimal()
-        {
-            return Convert.ToDecimal(GenerateInteger(0, int.MaxValue));
-        }
-
-        /// <summary>
-        /// Generates a random integer value between a min and a max value.
-        /// </summary>
+        /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
+        /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
         /// <returns>An integer value generated randomly.</returns>
         public int GenerateInteger(int minValue, int maxValue)
         {
@@ -92,9 +89,118 @@ namespace Diverse
         }
 
         /// <summary>
-        /// Sets the way you want to log or receive what the <see cref="Fuzzer"/> has to say about every generated seeds used for every fuzzer instance & test.
+        /// Generates a random positive decimal value.
         /// </summary>
-        public static Action<string> Log { get; set; }
+        /// <returns>A positive decimal value generated randomly.</returns>
+        public decimal GeneratePositiveDecimal()
+        {
+            return Convert.ToDecimal(GenerateInteger(0, int.MaxValue));
+        }
+
+        /// <summary>
+        /// Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
+        /// </summary>
+        /// <param name="gender">The <see cref="Gender"/> to be used as indication (optional).</param>
+        /// <returns>A 'Diverse' first name.</returns>
+        public string GenerateFirstName(Gender? gender = null)
+        {
+            string[] firstNameCandidates;
+            if (gender == null)
+            {
+                var isFemale = HeadsOrTails();
+                firstNameCandidates = isFemale ? Female.FirstNames : Male.FirstNames;
+            }
+            else
+            {
+                firstNameCandidates = gender == Gender.Female ? Female.FirstNames : Male.FirstNames;
+            }
+
+            var randomLocaleIndex = InternalRandom.Next(0, firstNameCandidates.Length);
+
+            return firstNameCandidates[randomLocaleIndex];
+        }
+
+        /// <summary>
+        /// Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
+        /// </summary>
+        /// <param name="firstName">The first name of this person.</param>
+        /// <returns>A 'Diverse' last name.</returns>
+        public string GenerateLastName(string firstName)
+        {
+            Continent continent = FindContinent(firstName);
+
+            var lastNames = LastNames.PerContinent[continent];
+
+            var randomLocaleIndex = InternalRandom.Next(0, lastNames.Length);
+
+            return lastNames[randomLocaleIndex];
+        }
+
+        /// <summary>
+        /// Generates a 'Diverse' <see cref="Person"/> (i.e. from all around the world and different cultures). 
+        /// </summary>
+        /// <param name="gender">The (optional) <see cref="Gender"/> of this <see cref="Person"/></param>
+        /// <returns>A 'Diverse' <see cref="Person"/> instance.</returns>
+        public Person GenerateAPerson(Gender? gender = null)
+        {
+            if (gender == null)
+            {
+                var isFemale = HeadsOrTails();
+                if (isFemale)
+                {
+                    gender = Gender.Female;
+                }
+                else
+                {
+                    var isNonBinary = HeadsOrTails();
+                    gender = isNonBinary ? Gender.NonBinary : Gender.Male;
+                }
+            }
+
+            var firstName = GenerateFirstName(gender);
+            var lastName = GenerateLastName(firstName);
+            var eMail = GenerateEMail(firstName, lastName);
+            var isMarried = HeadsOrTails();
+            var age = GenerateInteger(18, 97);
+
+            return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
+        }
+
+        /// <summary>
+        /// Generates a random Email.
+        /// </summary>
+        /// <param name="firstName">The (optional) first name for this Email</param>
+        /// <param name="lastName">The (option) last name for this Email.</param>
+        /// <returns>A random Email.</returns>
+        public string GenerateEMail(string firstName = null, string lastName = null)
+        {
+            if (firstName == null)
+            {
+                firstName = GenerateFirstName();
+            }
+
+            if (lastName == null)
+            {
+                lastName = GenerateLastName(firstName);
+            }
+
+            var domainNames = new string[] { "gmail.com", "yahoo.fr", "louvre-hotels.com", "ibm.com", "yopmail.com", "microsoft.com", "aol.com", "kolab.com", "protonmail.com" };
+            var index = InternalRandom.Next(0, domainNames.Length);
+
+            var domainName = domainNames[index];
+
+
+            if (HeadsOrTails())
+            {
+                var shortVersion = $"{firstName.Substring(0, 1)}{lastName}@{domainName}".ToLower();
+                shortVersion = TransformIntoValidEmailFormat(shortVersion);
+                return shortVersion;
+            }
+
+            var longVersion = $"{firstName}.{lastName}@{domainName}".ToLower();
+            longVersion = TransformIntoValidEmailFormat(longVersion);
+            return longVersion;
+        }
 
 
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
@@ -162,35 +268,6 @@ namespace Diverse
             return $"fuzzer{index}";
         }
 
-        public string GenerateFirstName(Gender? gender = null)
-        {
-            string[] firstNameCandidates;
-            if (gender == null)
-            {
-                var isFemale = HeadsOrTails();
-                firstNameCandidates = isFemale ? Female.FirstNames : Male.FirstNames;
-            }
-            else
-            {
-                firstNameCandidates = gender == Gender.Female ? Female.FirstNames : Male.FirstNames;
-            }
-
-            var randomLocaleIndex = InternalRandom.Next(0, firstNameCandidates.Length);
-
-            return firstNameCandidates[randomLocaleIndex];
-        }
-
-        public string GenerateLastName(string firstName)
-        {
-            Continent continent = FindContinent(firstName);
-
-            var lastNames = LastNames.PerContinent[continent];
-
-            var randomLocaleIndex = InternalRandom.Next(0, lastNames.Length);
-
-            return lastNames[randomLocaleIndex];
-        }
-
         private static Continent FindContinent(string firstName)
         {
             Continent continent;
@@ -213,61 +290,6 @@ namespace Diverse
             }
 
             return continent;
-        }
-
-        public Person GenerateAPerson(Gender? gender = null)
-        {
-            if (gender == null)
-            {
-                var isFemale = HeadsOrTails();
-                if (isFemale)
-                {
-                    gender = Gender.Female;
-                }
-                else
-                {
-                    var isNonBinary = HeadsOrTails();
-                    gender = isNonBinary ? Gender.NonBinary : Gender.Male;
-                }
-            }
-
-            var firstName = GenerateFirstName(gender);
-            var lastName = GenerateLastName(firstName);
-            var eMail = GenerateEMail(firstName, lastName);
-            var isMarried = HeadsOrTails();
-            var age = GenerateInteger(18, 97);
-
-            return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
-        }
-
-        public string GenerateEMail(string firstName = null, string lastName = null)
-        {
-            if (firstName == null)
-            {
-                firstName = GenerateFirstName();
-            }
-
-            if (lastName == null)
-            {
-                lastName = GenerateLastName(firstName);
-            }
-
-            var domainNames = new string[] { "gmail.com", "yahoo.fr", "louvre-hotels.com", "ibm.com", "yopmail.com", "microsoft.com", "aol.com", "kolab.com", "protonmail.com" };
-            var index = InternalRandom.Next(0, domainNames.Length);
-
-            var domainName = domainNames[index];
-
-
-            if (HeadsOrTails())
-            {
-                var shortVersion = $"{firstName.Substring(0,1)}{lastName}@{domainName}".ToLower();
-                shortVersion = TransformIntoValidEmailFormat(shortVersion);
-                return shortVersion;
-            }
-
-            var longVersion = $"{firstName}.{lastName}@{domainName}".ToLower();
-            longVersion = TransformIntoValidEmailFormat(longVersion);
-            return longVersion;
         }
 
         private string TransformIntoValidEmailFormat(string eMail)
@@ -296,7 +318,11 @@ namespace Diverse
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
 
-        private bool HeadsOrTails()
+        /// <summary>
+        /// Flips a coin.
+        /// </summary>
+        /// <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
+        public bool HeadsOrTails()
         {
             return InternalRandom.Next(0, 2) == 1;
         }
