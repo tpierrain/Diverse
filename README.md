@@ -8,7 +8,7 @@ Diverse, the pico .NET Fuzzer you need to make your tests more *Diverse*.
 
 Diverse:
 
- - Provides __a set of primitives__ that speed up the usage of *inclusive Fuzzers* in your tests
+ - Provides __a set of primitives__ that speed up the usage of __*inclusive Fuzzers*__ in your tests
 	
  - Provides a way to easy reproduce any failing test in a deterministic manner whereas the bad conditions have been found randomly
 
