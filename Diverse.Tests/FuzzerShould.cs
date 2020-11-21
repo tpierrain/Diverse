@@ -5,6 +5,10 @@ using NUnit.Framework;
 
 namespace Diverse.Tests
 {
+    /// <summary>
+    /// Note: this test fixture has lot of tests using a specific seed provided to the Fuzzer instance.
+    /// This is not representative on how to use fuzzer in your code base but made for deterministic results instead.
+    /// </summary>
     [TestFixture]
     public class FuzzerShould
     {
