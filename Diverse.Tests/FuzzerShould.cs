@@ -7,7 +7,9 @@ namespace Diverse.Tests
 {
     /// <summary>
     /// Note: this test fixture has lot of tests using a specific seed provided to the Fuzzer instance.
-    /// This is not representative on how to use fuzzer in your code base but made for deterministic results instead.
+    /// This is not representative on how to use <see cref="Fuzzer"/> instances in your code
+    /// base (i.e. without fixing a seed in order to go full random), but made
+    /// for deterministic results instead.
     /// </summary>
     [TestFixture]
     public class FuzzerShould
