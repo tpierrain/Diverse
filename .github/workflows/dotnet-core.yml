@@ -26,7 +26,7 @@ jobs:
     - name: Package nuget
       run: dotnet pack --configuration Release
     - name: Upload Artifact
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'Ubuntu'
       uses: actions/upload-artifact@v2
       with:
         name: nupkg
