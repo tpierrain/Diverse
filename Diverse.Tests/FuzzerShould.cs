@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NFluent;
 using NUnit.Framework;
 
@@ -75,7 +76,7 @@ namespace Diverse.Tests
             var firstNames = new List<string>();
             for (var i = 0; i < 10; i++)
             {
-                firstNames.Add( fuzzer.GenerateFirstName(Genders.Male));
+                firstNames.Add( fuzzer.GenerateFirstName(Gender.Male));
             }
 
             Check.That(firstNames).ContainsExactly("Khaled", "Lukas", "Aylan", "Espen", "Jerry", "Mehmet", "Alexei", "Djibril", "Enok", "Hoà");
@@ -89,7 +90,7 @@ namespace Diverse.Tests
             var firstNames = new List<string>();
             for (var i = 0; i < 10; i++)
             {
-                firstNames.Add(fuzzer.GenerateFirstName(Genders.Female));
+                firstNames.Add(fuzzer.GenerateFirstName(Gender.Female));
             }
 
             Check.That(firstNames).ContainsExactly("Keisha", "Jung-sook", "Liv", "Lin", "Laila", "Marie", "Christine", "Makeba", "Mette", "Nichelle");
@@ -123,5 +124,55 @@ namespace Diverse.Tests
 
             Check.That(lastNames).ContainsExactly("Maëla Di Maria", "Drell Thompson", "Ida Johnsen", "Demba Belkhodja", "Liam Brown", "Maja Eriksen", "Li Wú", "Oluf Johnsen", "Mahdi Smah", "Bintu Kasongo");
         }
+
+        [Test]
+        public void Be_able_to_Fuzz_Persons()
+        {
+            var fuzzer = new Fuzzer(1320843396);
+
+            var persons = new List<Person>();
+            for (var i = 0; i < 10; i++)
+            {
+                persons.Add(fuzzer.GenerateAPerson());
+            }
+
+            Check.That(persons.Select(x => x.ToString()))
+                .ContainsExactly(
+                    "Ms. Nakeisha BEN ACHOUR (Female) nben-achour@kolab.com (is married: False - age: 92 yrs)", 
+                    "Mrs. Bayla CHÉN (Female) bchen@aol.com (is married: True - age: 26 yrs)", 
+                    "Mx. Julien SCHNEIDER (NonBinary) julien.schneider@aol.com (is married: True - age: 65 yrs)", 
+                    "Ms. Chan HAN (Female) chan.han@louvre-hotels.com (is married: False - age: 34 yrs)", 
+                    "Mrs. Nora BEN AYED (Female) nora.ben-ayed@aol.com (is married: True - age: 82 yrs)", 
+                    "Mrs. Ja-kyung CHÉN (Female) ja-kyung.chen@yopmail.com (is married: True - age: 61 yrs)", 
+                    "Mr. Sergio RODRÍGUEZ (Male) srodriguez@yahoo.fr (is married: False - age: 65 yrs)", 
+                    "Mx. Esteban ROJAS (NonBinary) esteban.rojas@louvre-hotels.com (is married: False - age: 75 yrs)", 
+                    "Ms. Eve MÜLLER (Female) emuller@microsoft.com (is married: False - age: 85 yrs)", 
+                    "Ms. Solveig IVERSEN (Female) siversen@ibm.com (is married: False - age: 43 yrs)");
+        }
+
+        [Test]
+        public void Be_able_to_generate_email_from_scratch()
+        {
+            var fuzzer = new Fuzzer(1996243347);
+
+            var email = fuzzer.GenerateEMail();
+            var email2 = fuzzer.GenerateEMail();
+            var email3 = fuzzer.GenerateEMail();
+
+            Check.That(email).IsEqualTo("mamadou.chedjou@aol.com");
+            Check.That(email2).IsEqualTo("eesposito@gmail.com");
+            Check.That(email3).IsEqualTo("dimitri.dupuy@yopmail.com");
+        }
+
+        [Test]
+        public void Generate_Email_with_dashes_instead_of_spaces_and_pure_ascii_char()
+        {
+            var fuzzer = new Fuzzer(40816378);
+
+            var email = fuzzer.GenerateEMail("Saïd Ef", "Ben Achour");
+
+            Check.That(email).IsEqualTo("said-ef.ben-achour@kolab.com");
+        }
     }
+
 }

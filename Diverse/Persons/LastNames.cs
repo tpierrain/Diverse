@@ -4,11 +4,6 @@ namespace Diverse
 {
     public static class LastNames
     {
-        public static string[] GetNames(Continent continent)
-        {
-            return PerContinent[continent];
-        }
-
         public static IDictionary<Continent, string[]> PerContinent { get; } = new Dictionary<Continent, string[]>
         {
             {

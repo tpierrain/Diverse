@@ -2,9 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace Diverse
 {
@@ -159,17 +162,17 @@ namespace Diverse
             return $"fuzzer{index}";
         }
 
-        public string GenerateFirstName(Genders? gender = null)
+        public string GenerateFirstName(Gender? gender = null)
         {
             string[] firstNameCandidates;
             if (gender == null)
             {
-                var isShe = InternalRandom.Next(0, 2);
-                firstNameCandidates = isShe == 1 ? Female.FirstNames : Male.FirstNames;
+                var isFemale = HeadsOrTails();
+                firstNameCandidates = isFemale ? Female.FirstNames : Male.FirstNames;
             }
             else
             {
-                firstNameCandidates = gender == Genders.Female ? Female.FirstNames : Male.FirstNames;
+                firstNameCandidates = gender == Gender.Female ? Female.FirstNames : Male.FirstNames;
             }
 
             var randomLocaleIndex = InternalRandom.Next(0, firstNameCandidates.Length);
@@ -181,7 +184,7 @@ namespace Diverse
         {
             Continent continent = FindContinent(firstName);
 
-            var lastNames = LastNames.GetNames(continent);
+            var lastNames = LastNames.PerContinent[continent];
 
             var randomLocaleIndex = InternalRandom.Next(0, lastNames.Length);
 
@@ -210,6 +213,92 @@ namespace Diverse
             }
 
             return continent;
+        }
+
+        public Person GenerateAPerson(Gender? gender = null)
+        {
+            if (gender == null)
+            {
+                var isFemale = HeadsOrTails();
+                if (isFemale)
+                {
+                    gender = Gender.Female;
+                }
+                else
+                {
+                    var isNonBinary = HeadsOrTails();
+                    gender = isNonBinary ? Gender.NonBinary : Gender.Male;
+                }
+            }
+
+            var firstName = GenerateFirstName(gender);
+            var lastName = GenerateLastName(firstName);
+            var eMail = GenerateEMail(firstName, lastName);
+            var isMarried = HeadsOrTails();
+            var age = GenerateInteger(18, 97);
+
+            return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
+        }
+
+        public string GenerateEMail(string firstName = null, string lastName = null)
+        {
+            if (firstName == null)
+            {
+                firstName = GenerateFirstName();
+            }
+
+            if (lastName == null)
+            {
+                lastName = GenerateLastName(firstName);
+            }
+
+            var domainNames = new string[] { "gmail.com", "yahoo.fr", "louvre-hotels.com", "ibm.com", "yopmail.com", "microsoft.com", "aol.com", "kolab.com", "protonmail.com" };
+            var index = InternalRandom.Next(0, domainNames.Length);
+
+            var domainName = domainNames[index];
+
+
+            if (HeadsOrTails())
+            {
+                var shortVersion = $"{firstName.Substring(0,1)}{lastName}@{domainName}".ToLower();
+                shortVersion = TransformIntoValidEmailFormat(shortVersion);
+                return shortVersion;
+            }
+
+            var longVersion = $"{firstName}.{lastName}@{domainName}".ToLower();
+            longVersion = TransformIntoValidEmailFormat(longVersion);
+            return longVersion;
+        }
+
+        private string TransformIntoValidEmailFormat(string eMail)
+        {
+            var validFormat = eMail.Replace(' ', '-');
+            validFormat = RemoveDiacritics(validFormat);
+
+            return validFormat;
+        }
+
+        // from https://stackoverflow.com/questions/249087/how-do-i-remove-diacritics-accents-from-a-string-in-net
+        private static string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        private bool HeadsOrTails()
+        {
+            return InternalRandom.Next(0, 2) == 1;
         }
     }
 }
