@@ -23,10 +23,11 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - name: Package nuget
-      run: dotnet pack --configuration Release
+    - name: Pack
+      if: matrix.os == 'ubuntu-latest'
+      run: dotnet pack -v normal -c Release --no-restore --include-symbols --include-source -p:PackageVersion=$GITHUB_RUN_ID src/$PROJECT_NAME/$PROJECT_NAME.*proj
     - name: Upload Artifact
-      if: matrix.os == 'Ubuntu'
+      if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v2
       with:
         name: nupkg
