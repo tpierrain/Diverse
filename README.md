@@ -4,7 +4,7 @@ thomas@42skillz.com - ![twitter icon](https://github.com/42skillz/Diverse/blob/m
 
 Diverse, the pico .NET Fuzzer you need to make your tests more *Diverse*.
 
-![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-small.jpg?raw=true)
+![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-wave.jpg?raw=true)
 
 ## Diverse added-value
 
