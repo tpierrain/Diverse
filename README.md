@@ -41,6 +41,8 @@ Diverse will help you to make your test more inclusive and diverse by picking ot
 
 Diverse will help you to quickly generate diverse names or persons from various genders, countries, cultures, etc.
 
+![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-small.jpg?raw=true)
+
 Just pick the primitives you want and check by yourself ;-)
 
 
