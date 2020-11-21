@@ -2,7 +2,7 @@
 
 thomas@42skillz.com - ![twitter icon](https://github.com/42skillz/Diverse/blob/main/Images/Twitter_icon.gif?raw=true) [use case driven on twitter](https://twitter.com/tpierrain)
 
-Diverse, the pico .NET Fuzzer you need to make your tests more *Diverse*.
+Diverse, the Fuzzer pico library you need to make your .NET tests more *Diverse*.
 
 ![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-wave.jpg?raw=true)
 
@@ -12,7 +12,7 @@ Diverse:
 
  - Provides __a set of primitives__ that speed up the usage and/or the build of __*inclusive Fuzzers*__ in your tests
 	
- - Provides a way to easy reproduce any failing test in a deterministic manner whereas the bad conditions have been found randomly
+ - Provides __a way to easy reproduce any failing test in a deterministic manner__ whereas the initial bad conditions have been found randomly
 
 	- Important when your Fuzzer make you discover randomly a case that breaks one of your test
  
