@@ -17,6 +17,8 @@ namespace Diverse
     /// </summary>
     public class Fuzzer : IFuzz
     {
+        private Random _internalRandom;
+
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
         /// </summary>
@@ -24,10 +26,10 @@ namespace Diverse
         public string Name { get; }
 
         /// <summary>
-        /// Exposes the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
-        /// <remarks>The use of explicit interface implementation for this property hide this internal mechanic details from the Fuzzer end-users ;-)</remarks>
+        /// Gets the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
+        /// <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
         /// </summary>
-        Random IFuzz.Random { get; set; }
+        Random IFuzz.Random => _internalRandom;
 
         /// <summary>
         /// Gives easy access to the <see cref="IFuzz.Random"/> explicit implementation.
@@ -51,7 +53,7 @@ namespace Diverse
             seed = seed ?? new Random().Next(); // the seed is not specified? pick a random one for this Fuzzer instance.
             Seed = seed.Value;
 
-            ((IFuzz)this).Random = new Random(seed.Value);
+            _internalRandom = new Random(seed.Value);
 
             name = name ?? GenerateFuzzerName();
             Name = name;
