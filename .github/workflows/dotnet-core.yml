@@ -3,6 +3,10 @@ name: .NET Core
 on:
   push:
     branches: [ main ]
+    paths-ignore: 
+      - 'README.md'
+      - '**.jpg'
+  
   pull_request:
     branches: [ main ]
 
