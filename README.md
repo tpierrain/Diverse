@@ -31,7 +31,7 @@ issues in your production code or discover that a test is badly written.
 ```csharp
 
 // avoid using always the same hard-coded values => use Fuzzers instead
-var age = fuzzer.GeneratePositiveInteger(minValue: 17, maxValue: 54);
+var age = fuzzer.GenerateInteger(minValue: 17, maxValue: 54);
 
 // speed up the creation of something relatively 'complicated', 
 // with random but coherent values
@@ -98,9 +98,55 @@ I explained this here in that thread:
 
 #### How to deterministically reproduce a test that has failed but only in a very specific case (picked randomly)
 
- 1. Do ...
- 1. Do ...
+1. First, ensure that Diverse's logs will be trace down wherever you want. All you have to do is to call once:
 
+ ```csharp
+
+    [SetUpFixture]
+    public class AllTestFixtures
+    {
+        [OneTimeSetUp]
+        public void Init()
+        {
+            // Here with nunit, we redirect all Diverse's log into the TestContext outputs
+            Fuzzer.Log = TestContext.WriteLine;
+        }
+    }
+
+ ```
+
+
+ 2. Consult the report of a failing test and Copy the Seed that was used for it. Note: Diverse traces the seed used for every test ran. It will look like this:
+ ```
+ ----------------------------------------------------------------------------------------------------------------------
+--- Fuzzer ("fuzzer1265") instantiated with the seed (1248680008)
+--- from the test: FuzzerWithNumbersShould.GeneratePositiveInteger_with_an_inclusive_upper_bound()
+--- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions
+-----------------------------------------------------------------------------------------------------------------------
+
+ ```
+
+ 3. Change your failing test to provide the copied Seed to its fuzzer:
+
+ Instead of:
+
+ ```csharp
+
+ var fuzzer = new Fuzzer();
+
+ ```
+
+ calls:
+
+ ```csharp
+
+ var fuzzer = new Fuzzer(seed: 1248680008);
+
+ ```
+
+That's it! Your test using Diverse fuzzers will be deterministic and always provide the same Fuzzed values.
+
+You can then fix your implementation code to make your test green, or rewrite your badly written test, or keep your test like this so you can have *deterministic values* in it (nice for documentation).
 
 ## Code Sample
 
