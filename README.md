@@ -30,17 +30,18 @@ issues in your production code or discover that a test is badly written.
 
 ```csharp
 
-// avoid always using the same hard-coded values
+// avoid using always the same hard-coded values => use Fuzzers instead
 var age = fuzzer.GeneratePositiveInteger(minValue: 17, maxValue: 54);
 
-// speed up the creation of something relatively 'complicated', but with random values
+// speed up the creation of something relatively 'complicated', 
+// with random but coherent values
 var person = fuzzer.GenerateAPerson(); 
 
-// or 
+// or other specific stuffs
 var password = fuzzer.GeneratePassword(); 
 
-// or anything you need for your test cases
-
+// Anything you need for your test cases actually
+// Diverse Fuzzers are easily extensible ;-)
 
 ```
 
