@@ -150,7 +150,7 @@ That's it! Your test using Diverse fuzzers will be deterministic and always prov
 
 You can then fix your implementation code to make your test green, or rewrite your badly written test, or keep your test like this so you can have *deterministic values* in it (nice for documentation).
 
-## Code Sample
+## Sample
 
 Example of a typical test using Fuzzers. Here, a test for the SignUp process of an API:
 
@@ -193,11 +193,14 @@ public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumb
 
  Easy. All you have to do is to __add your own .NET extension methods onto the *'IFuzz'* interface__
 
-  - This will automatically add your method to any Fuzzer instance
+  - This will automatically add your own method to any Fuzzer instance
   
-  - This will allow your extending methods to have access to the Random of the Fuzzer
+  - This will allow your methods to have access to the *'Random'* instance of the Fuzzer 
     
-    - And thus, to compose with any other existing Fuzzing function! 
+    - Mandatory to benefits from the Deterministic capabilities of the library
+    
+    - Interesting to leverage & compose with any other existing Fuzzing function! 
+
 
 #### Example of method extension for IFuzz
 
