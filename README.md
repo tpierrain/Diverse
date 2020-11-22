@@ -205,12 +205,60 @@ public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumb
 
 #### Example of method extension for IFuzz
 
+The *IFuzz* interface implemented by all our Fuzzer instances is made to be extended.
+Let's say that we want to Add a new fuzzing method to dynamically generate an 'Age' instance
+(part of our specific domain).
 
-  ```csharp
+All we have to do in our project is to add a new GenerateAVerySpecificAge() extension method that may looks like this:
 
-  TBD
+```csharp
 
-   ```
+public static class FuzzerExtensions
+{
+    public static Age GenerateAVerySpecificAge(this IFuzz fuzzer)
+    {
+        // Here, we can have access to all the existing methods 
+        // exposed by the IFuzz interface
+        var years = fuzzer.GeneratePositiveInteger(97);
+
+        // or this one (very useful)
+        var isConfidential = fuzzer.HeadsOrTails();
+
+        // For very specific needs, you have to use the
+        // Random property of the Fuzzer
+        var aDoubleForInstance = fuzzer.Random.NextDouble();
+
+        return new Age(years, isConfidential);
+    }
+}
+
+```
+
+So that we can now see it and call it onto any of the Diverse Fuzzers like this in a test:
+
+```csharp
+
+[TestFixture]
+public class FuzzerThatIsExtensibleShould
+{
+    [Test]
+    public void Be_able_to_have_extension_methods()
+    {
+        var fuzzer = new Fuzzer(1245650948);
+
+        // we have access to all our extension methods on our Fuzzer
+        // (here: GenerateAVerySpecificAge())
+        Age age = fuzzer.GenerateAVerySpecificAge();
+
+        Check.That(age.Confidential).IsTrue();
+        Check.That(age.Years).IsEqualTo(59);
+    }
+}
+
+```
+
+
+
 
 
 
