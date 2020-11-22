@@ -191,7 +191,7 @@ public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumb
 
  ## How to extend Diverse with your own Fuzzing methods
 
- Easy, all you have to do is to add your own .NET extension methods onto the *'IFuzz'* interface.
+ Easy. All you have to do is to __add your own .NET extension methods onto the *'IFuzz'* interface__
 
   - This will automatically add your method to any Fuzzer instance
   
