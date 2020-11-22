@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using NFluent;
 using NUnit.Framework;
 
@@ -7,15 +10,19 @@ namespace Diverse.Tests
     [TestFixture]
     public class FuzzerWithPasswordShould
     {
-        [Test]
-        public void GeneratePasswords_of_various_sizes()
+        [TestCase(500)]
+        public void GeneratePasswords_of_various_sizes(int attempts)
         {
             var fuzzer = new Fuzzer();
 
-            var password1 = fuzzer.GeneratePassword();
-            var password2 = fuzzer.GeneratePassword();
+            var generatedPasswords = new List<string>();
+            for (var i = 0; i < attempts; i++)
+            {
+                generatedPasswords.Add(fuzzer.GeneratePassword());
+            }
 
-            Check.That(password2.Length).IsNotEqualTo(password1.Length);
+            var generatedSizes = generatedPasswords.Select(p => p.Length).Distinct();
+            Check.That(generatedSizes.Count()).IsStrictlyGreaterThan(2);
         }
 
         [TestCase(12, null)]

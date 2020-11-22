@@ -13,23 +13,29 @@ namespace Diverse.Tests
     public class FuzzerShouldDocument
     {
         [Test]
-        public void Simplest_usage()
+        public void Simplest_usage_with_numbers()
         {
             // Instantiates the Fuzzer
             var fuzzer = new Fuzzer();
 
             var results = new List<int>();
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
-                results.Add(fuzzer.GeneratePositiveInteger(maxValue: 3));
+                var integer = fuzzer.GeneratePositiveInteger(maxValue: 3);
+                results.Add(integer);
             }
 
-            var greater = results.Any(x => x > 3);
-            var withMaxValue = results.Any(x => x == 3);
-            Check.That(greater).IsFalse();
-            Check.That(withMaxValue).IsTrue();
+            var findGreaterNumberThanMaxValue = results.Any(x => x > 3);
+            var findAtLeastOneNumberWithTheMaxValue = results.Any(x => x == 3);
 
+            Check.That(findGreaterNumberThanMaxValue).IsFalse();
+            Check.That(findAtLeastOneNumberWithTheMaxValue).IsTrue();
+        }
 
+        public void Simplest_usage_with_Persons_and_passwords()
+        {
+            // Instantiates the Fuzzer
+            var fuzzer = new Fuzzer();
 
             // Uses it for various usages
             var randomPositiveNumber = fuzzer.GeneratePositiveInteger(maxValue:8);
