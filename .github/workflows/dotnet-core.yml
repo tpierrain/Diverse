@@ -31,7 +31,11 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: Pack
       if: matrix.os == 'ubuntu-latest'
-      run: dotnet pack --configuration Release --version-suffix $GITHUB_RUN_ID
+      run: |
+        arrTag=(${GITHUB_REF//\// })
+        VERSION="${arrTag[2]}"
+        VERSION="${VERSION//v}"
+        dotnet pack --configuration Release -p:PackageVersion=$VERSION
     - name: Upload Artifact
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v2
