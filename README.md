@@ -30,8 +30,17 @@ issues in your production code or discover that a test is badly written.
 
 ```csharp
 
-var person = fuzzer.GenerateAPerson(); // avoid always using the same hard-coded values
-var password = fuzzer.GeneratePassword(); // speed up the creation of something relatively 'complicated' with random values
+// avoid always using the same hard-coded values
+var age = fuzzer.GeneratePositiveInteger(minValue: 17, maxValue: 54);
+
+// speed up the creation of something relatively 'complicated', but with random values
+var person = fuzzer.GenerateAPerson(); 
+
+// or 
+var password = fuzzer.GeneratePassword(); 
+
+// or anything you need for your test cases
+
 
 ```
 
