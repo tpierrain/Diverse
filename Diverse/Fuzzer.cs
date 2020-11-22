@@ -19,6 +19,11 @@ namespace Diverse
     {
         private Random _internalRandom;
 
+        private static char[] _specialCharacters = "+-_$%£&!?*$€'|[]()".ToCharArray();
+        private static char[] _upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+        private static char[] _lowerCharacters = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+        private static char[] _numericCharacters = "0123456789".ToCharArray();
+
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
         /// </summary>
@@ -327,6 +332,73 @@ namespace Diverse
         public bool HeadsOrTails()
         {
             return InternalRandom.Next(0, 2) == 1;
+        }
+
+        /// <summary>
+        /// Generates a password following some common rules asked on the internet.
+        /// </summary>
+        /// <returns>The generated password</returns>
+        public string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null)
+        {
+            var defaultMinSize = 7;
+            var defaultMaxSize = 12;
+
+            var minimumSize = minSize ?? defaultMinSize;
+            var maximumSize = maxSize ?? defaultMaxSize;
+
+            CheckGuardMinAndMaximumSizes(minSize, maxSize, minimumSize, maximumSize, defaultMinSize, defaultMaxSize);
+
+            var passwordSize = InternalRandom.Next(minimumSize, maximumSize + 1);
+
+            var pwd = new StringBuilder(passwordSize);
+            for (var i = 0; i < passwordSize; i++)
+            {
+                if ((i == 0 || i == 10) && (includeSpecialCharacters.HasValue && includeSpecialCharacters.Value))
+                {
+                    pwd.Append(_specialCharacters[InternalRandom.Next(0, _specialCharacters.Length)]);
+                    continue;
+                }
+
+                if (i == 4 || i == 14)
+                {
+                    pwd.Append(_upperCharacters[InternalRandom.Next(1, 26)]);
+                    continue;
+                }
+
+                if (i == 6 || i == 13)
+                {
+                    pwd.Append(_numericCharacters[InternalRandom.Next(4, 10)]);
+                    continue;
+                }
+
+                if (i == 3 || i == 9)
+                {
+                    pwd.Append(_numericCharacters[InternalRandom.Next(1, 5)]);
+                    continue;
+                }
+
+                // by default
+                pwd.Append(_lowerCharacters[InternalRandom.Next(1, 26)]);
+            }
+
+            return pwd.ToString();
+        }
+
+        
+
+        private static void CheckGuardMinAndMaximumSizes(int? minSize, int? maxSize, int minimumSize, int maximumSize, int defaultMinSize, int defaultMaxSize)
+        {
+            if (minimumSize > maximumSize)
+            {
+                var parameterName = minSize == null ? "maxSize" : "minSize";
+                if (minSize.HasValue && maxSize.HasValue)
+                {
+                    parameterName = "maxSize";
+                }
+
+                throw new ArgumentOutOfRangeException(parameterName,
+                    $"maxSize ({maximumSize}) can't be inferior to minSize({minimumSize}). Specify 2 values if you don't want to use the default values of the library (i.e.: [{defaultMinSize}, {defaultMaxSize}]).");
+            }
         }
     }
 }
