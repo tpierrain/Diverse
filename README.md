@@ -30,10 +30,10 @@ issues in your production code or discover that a test is badly written.
 
 ```csharp
 
-// avoid using always the same hard-coded values => use Fuzzers instead
+// avoid using always the same hard-coded values in your tests code => use Fuzzers instead
 var age = fuzzer.GenerateInteger(minValue: 17, maxValue: 54);
 
-// speed up the creation of something relatively 'complicated', 
+// speed up the creation of something relatively 'complicated' and stay *intent driven*
 // with random but coherent values
 var person = fuzzer.GenerateAPerson(); 
 
@@ -48,7 +48,7 @@ var password = fuzzer.GeneratePassword();
 
 Every time your test will run, it will use different random values for what matters in your *Domain*.
 
-The whole idea of a good *Fuzzer* is to be as easy to use as putting an hard-coded value.
+The whole idea of a good *Fuzzer* is to be as easy to use as it is to put an hard-coded value.
 
 
 ## Why the name Diverse?
@@ -56,7 +56,7 @@ The whole idea of a good *Fuzzer* is to be as easy to use as putting an hard-cod
 Thanks to ask ;-) Well... It is a matter of fact that the software industry is still not really a super inclusive place right now.
 
 ### *Karens* are in minority here ;-)
-Indded, Diverse will help you to make your tests more inclusive and more diverse by picking other things that *Karen* of *John* as default first names for instance.
+Indeed, Diverse will help you to make your tests more inclusive and more diverse by picking other things that *Karen* of *John* as default first names for instance.
 
 Diverse will help you to quickly generate diverse names or persons from various genders, countries, cultures, etc.
 
@@ -98,7 +98,9 @@ I explained this here in that thread:
 
 #### How to deterministically reproduce a test that has failed but only in a very specific case (picked randomly)
 
-1. First, ensure that Diverse's logs will be trace down wherever you want. All you have to do is to call once:
+1. First, ensure that Diverse's logs will be traced down wherever you want. All you have to do is to call once the Fuzzer.Log setter:
+
+e.g.: here with NUnit :
 
  ```csharp
 
@@ -108,7 +110,7 @@ I explained this here in that thread:
         [OneTimeSetUp]
         public void Init()
         {
-            // Here with nunit, we redirect all Diverse's log into the TestContext outputs
+            // We redirect all Diverse's log into NUnit's TestContext outputs
             Fuzzer.Log = TestContext.WriteLine;
         }
     }
@@ -150,8 +152,36 @@ You can then fix your implementation code to make your test green, or rewrite yo
 
 ## Code Sample
 
+Example of a typical test using Fuzzers. Here, a test for the SignUp process of an API:
 
-     TBD
+
+ ```csharp
+
+[Test]
+public void Classical_usage()
+{
+    var fuzzer = new Fuzzer();
+            
+    // Uses the Fuzzer
+    var person = fuzzer.GenerateAPerson(); // speed up the creation of someone with random values
+    var password = fuzzer.GeneratePassword(); // avoid always using the same hard-coded values
+    TestContext.WriteLine($"password: {password}");
+    var invalidPhoneNumber = "";
+
+    // Do your domain stuff
+    var signUpRequest = new SignUpRequest(login: person.EMail, password: password, 
+                                            firstName: person.FirstName, lastName: person.LastName, 
+                                            phoneNumber : invalidPhoneNumber);
+
+    var signUpResponse = new AccountService().SignUp(signUpRequest);
+
+    // Assert
+    Check.That(signUpResponse.Login).IsEqualTo(person.EMail);
+    Check.That(signUpResponse.Status).IsEqualTo(SignUpStatus.InvalidPhoneNumber);
+}
+
+
+ ```
 
 
 
