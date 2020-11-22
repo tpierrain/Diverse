@@ -197,9 +197,10 @@ public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumb
   
   - This will allow your methods to have access to the *'Random'* instance of the Fuzzer 
     
-    - Mandatory to benefits from the Deterministic capabilities of the library
-    
-    - Interesting to leverage & compose with any other existing Fuzzing function! 
+     - Interesting to leverage & compose with any other existing Fuzzing function! 
+     
+     - Mandatory to benefits from the Deterministic capabilities of the library
+
 
 
 #### Example of method extension for IFuzz
