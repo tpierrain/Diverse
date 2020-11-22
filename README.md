@@ -15,9 +15,9 @@ Diverse, the Fuzzer pico library you need to make your .NET tests more *Diverse*
 
 Diverse:
 
- - Provides __a set of primitives__ to Fuzz your data in your .NET tests in a *Diverse* manner
+ - Provides __a set of primitives__ to easy *Fuzz* the data in your .NET tests in a *Diverse* manner
 	
- - Provides __fully randomed values, but__ every case can be reproduced in a __deterministic__ manner __when needed__ (e.g.: specific test case, debugging)
+ - Provides __fully randomed values, but__ every case can be reproduced after in a __deterministic__ manner __when needed__ (e.g.: specific test case, debugging)
  
  - Is a __pico library__ with __no external dependency__, and is nonetheless __compliant with all test frameworks__
 
@@ -33,7 +33,8 @@ issues in your production code or discover that a test is badly written.
 
 ```csharp
 
-
+        var person = fuzzer.GenerateAPerson(); // speed up the creation of someone with random values
+        var password = fuzzer.GeneratePassword(); // avoid always using the same hard-coded values
 
 ```
 
