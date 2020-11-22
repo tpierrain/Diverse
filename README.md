@@ -219,14 +219,14 @@ public static class FuzzerExtensions
     {
         // Here, we can have access to all the existing methods 
         // exposed by the IFuzz interface
-        var years = fuzzer.GeneratePositiveInteger(97);
+        int years = fuzzer.GeneratePositiveInteger(97);
 
         // or this one (very useful)
-        var isConfidential = fuzzer.HeadsOrTails();
+        bool isConfidential = fuzzer.HeadsOrTails();
 
         // For very specific needs, you have to use the
         // Random property of the Fuzzer
-        var aDoubleForInstance = fuzzer.Random.NextDouble();
+        double aDoubleForInstance = fuzzer.Random.NextDouble();
 
         return new Age(years, isConfidential);
     }
@@ -257,6 +257,10 @@ public class FuzzerThatIsExtensibleShould
 
 ```
 
+__*"I hope you will enjoy using more and more *Fuzzers* in your tests, but mostly to introduce some diversity in your code bases."*__
+
+__
+__*Thomas PIERRAIN*__
 
 
 
