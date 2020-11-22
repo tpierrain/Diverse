@@ -28,13 +28,25 @@ Diverse:
 
 *Fuzzers* are tiny utilities generating data/cases for you and your tests.
 Instead of hard-coding *'john@doe.com'* in all your tests (or using 42 as default integer ;-)
-a *Fuzzer* will generate any random value for you. Thus, you will more easily discover
+a *Fuzzer* will generate any random -but relevant credible- value for you. Thus, you will more easily discover
 issues in your production code or discover that a test is badly written.
 
 ```csharp
+// Examples of Persons created with Diverse:
 
-        var person = fuzzer.GenerateAPerson(); // speed up the creation of someone with random values
-        var password = fuzzer.GeneratePassword(); // avoid always using the same hard-coded values
+Mr. Mamadou TRAORE (Male) mtraore@kolab.com (is married: False - age: 96 yrs)
+Ms. Fatima BA (Female) fba@gmail.com (is married: False - age: 93 yrs) 
+Ms. Ida STRØM (Female) ida.strøm@protonmail.com (is married: False - age: 68 yrs)
+Mx. Jeremie MATEUDI (NonBinary) jeremie.mateudi@yopmail.com (is married: True - age: 66 yrs) 
+Ms. Sarah BEN ACHOUR (Female) sben-achour@kolab.com (is married: False - age: 68 yrs)
+Mr. Connor BAKER (Male) cbaker@gmail.com (is married: False - age: 20 yrs)
+Mrs. Mériem MWANGI (Female) meriem.mwangi@yopmail.com (is married: True - age: 83 yrs) 
+Mr. Zhen MADAN (Male) zmadan@yahoo.fr (is married: True - age: 23 yrs)
+Mrs. Esther CHAKRABARTI (Female) esther.chakrabarti@ibm.com (is married: True - age: 62 yrs) 
+Mr. Javier MUÑOZ (Male) jmunoz@gmail.com (is married: False - age: 66 yrs) 
+Mx. Alejandro QUISPE (NonBinary) alejandro.quispe@yahoo.fr (is married: False - age: 76 yrs) 
+Ms. Francesca ARELLANO (Female) farellano@ibm.com (is married: False - age: 85 yrs) 
+Ms. Ji-yeon WANG (Female) jwang@42skillz.com (is married: False - age: 43 yrs)
 
 ```
 
@@ -56,6 +68,12 @@ Diverse will help you to quickly generate diverse names or persons from various 
 ![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-small.jpg?raw=true)
 
 Just pick the primitives you want and check by yourself ;-)
+
+```csharp
+
+
+
+```
 
 
 ## Fully Random, but deterministic when needed! (for debugging)

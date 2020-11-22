@@ -72,6 +72,7 @@ namespace Diverse.Tests
         public void Be_able_to_Fuzz_Diverse_Persons()
         {
             var fuzzer = new Fuzzer(1320843396);
+            //var fuzzer = new Fuzzer();
 
             var persons = new List<Person>();
             for (var i = 0; i < 10; i++)

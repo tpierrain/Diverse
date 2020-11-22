@@ -32,6 +32,7 @@ namespace Diverse.Tests
             Check.That(findAtLeastOneNumberWithTheMaxValue).IsTrue();
         }
 
+        [Test]
         public void Simplest_usage_with_Persons_and_passwords()
         {
             // Instantiates the Fuzzer
@@ -41,10 +42,10 @@ namespace Diverse.Tests
             var randomPositiveNumber = fuzzer.GeneratePositiveInteger(maxValue:8);
             TestContext.WriteLine($"Positive Number: {randomPositiveNumber}");
 
-            var password = fuzzer.GeneratePassword(); // avoid always using the same hard-coded values
+            var password = fuzzer.GeneratePassword(); // speed up the creation of something relatively 'complicated' with random values
             TestContext.WriteLine($"password: {password}");
 
-            var person = fuzzer.GenerateAPerson(); // speed up the creation of someone with random values
+            var person = fuzzer.GenerateAPerson(); // avoid always using the same hard-coded values
             TestContext.WriteLine($"First name: {person.FirstName}");
             TestContext.WriteLine($"Last name: {person.LastName}");
             TestContext.WriteLine($"Gender: {person.Gender}");
