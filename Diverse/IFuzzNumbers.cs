@@ -9,7 +9,7 @@
         /// Generates a random integer value between a min (inclusive) and a max (exclusive) value.
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-        /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
+        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
         /// <returns>An integer value generated randomly.</returns>
         int GenerateInteger(int minValue, int maxValue);
 
@@ -22,8 +22,9 @@
         /// <summary>
         /// Generates a random positive integer value.
         /// </summary>
+        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
         /// <returns>A positive integer value generated randomly.</returns>
-        int GeneratePositiveInteger();
+        int GeneratePositiveInteger(int? maxValue = null);
 
         /// <summary>
         /// Generates a random positive decimal value.

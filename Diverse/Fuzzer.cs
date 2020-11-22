@@ -70,10 +70,13 @@ namespace Diverse
         /// Generates a random integer value between a min (inclusive) and a max (exclusive) value.
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-        /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
+        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
         /// <returns>An integer value generated randomly.</returns>
         public int GenerateInteger(int minValue, int maxValue)
         {
+            // Adjust the inclusiveness of the Fuzzer API to the exclusiveness of the Random API.
+            maxValue = (maxValue == int.MaxValue) ? maxValue : maxValue + 1;
+            
             return InternalRandom.Next(minValue, maxValue);
         }
 
@@ -89,10 +92,13 @@ namespace Diverse
         /// <summary>
         /// Generates a random positive integer value.
         /// </summary>
+        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
         /// <returns>A positive integer value generated randomly.</returns>
-        public int GeneratePositiveInteger()
+        public int GeneratePositiveInteger(int? maxValue = null)
         {
-            return GenerateInteger(0, int.MaxValue);
+            maxValue = maxValue ?? int.MaxValue;
+
+            return GenerateInteger(0, maxValue.Value);
         }
 
         /// <summary>
