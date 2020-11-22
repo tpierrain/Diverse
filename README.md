@@ -259,9 +259,10 @@ public class FuzzerThatIsExtensibleShould
 
 #
 
-__*"I hope you will enjoy & benefit from adding more and more *Fuzzers* in your tests, but mostly to introduce some diversity in your code bases"*__
+__*"I hope you will enjoy & benefit from adding more and more *Fuzzers* in your tests, but also to introduce some diversity in your code bases"*__
 
-__
+- - -
+
 __*Thomas PIERRAIN*__
 
 
