@@ -54,14 +54,13 @@ namespace Diverse.Tests
         }
 
         [Test]
-        public void Classical_usage()
+        public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumber()
         {
             var fuzzer = new Fuzzer();
             
             // Uses the Fuzzer
             var person = fuzzer.GenerateAPerson(); // speed up the creation of someone with random values
             var password = fuzzer.GeneratePassword(); // avoid always using the same hard-coded values
-            TestContext.WriteLine($"password: {password}");
             var invalidPhoneNumber = "";
 
             // Do your domain stuff
@@ -69,6 +68,8 @@ namespace Diverse.Tests
                                                     firstName: person.FirstName, lastName: person.LastName, 
                                                     phoneNumber : invalidPhoneNumber);
 
+            // Here, the quality of the password won't be a blocker for this
+            // SignUp process. We just want to check the behaviour with empty phone number
             var signUpResponse = new AccountService().SignUp(signUpRequest);
 
             // Assert
