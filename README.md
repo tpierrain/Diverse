@@ -182,7 +182,19 @@ public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumb
 }
 
 
- ```
+ ```csharp
+
+ Note that in a real project, we may have implemented a specific Fuzzer to generate a SignUpRequest.
+
+ __Fortunately, Diverse is extensible.__ You will be able to add any specific method you want.
+
+
+ ## How to extend Diverse with your own methods
+
+  ```csharp
+
+   ```
+
 
 
 
