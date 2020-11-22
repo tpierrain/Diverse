@@ -1,0 +1,40 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: 
+      - 'README.md'
+      - '**.jpg'
+  
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: 
+        os: [ ubuntu-latest ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Pack
+      if: matrix.os == 'ubuntu-latest'
+      run: dotnet pack --configuration Release
+    - name: Upload Artifact
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: nupkg
+        path: /home/runner/work/Diverse/Diverse/Diverse/bin/Release/*.nupkg
