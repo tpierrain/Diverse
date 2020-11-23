@@ -28,6 +28,10 @@ namespace Diverse
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
         /// </summary>
         public int Seed { get; }
+        
+        /// <summary>
+        /// Gets the name of this <see cref="Fuzzer"/> instance.
+        /// </summary>
         public string Name { get; }
 
         /// <summary>

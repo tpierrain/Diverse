@@ -7,10 +7,16 @@ namespace Diverse
     /// </summary>
     public static class Male
     {
+        /// <summary>
+        /// Gets all the <see cref="ContextualizedFirstName"/> instances possibly used by the lib.
+        /// </summary>
         public static ContextualizedFirstName[] ContextualizedFirstNames => _contextualizedFirstNames;
 
         private static string[] _firstNames = null;
 
+        /// <summary>
+        /// Gets all the male first names possibly used by the lib.
+        /// </summary>
         public static string[] FirstNames
         {
             get
@@ -55,19 +61,19 @@ namespace Diverse
             new ContextualizedFirstName("Lounes", Continent.Africa),
             new ContextualizedFirstName("Khaled", Continent.Africa),
 
-            new ContextualizedFirstName("Aleksander", Continent.Antartica),
-            new ContextualizedFirstName("Ansgar", Continent.Antartica),
-            new ContextualizedFirstName("Einar", Continent.Antartica),
-            new ContextualizedFirstName("Casper", Continent.Antartica),
-            new ContextualizedFirstName("Eirik", Continent.Antartica),
-            new ContextualizedFirstName("Enok", Continent.Antartica),
-            new ContextualizedFirstName("Espen", Continent.Antartica),
-            new ContextualizedFirstName("Frans", Continent.Antartica),
-            new ContextualizedFirstName("Gjurd", Continent.Antartica),
-            new ContextualizedFirstName("Gunne", Continent.Antartica),
-            new ContextualizedFirstName("Olle", Continent.Antartica),
-            new ContextualizedFirstName("Oluf", Continent.Antartica),
-            new ContextualizedFirstName("Bjorn", Continent.Antartica),
+            new ContextualizedFirstName("Aleksander", Continent.Antarctica),
+            new ContextualizedFirstName("Ansgar", Continent.Antarctica),
+            new ContextualizedFirstName("Einar", Continent.Antarctica),
+            new ContextualizedFirstName("Casper", Continent.Antarctica),
+            new ContextualizedFirstName("Eirik", Continent.Antarctica),
+            new ContextualizedFirstName("Enok", Continent.Antarctica),
+            new ContextualizedFirstName("Espen", Continent.Antarctica),
+            new ContextualizedFirstName("Frans", Continent.Antarctica),
+            new ContextualizedFirstName("Gjurd", Continent.Antarctica),
+            new ContextualizedFirstName("Gunne", Continent.Antarctica),
+            new ContextualizedFirstName("Olle", Continent.Antarctica),
+            new ContextualizedFirstName("Oluf", Continent.Antarctica),
+            new ContextualizedFirstName("Bjorn", Continent.Antarctica),
             
             
             new ContextualizedFirstName("Yi", Continent.Asia),

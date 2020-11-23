@@ -2,8 +2,14 @@
 
 namespace Diverse
 {
+    /// <summary>
+    /// Contains all the last names used by the library.
+    /// </summary>
     public static class LastNames
     {
+        /// <summary>
+        /// Gets a dictionary of all the last name per <see cref="Continent"/>.
+        /// </summary>
         public static IDictionary<Continent, string[]> PerContinent { get; } = new Dictionary<Continent, string[]>
         {
             {
@@ -29,7 +35,7 @@ namespace Diverse
                 }
             },
             {
-                Continent.Antartica,
+                Continent.Antarctica,
                 new[]
                 {
                     "Karlsen", "Johnsen", "Pettersen", "Eriksen", "Johannessen", "Jørgensen", "Jacobsen", "Iversen",

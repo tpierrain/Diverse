@@ -7,10 +7,16 @@ namespace Diverse
     /// </summary>
     public static class Female
     {
+        /// <summary>
+        /// Gets all the <see cref="ContextualizedFirstName"/> instances possibly used by the lib.
+        /// </summary>
         public static ContextualizedFirstName[] ContextualizedFirstNames => _contextualizedFirstNames;
 
         private static string[] _firstNames = null;
 
+        /// <summary>
+        /// Gets all the female first names possibly used by the lib.
+        /// </summary>
         public static string[] FirstNames
         {
             get
@@ -60,19 +66,19 @@ namespace Diverse
             new ContextualizedFirstName("Zayneb", Continent.Africa),
             new ContextualizedFirstName("Khadija", Continent.Africa),
 
-            new ContextualizedFirstName("Solveig", Continent.Antartica),
-            new ContextualizedFirstName("Freja", Continent.Antartica),
-            new ContextualizedFirstName("Kirsten", Continent.Antartica),
-            new ContextualizedFirstName("Mette", Continent.Antartica),
-            new ContextualizedFirstName("Liv", Continent.Antartica),
-            new ContextualizedFirstName("Erika", Continent.Antartica),
-            new ContextualizedFirstName("Maja", Continent.Antartica),
-            new ContextualizedFirstName("Ida", Continent.Antartica),
-            new ContextualizedFirstName("Anouk", Continent.Antartica),
-            new ContextualizedFirstName("Johanna", Continent.Antartica),
-            new ContextualizedFirstName("Mathilda", Continent.Antartica),
-            new ContextualizedFirstName("Sigrid", Continent.Antartica),
-            new ContextualizedFirstName("Anya", Continent.Antartica),
+            new ContextualizedFirstName("Solveig", Continent.Antarctica),
+            new ContextualizedFirstName("Freja", Continent.Antarctica),
+            new ContextualizedFirstName("Kirsten", Continent.Antarctica),
+            new ContextualizedFirstName("Mette", Continent.Antarctica),
+            new ContextualizedFirstName("Liv", Continent.Antarctica),
+            new ContextualizedFirstName("Erika", Continent.Antarctica),
+            new ContextualizedFirstName("Maja", Continent.Antarctica),
+            new ContextualizedFirstName("Ida", Continent.Antarctica),
+            new ContextualizedFirstName("Anouk", Continent.Antarctica),
+            new ContextualizedFirstName("Johanna", Continent.Antarctica),
+            new ContextualizedFirstName("Mathilda", Continent.Antarctica),
+            new ContextualizedFirstName("Sigrid", Continent.Antarctica),
+            new ContextualizedFirstName("Anya", Continent.Antarctica),
             
             
             new ContextualizedFirstName("Kyeol", Continent.Asia),
