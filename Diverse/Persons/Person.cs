@@ -4,16 +4,43 @@ namespace Diverse
 {
     /// <summary>
     /// Represent a <see cref="Person"/> with some common characteristics.
-    /// Very useful to test most of the application requesting Accounts.
+    /// Very useful to test most of the applications dealing with humans.
     /// </summary>
     public class Person
     {
+        /// <summary>
+        /// Gets the first name of the <see cref="Person"/> instance.
+        /// </summary>
         public string FirstName { get; }
+
+        /// <summary>
+        /// Gets the last name of the <see cref="Person"/> instance.
+        /// </summary>
         public string LastName { get; }
+
+        /// <summary>
+        /// Gets the gender of the <see cref="Person"/> instance.
+        /// </summary>
         public Gender Gender { get; }
+        
+        /// <summary>
+        /// Gets the title of the <see cref="Person"/> instance.
+        /// </summary>
         public GenderTitle Title { get; }
+
+        /// <summary>
+        /// Gets the email of the <see cref="Person"/> instance.
+        /// </summary>
         public string EMail { get; }
+
+        /// <summary>
+        /// Gets whether or not the <see cref="Person"/> instance is married.
+        /// </summary>
         public bool IsMarried { get;  }
+
+        /// <summary>
+        /// Gets the age of the <see cref="Person"/> instance.
+        /// </summary>
         public int Age { get; }
 
         internal Person(string firstName, string lastName, Gender gender, string eMail, bool isMarried, int age)
@@ -40,9 +67,16 @@ namespace Diverse
             }
         }
 
+        /// <summary>
+        /// Returns this instance of <see cref="string"/>.
+        /// </summary>
+        /// <returns>The current string./</returns>
         public override string ToString()
         {
-            return $"{Title}. {FirstName} {LastName.ToUpper()} ({Gender}) {EMail} (is married: {IsMarried} - age: {Age} yrs)";
+            var marriageStatus = IsMarried ? "married - " :string.Empty;
+            var status = $"({marriageStatus}age: {Age} years)";
+
+            return $"{Title}. {FirstName} {LastName.ToUpper()} ({Gender}) {EMail} {status}";
         }
     }
 }

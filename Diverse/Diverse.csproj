@@ -27,6 +27,10 @@ BREAKING change:
     <Version>0.4.0.0</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>.\Diverse\Diverse.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\wave-icon.jpg">
       <Pack>True</Pack>

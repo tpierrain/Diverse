@@ -81,16 +81,16 @@ namespace Diverse.Tests
 
             Check.That(persons.Select(x => x.ToString()))
                 .ContainsExactly(
-                    "Ms. Valeria DENILSON (Female) vdenilson@microsoft.com (is married: False - age: 62 yrs)", 
-                    "Ms. Kirsten BREKKE (Female) kbrekke@gmail.com (is married: False - age: 76 yrs)", 
-                    "Mr. John BRAND (Male) john.brand@gmail.com (is married: True - age: 86 yrs)", 
-                    "Mx. Ashok KHATRI (NonBinary) ashok.khatri@yahoo.fr (is married: True - age: 32 yrs)", 
-                    "Ms. Fatima SELASSIE (Female) fatima.selassie@aol.com (is married: False - age: 68 yrs)", 
-                    "Mx. Demba ADOMAKO (NonBinary) demba.adomako@gmail.com (is married: False - age: 34 yrs)", 
-                    "Mrs. Erika MADSEN (Female) emadsen@gmail.com (is married: True - age: 24 yrs)", 
-                    "Ms. Antje JOHNSON (Female) antje.johnson@protonmail.com (is married: False - age: 37 yrs)", 
-                    "Ms. Isabella AMBRÍZ (Female) isabella.ambriz@microsoft.com (is married: False - age: 60 yrs)", 
-                    "Mr. Arjun YOON (Male) ayoon@42skillz.com (is married: False - age: 53 yrs)");
+                    "Ms. Valeria DENILSON (Female) vdenilson@microsoft.com (age: 62 years)", 
+                    "Ms. Kirsten BREKKE (Female) kbrekke@gmail.com (age: 76 years)", 
+                    "Mr. John BRAND (Male) john.brand@gmail.com (married - age: 86 years)", 
+                    "Mx. Ashok KHATRI (NonBinary) ashok.khatri@yahoo.fr (married - age: 32 years)", 
+                    "Ms. Fatima SELASSIE (Female) fatima.selassie@aol.com (age: 68 years)", 
+                    "Mx. Demba ADOMAKO (NonBinary) demba.adomako@gmail.com (age: 34 years)", 
+                    "Mrs. Erika MADSEN (Female) emadsen@gmail.com (married - age: 24 years)", 
+                    "Ms. Antje JOHNSON (Female) antje.johnson@protonmail.com (age: 37 years)", 
+                    "Ms. Isabella AMBRÍZ (Female) isabella.ambriz@microsoft.com (age: 60 years)", 
+                    "Mr. Arjun YOON (Male) ayoon@42skillz.com (age: 53 years)");
         }
 
         [Test]

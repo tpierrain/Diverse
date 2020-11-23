@@ -42,7 +42,7 @@ namespace Diverse
         private Random InternalRandom => ((IFuzz)this).Random;
 
         /// <summary>
-        /// Sets the way you want to log or receive what the <see cref="Fuzzer"/> has to say about every generated seeds used for every fuzzer instance & test.
+        /// Sets the way you want to log or receive what the <see cref="Fuzzer"/> has to say about every generated seeds used for every fuzzer instance and test.
         /// </summary>
         public static Action<string> Log { get; set; }
 
