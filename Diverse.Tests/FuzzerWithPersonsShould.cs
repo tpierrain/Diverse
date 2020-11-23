@@ -71,8 +71,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_Fuzz_Diverse_Persons()
         {
-            var fuzzer = new Fuzzer(1320843396);
-            //var fuzzer = new Fuzzer();
+            var fuzzer = new Fuzzer(541936699);
 
             var persons = new List<Person>();
             for (var i = 0; i < 10; i++)
@@ -81,16 +80,17 @@ namespace Diverse.Tests
             }
 
             Check.That(persons.Select(x => x.ToString()))
-                .ContainsExactly("Ms. Fatima BA (Female) fba@gmail.com (is married: False - age: 93 yrs)", 
-                    "Mrs. Sofie MOREAU (Female) smoreau@microsoft.com (is married: True - age: 26 yrs)", 
-                    "Mx. Jeremie MATEUDI (NonBinary) jeremie.mateudi@yopmail.com (is married: True - age: 66 yrs)", 
-                    "Ms. Marija DUPONT (Female) marija.dupont@yahoo.fr (is married: False - age: 34 yrs)", 
-                    "Mrs. Mériem MWANGI (Female) meriem.mwangi@yopmail.com (is married: True - age: 83 yrs)", 
-                    "Mrs. Esther CHAKRABARTI (Female) esther.chakrabarti@ibm.com (is married: True - age: 62 yrs)", 
-                    "Mr. Javier MUÑOZ (Male) jmunoz@gmail.com (is married: False - age: 66 yrs)", 
-                    "Mx. Alejandro QUISPE (NonBinary) alejandro.quispe@yahoo.fr (is married: False - age: 76 yrs)", 
-                    "Ms. Francesca ARELLANO (Female) farellano@ibm.com (is married: False - age: 85 yrs)", 
-                    "Ms. Ji-yeon WANG (Female) jwang@42skillz.com (is married: False - age: 43 yrs)");
+                .ContainsExactly(
+                    "Ms. Valeria DENILSON (Female) vdenilson@microsoft.com (is married: False - age: 62 yrs)", 
+                    "Ms. Kirsten BREKKE (Female) kbrekke@gmail.com (is married: False - age: 76 yrs)", 
+                    "Mr. John BRAND (Male) john.brand@gmail.com (is married: True - age: 86 yrs)", 
+                    "Mx. Ashok KHATRI (NonBinary) ashok.khatri@yahoo.fr (is married: True - age: 32 yrs)", 
+                    "Ms. Fatima SELASSIE (Female) fatima.selassie@aol.com (is married: False - age: 68 yrs)", 
+                    "Mx. Demba ADOMAKO (NonBinary) demba.adomako@gmail.com (is married: False - age: 34 yrs)", 
+                    "Mrs. Erika MADSEN (Female) emadsen@gmail.com (is married: True - age: 24 yrs)", 
+                    "Ms. Antje JOHNSON (Female) antje.johnson@protonmail.com (is married: False - age: 37 yrs)", 
+                    "Ms. Isabella AMBRÍZ (Female) isabella.ambriz@microsoft.com (is married: False - age: 60 yrs)", 
+                    "Mr. Arjun YOON (Male) ayoon@42skillz.com (is married: False - age: 53 yrs)");
         }
 
         [Test]

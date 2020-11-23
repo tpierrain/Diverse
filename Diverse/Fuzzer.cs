@@ -222,7 +222,7 @@ namespace Diverse
 
             if (Log == null)
             {
-                throw new FuzzerException($"You must (at least once) set a value for the static {nameof(Log)} property of the {nameof(Fuzzer)} type in order to be able to retrieve the seeds used for each one of your Fuzzer/Tests (which is a prerequisite for deterministic test runs). Suggested value: ex. Fuzzers.Log = TestContext.WriteLine; in the [OneTimeSetUp] initialization method of your [SetUpFixture] class.");
+                throw new FuzzerException($"You must (at least once) set a value for the static {nameof(Log)} property of the {nameof(Fuzzer)} type in order to be able to retrieve the seeds used for each one of your Fuzzer/Tests (which is a prerequisite for deterministic test runs). Suggested value: ex. {nameof(Fuzzer)}.{nameof(Log)} = TestContext.WriteLine; in the [OneTimeSetUp] initialization method of your [SetUpFixture] class.");
             }
 
             Log($"----------------------------------------------------------------------------------------------------------------------");
