@@ -45,7 +45,7 @@ namespace Diverse.Tests
             var password = fuzzer.GeneratePassword(); // speed up the creation of something relatively 'complicated' with random values
             TestContext.WriteLine($"password: {password}");
 
-            var person = fuzzer.GenerateAPerson(); // avoid always using the same hard-coded values
+            var person = fuzzer.GeneratePerson(); // avoid always using the same hard-coded values
             TestContext.WriteLine($"First name: {person.FirstName}");
             TestContext.WriteLine($"Last name: {person.LastName}");
             TestContext.WriteLine($"Gender: {person.Gender}");
@@ -59,7 +59,7 @@ namespace Diverse.Tests
             var fuzzer = new Fuzzer();
             
             // Uses the Fuzzer
-            var person = fuzzer.GenerateAPerson(); // speed up the creation of someone with random values
+            var person = fuzzer.GeneratePerson(); // speed up the creation of someone with random values
             var password = fuzzer.GeneratePassword(); // avoid always using the same hard-coded values
             var invalidPhoneNumber = "";
 

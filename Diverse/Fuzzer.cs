@@ -154,7 +154,7 @@ namespace Diverse
         /// </summary>
         /// <param name="gender">The (optional) <see cref="Gender"/> of this <see cref="Person"/></param>
         /// <returns>A 'Diverse' <see cref="Person"/> instance.</returns>
-        public Person GenerateAPerson(Gender? gender = null)
+        public Person GeneratePerson(Gender? gender = null)
         {
             if (gender == null)
             {

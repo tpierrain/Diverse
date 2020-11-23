@@ -76,7 +76,7 @@ namespace Diverse.Tests
             var persons = new List<Person>();
             for (var i = 0; i < 10; i++)
             {
-                persons.Add(fuzzer.GenerateAPerson());
+                persons.Add(fuzzer.GeneratePerson());
             }
 
             Check.That(persons.Select(x => x.ToString()))

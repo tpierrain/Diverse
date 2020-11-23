@@ -24,7 +24,7 @@
         /// </summary>
         /// <param name="gender">The (optional) <see cref="Gender"/> of this <see cref="Person"/></param>
         /// <returns>A 'Diverse' <see cref="Person"/> instance.</returns>
-        Person GenerateAPerson(Gender? gender = null);
+        Person GeneratePerson(Gender? gender = null);
 
         /// <summary>
         /// Generates a random Email.
