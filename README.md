@@ -68,19 +68,17 @@ Just pick the primitives you want and check by yourself ;-)
 
 // Examples of Persons created with Diverse:
 
-Mr. Mamadou TRAORE (Male) mtraore@kolab.com (is married: False - age: 96 yrs)
-Ms. Fatima BA (Female) fba@gmail.com (is married: False - age: 93 yrs) 
-Ms. Ida STRØM (Female) ida.strøm@protonmail.com (is married: False - age: 68 yrs)
-Mx. Jeremie MATEUDI (NonBinary) jeremie.mateudi@yopmail.com (is married: True - age: 66 yrs) 
-Ms. Sarah BEN ACHOUR (Female) sben-achour@kolab.com (is married: False - age: 68 yrs)
-Mr. Connor BAKER (Male) cbaker@gmail.com (is married: False - age: 20 yrs)
-Mrs. Mériem MWANGI (Female) meriem.mwangi@yopmail.com (is married: True - age: 83 yrs) 
-Mr. Zhen MADAN (Male) zmadan@yahoo.fr (is married: True - age: 23 yrs)
-Mrs. Esther CHAKRABARTI (Female) esther.chakrabarti@ibm.com (is married: True - age: 62 yrs) 
-Mr. Javier MUÑOZ (Male) jmunoz@gmail.com (is married: False - age: 66 yrs) 
-Mx. Alejandro QUISPE (NonBinary) alejandro.quispe@yahoo.fr (is married: False - age: 76 yrs) 
-Ms. Francesca ARELLANO (Female) farellano@ibm.com (is married: False - age: 85 yrs) 
-Ms. Ji-yeon WANG (Female) jwang@42skillz.com (is married: False - age: 43 yrs)
+Ms. Valeria DENILSON (Female) vdenilson@microsoft.com (age: 62 years)
+Ms. Kirsten BREKKE (Female) kbrekke@gmail.com (age: 76 years)
+Mr. John BRAND (Male) john.brand@gmail.com (married - age: 86 years)
+Mx. Ashok KHATRI (NonBinary) ashok.khatri@yahoo.fr (married - age: 32 years)
+Ms. Fatima SELASSIE (Female) fatima.selassie@aol.com (age: 68 years)
+Mx. Demba ADOMAKO (NonBinary) demba.adomako@gmail.com (age: 34 years)
+Mrs. Erika MADSEN (Female) emadsen@gmail.com (married - age: 24 years)
+Ms. Antje JOHNSON (Female) antje.johnson@protonmail.com (age: 37 years)
+Ms. Isabella AMBRÍZ (Female) isabella.ambriz@microsoft.com (age: 60 years)
+Mr. Arjun YOON (Male) ayoon@42skillz.com (age: 53 years)
+
 
 ```
 
