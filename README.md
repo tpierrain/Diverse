@@ -74,6 +74,7 @@ So far the lib will only provide credible random data and not invalid or unexpec
 
 But it will soon probably do the second part too.
 
+#### How does Diverse looks like
 
 ```csharp
 
@@ -82,7 +83,7 @@ var age = fuzzer.GenerateInteger(minValue: 17, maxValue: 54);
 
 // speed up the creation of something relatively 'complicated' and stay *intent driven*
 // with random but coherent values
-var person = fuzzer.GenerateAPerson(); 
+var person = fuzzer.GeneratePerson(); 
 
 // or other specific stuffs
 var password = fuzzer.GeneratePassword(); 
@@ -91,7 +92,6 @@ var password = fuzzer.GeneratePassword();
 // Diverse Fuzzers are easily extensible ;-)
 
 ```
-
 
 Every time your test will run, it will use different random values for what matters in your *Domain*.
 
