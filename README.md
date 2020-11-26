@@ -21,12 +21,59 @@ Diverse:
  - Is __easily extensible__ through .NET extension methods over a simple *IFuzz* interface
 
 
+## Sample
+
+Example of a typical test using Fuzzers. Here, a test for the SignUp process of an API:
+
+```csharp
+
+[Test]
+public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumber()
+{
+    var fuzzer = new Fuzzer();
+            
+    // Uses the Fuzzer
+    var person = fuzzer.GeneratePerson(); // speed up the creation of someone with random values
+    var password = fuzzer.GeneratePassword(); // avoid always using the same hard-coded values
+    var invalidPhoneNumber = "";
+
+    // Do your domain stuff
+    var signUpRequest = new SignUpRequest(login: person.EMail, password: password, 
+                                            firstName: person.FirstName, lastName: person.LastName, 
+                                            phoneNumber : invalidPhoneNumber);
+
+    // Here, the quality of the password won't be a blocker for this
+    // SignUp process. We just want to check the behaviour with empty phone number
+    var signUpResponse = new AccountService().SignUp(signUpRequest);
+
+    // Assert
+    Check.That(signUpResponse.Login).IsEqualTo(person.EMail);
+    Check.That(signUpResponse.Status).IsEqualTo(SignUpStatus.InvalidPhoneNumber);
+}
+
+
+```
+
 ## What are Fuzzers and why should I use them?
 
 *Fuzzers* are tiny utilities generating data/cases for you and your tests.
 Instead of hard-coding *'john@doe.com'* in all your tests (or using 42 as default integer ;-)
-a *Fuzzer* will generate any random -but relevant credible- value for you. Thus, you will more easily discover
-issues in your production code or discover that a test is badly written.
+a *Fuzzer* will generate any random value for you. Diverse will provide you random but relevant/credible data but may soon provide invalid or unexpected ones too.
+Thus, you will more easily discover issues in your production code or discover that a test is badly written.
+
+#### Disclaimer
+
+Diverse is not a Property-based testing framework nor an advanced Fuzzer.
+
+There are debates about what is really a Fuzzer or not. 
+In Wikipedia, one can found __[the following definition for Fuzzing](https://en.wikipedia.org/wiki/Fuzzing)__: 
+
+*"Fuzzing or fuzz testing is an automated software testing technique that involves __providing invalid, unexpected, or random data__ as inputs to a computer program."*
+
+So far the lib will only provide credible random data and not invalid or unexpected ones. 
+
+But it will soon probably do the second part too.
+
 
 ```csharp
 
@@ -82,7 +129,6 @@ Mr. Arjun YOON (Male) ayoon@42skillz.com (age: 53 years)
 
 ```
 
-
 ## Fully Random, but deterministic when needed! (for debugging)
 
 Use extensible fuzzers that randomize the values for you, but that can be replayed deterministically if any of your tests failed one day (in a specific configuration). 
@@ -96,11 +142,13 @@ I explained this here in that thread:
 
 #### How to deterministically reproduce a test that has failed but only in a very specific case (picked randomly)
 
-1. First, ensure that Diverse's logs will be traced down wherever you want. All you have to do is to call once the Fuzzer.Log setter:
+### 1. First, ensure that Diverse's logs will be traced down wherever you want. 
+
+All you have to do is to call once the Fuzzer.Log setter:
 
 e.g.: here with NUnit :
 
- ```csharp
+```csharp
 
     [SetUpFixture]
     public class AllTestFixtures
@@ -113,83 +161,50 @@ e.g.: here with NUnit :
         }
     }
 
- ```
+```
 
 
- 2. Consult the report of a failing test and Copy the Seed that was used for it. Note: Diverse traces the seed used for every test ran. It will look like this:
- ```
+### 2. Consult the report of a failing test and Copy the Seed that was used for it. 
+
+Note: Diverse traces the seed used for every test ran. It will look like this:
+
+```
  ----------------------------------------------------------------------------------------------------------------------
 --- Fuzzer ("fuzzer1265") instantiated with the seed (1248680008)
 --- from the test: FuzzerWithNumbersShould.GeneratePositiveInteger_with_an_inclusive_upper_bound()
 --- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions
 -----------------------------------------------------------------------------------------------------------------------
 
- ```
+```
 
- 3. Change your failing test to provide the copied Seed to its fuzzer:
+### 3. Change your failing test to provide the copied Seed to its fuzzer:
 
- Instead of:
+Instead of:
 
- ```csharp
+```csharp
 
  var fuzzer = new Fuzzer();
 
- ```
+```
 
- calls:
+calls:
 
- ```csharp
+```csharp
 
  var fuzzer = new Fuzzer(seed: 1248680008);
 
- ```
+```
 
 That's it! Your test using Diverse fuzzers will be deterministic and always provide the same Fuzzed values.
 
 You can then fix your implementation code to make your test green, or rewrite your badly written test, or keep your test like this so you can have *deterministic values* in it (nice for documentation).
 
-## Sample
 
-Example of a typical test using Fuzzers. Here, a test for the SignUp process of an API:
+## How to extend Diverse with your own Fuzzing methods
 
+__Fortunately, Diverse is extensible.__ You will be able to add any specific method you want.
 
- ```csharp
-
-[Test]
-public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumber()
-{
-    var fuzzer = new Fuzzer();
-            
-    // Uses the Fuzzer
-    var person = fuzzer.GenerateAPerson(); // speed up the creation of someone with random values
-    var password = fuzzer.GeneratePassword(); // avoid always using the same hard-coded values
-    var invalidPhoneNumber = "";
-
-    // Do your domain stuff
-    var signUpRequest = new SignUpRequest(login: person.EMail, password: password, 
-                                            firstName: person.FirstName, lastName: person.LastName, 
-                                            phoneNumber : invalidPhoneNumber);
-
-    // Here, the quality of the password won't be a blocker for this
-    // SignUp process. We just want to check the behaviour with empty phone number
-    var signUpResponse = new AccountService().SignUp(signUpRequest);
-
-    // Assert
-    Check.That(signUpResponse.Login).IsEqualTo(person.EMail);
-    Check.That(signUpResponse.Status).IsEqualTo(SignUpStatus.InvalidPhoneNumber);
-}
-
-
- ```
-
- Note that in a real project, we may have implemented a specific Fuzzer to generate a SignUpRequest.
-
- __Fortunately, Diverse is extensible.__ You will be able to add any specific method you want.
-
-
- ## How to extend Diverse with your own Fuzzing methods
-
- Easy. All you have to do is to __add your own .NET extension methods onto the *'IFuzz'* interface__
+All you have to do is to __add your own .NET extension methods onto the *'IFuzz'* interface__
 
   - This will automatically add your own method to any Fuzzer instance
   
@@ -201,7 +216,7 @@ public void Return_InvalidPhoneNumber_status_when_SignUp_with_an_empty_PhoneNumb
 
 
 
-#### Example of method extension for IFuzz
+### Example of method extension for IFuzz
 
 The *IFuzz* interface implemented by all our Fuzzer instances is made to be extended.
 Let's say that we want to Add a new fuzzing method to dynamically generate an 'Age' instance
