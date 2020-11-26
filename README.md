@@ -68,7 +68,7 @@ Diverse is not a Property-based testing framework nor an advanced Fuzzer.
 There are debates about what is really a Fuzzer or not. 
 In Wikipedia, one can found __[the following definition for Fuzzing](https://en.wikipedia.org/wiki/Fuzzing)__: 
 
-*"Fuzzing or fuzz testing is an automated software testing technique that involves __providing invalid, unexpected, or random data__ as inputs to a computer program."*
+> *"Fuzzing or fuzz testing is an automated software testing technique that involves __providing invalid, unexpected, or random data__ as inputs to a computer program."*
 
 So far the lib will only provide credible random data and not invalid or unexpected ones. 
 
