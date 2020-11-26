@@ -7,6 +7,9 @@ using NUnit.Framework;
 
 namespace Diverse.Tests
 {
+    /// <summary>
+    /// All about the primitives related to password generation.
+    /// </summary>
     [TestFixture]
     public class FuzzerWithPasswordShould
     {

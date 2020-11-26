@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Diverse
@@ -394,8 +390,6 @@ namespace Diverse
             return pwd.ToString();
         }
 
-        
-
         private static void CheckGuardMinAndMaximumSizes(int? minSize, int? maxSize, int minimumSize, int maximumSize, int defaultMinSize, int defaultMaxSize)
         {
             if (minimumSize > maximumSize)
@@ -409,6 +403,21 @@ namespace Diverse
                 throw new ArgumentOutOfRangeException(parameterName,
                     $"maxSize ({maximumSize}) can't be inferior to minSize({minimumSize}). Specify 2 values if you don't want to use the default values of the library (i.e.: [{defaultMinSize}, {defaultMaxSize}]).");
             }
+        }
+
+        /// <summary>
+        /// Generates a random <see cref="DateTime"/>.
+        /// </summary>
+        /// <returns>A <see cref="DateTime"/> value generated randomly.</returns>
+        public DateTime GenerateDateTime()
+        {
+            var startDateTime = DateTime.Now;
+
+            var maxDaysAllowedBefore = (startDateTime - DateTime.MinValue).Days;
+            var maxDaysAllowedAfter = (DateTime.MaxValue - startDateTime).Days;
+            var maxDays = Math.Min(maxDaysAllowedBefore, maxDaysAllowedAfter);
+
+            return startDateTime.AddDays(GenerateInteger(0, maxDays));
         }
     }
 }

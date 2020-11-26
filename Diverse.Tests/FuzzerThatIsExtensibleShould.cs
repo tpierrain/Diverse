@@ -3,6 +3,9 @@ using NUnit.Framework;
 
 namespace Diverse.Tests
 {
+    /// <summary>
+    /// All about extensibility.
+    /// </summary>
     [TestFixture]
     public class FuzzerThatIsExtensibleShould
     {

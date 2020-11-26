@@ -5,6 +5,10 @@ using NUnit.Framework;
 
 namespace Diverse.Tests
 {
+    /// <summary>
+    /// All about the primitives related to Numbers.
+    /// </summary>
+    [TestFixture]
     public class FuzzerWithNumbersShould
     {
         [TestCase(500)]
