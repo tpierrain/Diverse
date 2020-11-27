@@ -39,8 +39,8 @@ namespace Diverse.Tests
             var fuzzer = new Fuzzer();
 
             var dateTime = fuzzer.GenerateDateTime();
-            var dateTimeBetweenToDates = fuzzer.GenerateDateTimeBetween("1974/06/08", "2020/11/01");
-            var otherDateTimeBetweenToDates = fuzzer.GenerateDateTimeBetween(new DateTime(1974,6,8), new DateTime(2020, 11, 1));
+            var dateTimeInRange = fuzzer.GenerateDateTimeBetween("1974/06/08", "2020/11/01");
+            var otherDateTimeInRange = fuzzer.GenerateDateTimeBetween(new DateTime(1974,6,8), new DateTime(2020, 11, 1));
         }
 
         [Test]
