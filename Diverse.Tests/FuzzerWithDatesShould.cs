@@ -42,6 +42,7 @@ namespace Diverse.Tests
         }
 
         [TestCase("1974/06/08", "2020/11/01")]
+        [TestCase("2000/01/01", "2020/01/01")]
         public void GenerateDifferentDatesBetween(string minDate, string maxDate)
         {
             var fuzzer = new Fuzzer();
@@ -58,13 +59,7 @@ namespace Diverse.Tests
             // Check that every generated date is between oour min and max boundaries
             CheckThatEveryDateTimeBelongsToTheInclusiveTimeRange(minDate, maxDate, generatedDateTimes);
         }
-
-        private static void CheckThatGeneratedDatesAreDiverseAMinimum(HashSet<DateTime> generatedDateTimes, int nbOfGeneration, int percentage)
-        {
-            // Check that generated dates are diverse
-            var actualPercentageOfDifferentDateTimes = generatedDateTimes.Count * 100 / nbOfGeneration;
-            Check.That(actualPercentageOfDifferentDateTimes).IsStrictlyGreaterThan(percentage);
-        }
+        
 
         [Test]
         public void GenerateDateTimeBetweenUsingInclusiveBoundaries()
@@ -78,16 +73,27 @@ namespace Diverse.Tests
             Check.That(generateDateTime).IsEqualTo(maxDate);
         }
 
-        private static void CheckThatEveryDateTimeBelongsToTheInclusiveTimeRange(string minDate, string maxDate,
-            HashSet<DateTime> generatedDateTimes)
+
+        #region helpers
+
+        private static void CheckThatGeneratedDatesAreDiverseAMinimum(HashSet<DateTime> generatedDateTimes, int nbOfGeneration, int percentage)
+        {
+            // Check that generated dates are diverse
+            var actualPercentageOfDifferentDateTimes = generatedDateTimes.Count * 100 / nbOfGeneration;
+            Check.That(actualPercentageOfDifferentDateTimes).IsStrictlyGreaterThan(percentage);
+        }
+
+        private static void CheckThatEveryDateTimeBelongsToTheInclusiveTimeRange(string minDate, string maxDate, HashSet<DateTime> generatedDateTimes)
         {
             var minDateOk = DateTime.TryParseExact(minDate, "yyyy/MM/dd", null, DateTimeStyles.None, out var minDateTime);
             var maxDateOk = DateTime.TryParseExact(maxDate, "yyyy/MM/dd", null, DateTimeStyles.None, out var maxDateTime);
 
             foreach (var generatedDateTime in generatedDateTimes)
             {
-                Check.That(generatedDateTime).IsBefore(maxDateTime).And.IsAfter(minDateTime);
+                Check.That(generatedDateTime).IsBefore(maxDateTime.AddDays(1)).And.IsAfter(minDateTime.AddDays(-1));
             }
         }
+
+        #endregion
     }
 }
