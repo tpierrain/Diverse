@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Diverse.Tests.Utils;
 using NFluent;
@@ -30,6 +31,16 @@ namespace Diverse.Tests
 
             Check.That(findGreaterNumberThanMaxValue).IsFalse();
             Check.That(findAtLeastOneNumberWithTheMaxValue).IsTrue();
+        }
+
+        [Test]
+        public void Simple_usages()
+        {
+            var fuzzer = new Fuzzer();
+
+            var dateTime = fuzzer.GenerateDateTime();
+            var dateTimeBetweenToDates = fuzzer.GenerateDateTimeBetween("1974/06/08", "2020/11/01");
+            var otherDateTimeBetweenToDates = fuzzer.GenerateDateTimeBetween(new DateTime(1974,6,8), new DateTime(2020, 11, 1));
         }
 
         [Test]

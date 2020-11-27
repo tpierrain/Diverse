@@ -88,6 +88,11 @@ var person = fuzzer.GeneratePerson();
 // or other specific stuffs
 var password = fuzzer.GeneratePassword(); 
 
+// or dates
+var dateTime = fuzzer.GenerateDateTime();
+var dateTimeBetweenToDates = fuzzer.GenerateDateTimeBetween("1974/06/08", "2020/11/01");
+var otherDateTimeBetweenToDates = fuzzer.GenerateDateTimeBetween(new DateTime(1974,6,8), new DateTime(2020, 11, 1));
+
 // Anything you need for your test cases actually
 // Diverse Fuzzers are easily extensible ;-)
 
