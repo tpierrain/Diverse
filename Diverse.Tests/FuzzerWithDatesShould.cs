@@ -25,7 +25,7 @@ namespace Diverse.Tests
                 generatedDateTimes.Add(fuzzer.GenerateDateTime());
             }
 
-            Check.That(generatedDateTimes.Count).IsEqualTo(nbOfGeneration);
+            CheckThatGeneratedDatesAreDiverseAMinimum(generatedDateTimes, nbOfGeneration, 90);
         }
 
         [Test]
@@ -53,13 +53,17 @@ namespace Diverse.Tests
                 generatedDateTimes.Add(fuzzer.GenerateDateTimeBetween(minDate, maxDate));
             }
 
-            // Check that generated dates are diverse
-            var actualPercentageOfDifferentDateTimes = generatedDateTimes.Count * 100 / nbOfGeneration;
-            var ninetyPercent = 90;
-            Check.That(actualPercentageOfDifferentDateTimes).IsStrictlyGreaterThan(ninetyPercent);
+            CheckThatGeneratedDatesAreDiverseAMinimum(generatedDateTimes, nbOfGeneration, 90);
 
             // Check that every generated date is between oour min and max boundaries
             CheckThatEveryDateTimeBelongsToTheInclusiveTimeRange(minDate, maxDate, generatedDateTimes);
+        }
+
+        private static void CheckThatGeneratedDatesAreDiverseAMinimum(HashSet<DateTime> generatedDateTimes, int nbOfGeneration, int percentage)
+        {
+            // Check that generated dates are diverse
+            var actualPercentageOfDifferentDateTimes = generatedDateTimes.Count * 100 / nbOfGeneration;
+            Check.That(actualPercentageOfDifferentDateTimes).IsStrictlyGreaterThan(percentage);
         }
 
         [Test]
