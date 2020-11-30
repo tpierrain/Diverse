@@ -458,15 +458,25 @@ namespace Diverse
             //    throw new ArgumentException(message, paramName);
             //}
 
-
             return GenerateDateTimeBetween(minDateTime, maxDateTime);
         }
 
         private IFuzzStrings _fuzzStrings;
-
         public string GenerateString(Feeling? feeling = null)
         {
             return _fuzzStrings.GenerateString(feeling);
+        }
+
+        public T GenerateInstance<T>()
+        {
+            Func<string> defaultGenerateFirstName = () => GenerateFirstName();
+
+            Generators generators = new Generators() {
+                NameGenerator = defaultGenerateFirstName,
+                LastNameGenerator = GenerateLastName
+            };
+
+            return new FuzzerClass().GenerateInstance<T>(generators);
         }
     }
 }
