@@ -456,8 +456,18 @@ namespace Diverse
             //    throw new ArgumentException(message, paramName);
             //}
 
-
             return GenerateDateTimeBetween(minDateTime, maxDateTime);
+        }
+        public T GenerateInstance<T>()
+        {
+            Func<string> defaultGenerateFirstName = () => GenerateFirstName();
+
+            Generators generators = new Generators() {
+                NameGenerator = defaultGenerateFirstName,
+                LastNameGenerator = GenerateLastName
+            };
+
+            return new FuzzerClass().GenerateInstance<T>(generators);
         }
     }
 }
