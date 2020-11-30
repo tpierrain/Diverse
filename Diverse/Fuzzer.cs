@@ -60,6 +60,8 @@ namespace Diverse
 
             _internalRandom = new Random(seed.Value);
 
+            _fuzzStrings = new FuzzerStrings(_internalRandom);
+
             name = name ?? GenerateFuzzerName();
             Name = name;
 
@@ -458,6 +460,13 @@ namespace Diverse
 
 
             return GenerateDateTimeBetween(minDateTime, maxDateTime);
+        }
+
+        private IFuzzStrings _fuzzStrings;
+
+        public string GenerateString(Feeling? feeling = null)
+        {
+            return _fuzzStrings.GenerateString(feeling);
         }
     }
 }
