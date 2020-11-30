@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Diverse
@@ -63,6 +59,8 @@ namespace Diverse
             Seed = seed.Value;
 
             _internalRandom = new Random(seed.Value);
+
+            _fuzzStrings = new FuzzerStrings(_internalRandom);
 
             name = name ?? GenerateFuzzerName();
             Name = name;
@@ -394,8 +392,6 @@ namespace Diverse
             return pwd.ToString();
         }
 
-        
-
         private static void CheckGuardMinAndMaximumSizes(int? minSize, int? maxSize, int minimumSize, int maximumSize, int defaultMinSize, int defaultMaxSize)
         {
             if (minimumSize > maximumSize)
@@ -409,6 +405,68 @@ namespace Diverse
                 throw new ArgumentOutOfRangeException(parameterName,
                     $"maxSize ({maximumSize}) can't be inferior to minSize({minimumSize}). Specify 2 values if you don't want to use the default values of the library (i.e.: [{defaultMinSize}, {defaultMaxSize}]).");
             }
+        }
+
+        /// <summary>
+        /// Generates a random <see cref="DateTime"/>.
+        /// </summary>
+        /// <returns>A <see cref="DateTime"/> value generated randomly.</returns>
+        public DateTime GenerateDateTime()
+        {
+            return GenerateDateTimeBetween(DateTime.MinValue, DateTime.MaxValue);
+        }
+
+        /// <summary>
+        /// Generates a random <see cref="DateTime"/> in a Time Range.
+        /// </summary>
+        /// <param name="minValue">The minimum inclusive boundary of the Time Range for this <see cref="DateTime"/> generation.</param>
+        /// <param name="maxValue">The maximum inclusive boundary of the Time Range for this <see cref="DateTime"/> generation.</param>
+        /// <returns>A <see cref="DateTime"/> instance between the min and the max inclusive boundaries.</returns>
+        public DateTime GenerateDateTimeBetween(DateTime minValue, DateTime maxValue)
+        {
+            var nbDays = (maxValue - minValue).Days;
+
+            var midInterval = (minValue.AddDays(nbDays/2));
+
+            var maxDaysAllowedBefore = (midInterval - minValue).Days;
+            var maxDaysAllowedAfter = (maxValue - midInterval).Days;
+            var maxDays = Math.Min(maxDaysAllowedBefore, maxDaysAllowedAfter);
+
+            return midInterval.AddDays(GenerateInteger(-maxDays, maxDays));
+        }
+
+        /// <summary>
+        /// Generates a random <see cref="DateTime"/> in a Time Range.
+        /// </summary>
+        /// <param name="minValue">The minimum inclusive boundary of the Time Range for this <see cref="DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+        /// <param name="maxValue">The maximum inclusive boundary of the Time Range for this <see cref="DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+        /// <returns>A <see cref="DateTime"/> instance between the min and the max inclusive boundaries.</returns>
+        public DateTime GenerateDateTimeBetween(string minDate, string maxDate)
+        {
+            var minDateOk = DateTime.TryParseExact(minDate, "yyyy/MM/dd", null, DateTimeStyles.None,  out var minDateTime);
+            var maxDateOk = DateTime.TryParseExact(maxDate, "yyyy/MM/dd", null, DateTimeStyles.None, out var maxDateTime);
+
+            //if (!minDateOk || !maxDateOk)
+            //{
+            //    var paramName = string.Empty;
+            //    var message = string.Empty;
+
+            //    if (!minDateOk)
+            //    {
+
+            //    }
+            //    throw new ArgumentException(message, paramName);
+            //}
+
+
+            return GenerateDateTimeBetween(minDateTime, maxDateTime);
+        }
+
+        private IFuzzStrings _fuzzStrings;
+
+        public string GenerateString(Feeling? feeling = null)
+        {
+            return _fuzzStrings.GenerateString(feeling);
         }
     }
 }
