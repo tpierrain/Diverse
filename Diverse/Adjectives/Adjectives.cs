@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 namespace Diverse
 {
-
     public static class Adjectives
     {
         /// <summary>
-        /// Gets a dictionary of all the last name per <see cref="Continent"/>.
+        /// Gets a dictionary of all the adjective per <see cref="Feeling"/>.
         /// </summary>
         public static IDictionary<Feeling, string[]> PerFeeling { get; } = new Dictionary<Feeling, string[]>
         {
