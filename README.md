@@ -86,7 +86,10 @@ var age = fuzzer.GenerateInteger(minValue: 17, maxValue: 54);
 var person = fuzzer.GeneratePerson(); 
 
 // or other specific stuffs
-var password = fuzzer.GeneratePassword(); 
+var password = fuzzer.GeneratePassword();
+
+// any enum value
+var ingredient = fuzzer.GenerateEnum<Ingredient>();
 
 // or dates
 var dateTime = fuzzer.GenerateDateTime();
