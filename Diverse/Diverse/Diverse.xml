@@ -4,6 +4,31 @@
         <name>Diverse</name>
     </assembly>
     <members>
+        <member name="T:Diverse.Adjectives">
+            <summary>
+            Contains all the adjectives used by the library.
+            </summary>
+        </member>
+        <member name="P:Diverse.Adjectives.PerFeeling">
+            <summary>
+            Gets a dictionary of all the adjective per <see cref="T:Diverse.Feeling"/>.
+            </summary>
+        </member>
+        <member name="T:Diverse.Feeling">
+            <summary>
+            Feeling.
+            </summary>
+        </member>
+        <member name="F:Diverse.Feeling.Positive">
+            <summary>
+            Positive <see cref="T:Diverse.Feeling"/>.
+            </summary>
+        </member>
+        <member name="F:Diverse.Feeling.Negative">
+            <summary>
+            Negative <see cref="T:Diverse.Feeling"/>.
+            </summary>
+        </member>
         <member name="T:Diverse.Fuzzer">
             <summary>
             Allows to generate lots of combination of things. <see cref="T:Diverse.Fuzzer"/> are very useful to detect hard coded values in our implementations.
@@ -21,6 +46,12 @@
             </summary>
         </member>
         <member name="P:Diverse.Fuzzer.Diverse#IFuzz#Random">
+            <summary>
+            Gets the Random instance to be used when we want to create a new extension method for the <see cref="T:Diverse.Fuzzer"/>.
+            <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
+            </summary>
+        </member>
+        <member name="P:Diverse.Fuzzer.Diverse#IProvideCorePrimitivesToFuzzer#Random">
             <summary>
             Gets the Random instance to be used when we want to create a new extension method for the <see cref="T:Diverse.Fuzzer"/>.
             <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
@@ -154,12 +185,6 @@
             Gets a <see cref="P:Diverse.IFuzz.Random"/> instance to use if you want your extensible Fuzzer to be deterministic when providing a seed.
             </summary>
         </member>
-        <member name="M:Diverse.IFuzz.HeadsOrTails">
-            <summary>
-            Flips a coin.
-            </summary>
-            <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
-        </member>
         <member name="T:Diverse.IFuzzDatesAndTime">
             <summary>
             Fuzz Dates and Time.
@@ -252,6 +277,34 @@
             <param name="firstName">The (optional) first name for this Email</param>
             <param name="lastName">The (option) last name for this Email.</param>
             <returns>A random Email.</returns>
+        </member>
+        <member name="T:Diverse.IFuzzStrings">
+            <summary>
+            Fuzz numbers.
+            </summary>
+        </member>
+        <member name="M:Diverse.IFuzzStrings.GenerateAdjective(System.Nullable{Diverse.Feeling})">
+            <summary>
+            Generates a random adjective based on a feeling.
+            </summary>
+            <param name="feeling">The expected feeling of the adjective</param>
+            <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        </member>
+        <member name="T:Diverse.IProvideCorePrimitivesToFuzzer">
+            <summary>
+            Provides Core primitives for <see cref="T:Diverse.Fuzzer"/> to be able to work.
+            </summary>
+        </member>
+        <member name="P:Diverse.IProvideCorePrimitivesToFuzzer.Random">
+            <summary>
+            Gets a <see cref="P:Diverse.IProvideCorePrimitivesToFuzzer.Random"/> instance to use if you want your extensible Fuzzer to be deterministic when providing a seed.
+            </summary>
+        </member>
+        <member name="M:Diverse.IProvideCorePrimitivesToFuzzer.HeadsOrTails">
+            <summary>
+            Flips a coin.
+            </summary>
+            <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
         <member name="T:Diverse.ContextualizedFirstName">
             <summary>
@@ -446,6 +499,11 @@
             Returns this instance of <see cref="T:System.String"/>.
             </summary>
             <returns>The current string./</returns>
+        </member>
+        <member name="T:Diverse.StringFuzzer">
+            <summary>
+            Fuzz <see cref="T:System.String"/> values.
+            </summary>
         </member>
     </members>
 </doc>

@@ -8,7 +8,7 @@ namespace Diverse
     public interface IProvideCorePrimitivesToFuzzer
     {
         /// <summary>
-        /// Gets a <see cref="Random"/> instance to use if you want your extensible Fuzzer to be deterministic when providing a seed.
+        /// Gets a <see cref="Random"/> instance to use if you want your Fuzzer to be deterministic when providing a seed.
         /// </summary>
         Random Random { get; }
 

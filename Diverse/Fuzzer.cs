@@ -20,6 +20,8 @@ namespace Diverse
         private static char[] _lowerCharacters = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
         private static char[] _numericCharacters = "0123456789".ToCharArray();
 
+        private IFuzzStrings _stringFuzzer;
+
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
         /// </summary>
@@ -32,6 +34,12 @@ namespace Diverse
 
         /// <summary>
         /// Gets the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
+        /// <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
+        /// </summary>
+        Random IFuzz.Random => _internalRandom;
+
+        /// <summary>
+        /// Gets a <see cref="Random"/> instance to use if you want your Fuzzer to be deterministic when providing a seed.
         /// <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
         /// </summary>
         Random IProvideCorePrimitivesToFuzzer.Random => _internalRandom;
@@ -59,6 +67,8 @@ namespace Diverse
             Seed = seed.Value;
 
             _internalRandom = new Random(seed.Value);
+
+            _stringFuzzer = new StringFuzzer(this);
 
             name = name ?? GenerateFuzzerName();
             Name = name;
@@ -483,6 +493,16 @@ namespace Diverse
             }
 
             throw new ArgumentException(message);
+        }
+
+        /// <summary>
+        /// Generates a random adjective based on a feeling.
+        /// </summary>
+        /// <param name="feeling">The expected feeling of the adjective</param>
+        /// <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        public string GenerateAdjective(Feeling? feeling = null)
+        {
+            return _stringFuzzer.GenerateAdjective(feeling);
         }
     }
 }
