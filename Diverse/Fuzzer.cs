@@ -13,14 +13,15 @@ namespace Diverse
     /// </summary>
     public class Fuzzer : IFuzz
     {
-        private Random _internalRandom;
+        private readonly Random _internalRandom;
 
         private static char[] _specialCharacters = "+-_$%£&!?*$€'|[]()".ToCharArray();
         private static char[] _upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
         private static char[] _lowerCharacters = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
         private static char[] _numericCharacters = "0123456789".ToCharArray();
 
-        private IFuzzStrings _stringFuzzer;
+        private readonly IFuzzStrings _stringFuzzer;
+        private readonly NumberFuzzer _numberFuzzer;
 
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
@@ -69,11 +70,13 @@ namespace Diverse
             _internalRandom = new Random(seed.Value);
 
             _stringFuzzer = new StringFuzzer(this);
+            _numberFuzzer = new NumberFuzzer(this);
 
             name = name ?? GenerateFuzzerName();
             Name = name;
 
             LogSeedAndTestInformations(seed.Value, seedWasProvided, name);
+            _numberFuzzer = new NumberFuzzer(this);
         }
 
         /// <summary>
@@ -84,10 +87,7 @@ namespace Diverse
         /// <returns>An integer value generated randomly.</returns>
         public int GenerateInteger(int minValue, int maxValue)
         {
-            // Adjust the inclusiveness of the Fuzzer API to the exclusiveness of the Random API.
-            maxValue = (maxValue == int.MaxValue) ? maxValue : maxValue + 1;
-            
-            return InternalRandom.Next(minValue, maxValue);
+            return _numberFuzzer.GenerateInteger(minValue, maxValue);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Diverse
         /// <returns>An integer value generated randomly.</returns>
         public int GenerateInteger()
         {
-            return GenerateInteger(int.MinValue, int.MaxValue);
+            return _numberFuzzer.GenerateInteger();
         }
 
         /// <summary>
@@ -106,9 +106,7 @@ namespace Diverse
         /// <returns>A positive integer value generated randomly.</returns>
         public int GeneratePositiveInteger(int? maxValue = null)
         {
-            maxValue = maxValue ?? int.MaxValue;
-
-            return GenerateInteger(0, maxValue.Value);
+            return _numberFuzzer.GeneratePositiveInteger(maxValue);
         }
 
         /// <summary>
@@ -117,7 +115,7 @@ namespace Diverse
         /// <returns>A positive decimal value generated randomly.</returns>
         public decimal GeneratePositiveDecimal()
         {
-            return Convert.ToDecimal(GenerateInteger(0, int.MaxValue));
+            return _numberFuzzer.GeneratePositiveDecimal();
         }
 
         /// <summary>
@@ -446,8 +444,8 @@ namespace Diverse
         /// <summary>
         /// Generates a random <see cref="DateTime"/> in a Time Range.
         /// </summary>
-        /// <param name="minValue">The minimum inclusive boundary of the Time Range for this <see cref="DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
-        /// <param name="maxValue">The maximum inclusive boundary of the Time Range for this <see cref="DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+        /// <param name="minDate">The minimum inclusive boundary of the Time Range for this <see cref="DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+        /// <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
         /// <returns>A <see cref="DateTime"/> instance between the min and the max inclusive boundaries.</returns>
         public DateTime GenerateDateTimeBetween(string minDate, string maxDate)
         {
