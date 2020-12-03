@@ -16,7 +16,7 @@ namespace Diverse
         private readonly IFuzzStrings _stringFuzzer;
         private readonly IFuzzNumbers _numberFuzzer;
         private readonly IFuzzPersons _personFuzzer;
-        private readonly DateTimeFuzzer _dateTimeFuzzer;
+        private readonly IFuzzDatesAndTime _dateTimeFuzzer;
 
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
@@ -75,96 +75,7 @@ namespace Diverse
             _personFuzzer = new PersonFuzzer(this, _numberFuzzer);
             _dateTimeFuzzer = new DateTimeFuzzer(this, _numberFuzzer);
         }
-
-        /// <summary>
-        /// Generates a random integer value between a min (inclusive) and a max (exclusive) value.
-        /// </summary>
-        /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
-        /// <returns>An integer value generated randomly.</returns>
-        public int GenerateInteger(int minValue, int maxValue)
-        {
-            return _numberFuzzer.GenerateInteger(minValue, maxValue);
-        }
-
-        /// <summary>
-        /// Generates a random integer value.
-        /// </summary>
-        /// <returns>An integer value generated randomly.</returns>
-        public int GenerateInteger()
-        {
-            return _numberFuzzer.GenerateInteger();
-        }
-
-        /// <summary>
-        /// Generates a random positive integer value.
-        /// </summary>
-        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
-        /// <returns>A positive integer value generated randomly.</returns>
-        public int GeneratePositiveInteger(int? maxValue = null)
-        {
-            return _numberFuzzer.GeneratePositiveInteger(maxValue);
-        }
-
-        /// <summary>
-        /// Generates a random positive decimal value.
-        /// </summary>
-        /// <returns>A positive decimal value generated randomly.</returns>
-        public decimal GeneratePositiveDecimal()
-        {
-            return _numberFuzzer.GeneratePositiveDecimal();
-        }
-
-        /// <summary>
-        /// Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
-        /// </summary>
-        /// <param name="gender">The <see cref="Gender"/> to be used as indication (optional).</param>
-        /// <returns>A 'Diverse' first name.</returns>
-        public string GenerateFirstName(Gender? gender = null)
-        {
-            return _personFuzzer.GenerateFirstName(gender);
-        }
-
-        /// <summary>
-        /// Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
-        /// </summary>
-        /// <param name="firstName">The first name of this person.</param>
-        /// <returns>A 'Diverse' last name.</returns>
-        public string GenerateLastName(string firstName)
-        {
-            return _personFuzzer.GenerateLastName(firstName);
-        }
-
-        /// <summary>
-        /// Generates a 'Diverse' <see cref="Person"/> (i.e. from all around the world and different cultures). 
-        /// </summary>
-        /// <param name="gender">The (optional) <see cref="Gender"/> of this <see cref="Person"/></param>
-        /// <returns>A 'Diverse' <see cref="Person"/> instance.</returns>
-        public Person GeneratePerson(Gender? gender = null)
-        {
-            return _personFuzzer.GeneratePerson(gender);
-        }
-
-        /// <summary>
-        /// Generates a random Email.
-        /// </summary>
-        /// <param name="firstName">The (optional) first name for this Email</param>
-        /// <param name="lastName">The (option) last name for this Email.</param>
-        /// <returns>A random Email.</returns>
-        public string GenerateEMail(string firstName = null, string lastName = null)
-        {
-            return _personFuzzer.GenerateEMail(firstName, lastName);
-        }
-
-        /// <summary>
-        /// Generates a password following some common rules asked on the internet.
-        /// </summary>
-        /// <returns>The generated password</returns>
-        public string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null)
-        {
-            return _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
-        }
-
+        
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
         {
             var testName = FindTheNameOfTheTestInvolved();
@@ -239,6 +150,105 @@ namespace Diverse
             return InternalRandom.Next(0, 2) == 1;
         }
 
+        #region NumberFuzzer
+
+        /// <summary>
+        /// Generates a random integer value between a min (inclusive) and a max (exclusive) value.
+        /// </summary>
+        /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
+        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
+        /// <returns>An integer value generated randomly.</returns>
+        public int GenerateInteger(int minValue, int maxValue)
+        {
+            return _numberFuzzer.GenerateInteger(minValue, maxValue);
+        }
+
+        /// <summary>
+        /// Generates a random integer value.
+        /// </summary>
+        /// <returns>An integer value generated randomly.</returns>
+        public int GenerateInteger()
+        {
+            return _numberFuzzer.GenerateInteger();
+        }
+
+        /// <summary>
+        /// Generates a random positive integer value.
+        /// </summary>
+        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
+        /// <returns>A positive integer value generated randomly.</returns>
+        public int GeneratePositiveInteger(int? maxValue = null)
+        {
+            return _numberFuzzer.GeneratePositiveInteger(maxValue);
+        }
+
+        /// <summary>
+        /// Generates a random positive decimal value.
+        /// </summary>
+        /// <returns>A positive decimal value generated randomly.</returns>
+        public decimal GeneratePositiveDecimal()
+        {
+            return _numberFuzzer.GeneratePositiveDecimal();
+        }
+
+        #endregion
+
+        #region PersonFuzzer
+
+        /// <summary>
+        /// Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
+        /// </summary>
+        /// <param name="gender">The <see cref="Gender"/> to be used as indication (optional).</param>
+        /// <returns>A 'Diverse' first name.</returns>
+        public string GenerateFirstName(Gender? gender = null)
+        {
+            return _personFuzzer.GenerateFirstName(gender);
+        }
+
+        /// <summary>
+        /// Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
+        /// </summary>
+        /// <param name="firstName">The first name of this person.</param>
+        /// <returns>A 'Diverse' last name.</returns>
+        public string GenerateLastName(string firstName)
+        {
+            return _personFuzzer.GenerateLastName(firstName);
+        }
+
+        /// <summary>
+        /// Generates a 'Diverse' <see cref="Person"/> (i.e. from all around the world and different cultures). 
+        /// </summary>
+        /// <param name="gender">The (optional) <see cref="Gender"/> of this <see cref="Person"/></param>
+        /// <returns>A 'Diverse' <see cref="Person"/> instance.</returns>
+        public Person GeneratePerson(Gender? gender = null)
+        {
+            return _personFuzzer.GeneratePerson(gender);
+        }
+
+        /// <summary>
+        /// Generates a random Email.
+        /// </summary>
+        /// <param name="firstName">The (optional) first name for this Email</param>
+        /// <param name="lastName">The (option) last name for this Email.</param>
+        /// <returns>A random Email.</returns>
+        public string GenerateEMail(string firstName = null, string lastName = null)
+        {
+            return _personFuzzer.GenerateEMail(firstName, lastName);
+        }
+
+        /// <summary>
+        /// Generates a password following some common rules asked on the internet.
+        /// </summary>
+        /// <returns>The generated password</returns>
+        public string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null)
+        {
+            return _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
+        }
+
+        #endregion
+
+        #region DateTimeFuzzer
+
         /// <summary>
         /// Generates a random <see cref="DateTime"/>.
         /// </summary>
@@ -270,6 +280,10 @@ namespace Diverse
             return _dateTimeFuzzer.GenerateDateTimeBetween(minDate, maxDate);
         }
 
+        #endregion
+
+        #region StringFuzzer
+
         /// <summary>
         /// Generates a random adjective based on a feeling.
         /// </summary>
@@ -279,5 +293,7 @@ namespace Diverse
         {
             return _stringFuzzer.GenerateAdjective(feeling);
         }
+
+        #endregion
     }
 }
