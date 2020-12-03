@@ -10,6 +10,6 @@ namespace Diverse
         /// </summary>
         /// <param name="feeling">The expected feeling of the adjective</param>
         /// <returns>An adjective based on a particular feeling or random one if not provided</returns>
-        string GenerateString(Feeling? feeling);
+        string GenerateAdjective(Feeling? feeling);
     }
 }

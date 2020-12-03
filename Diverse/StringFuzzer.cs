@@ -3,21 +3,24 @@ using System.Linq;
 
 namespace Diverse
 {
-    public class FuzzerStrings : IFuzzStrings
+    /// <summary>
+    /// Fuzz <see cref="string"/> values.
+    /// </summary>
+    public class StringFuzzer : IFuzzStrings
     {
-        private Random _internalRandom;
+        private readonly IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
 
-        public FuzzerStrings(Random random)
+        public StringFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives)
         {
-            _internalRandom = random;
+            _fuzzerPrimitives = fuzzerPrimitives;
         }
 
         private bool HeadsOrTails()
         {
-            return _internalRandom.Next(0, 2) == 1;
+            return _fuzzerPrimitives.Random.Next(0, 2) == 1;
         }
 
-        public string GenerateString(Feeling? feeling = null)
+        public string GenerateAdjective(Feeling? feeling = null)
         {
             string[] adjectives;
             if(feeling.HasValue)
@@ -32,7 +35,7 @@ namespace Diverse
                 adjectives = Adjectives.PerFeeling[feeling.Value];
             }
             
-            var randomLocalIndex = _internalRandom.Next(0, adjectives.Length);
+            var randomLocalIndex = _fuzzerPrimitives.Random.Next(0, adjectives.Length);
 
             return adjectives[randomLocalIndex];
         }

@@ -51,6 +51,12 @@
             <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
             </summary>
         </member>
+        <member name="P:Diverse.Fuzzer.Diverse#IProvideCorePrimitivesToFuzzer#Random">
+            <summary>
+            Gets the Random instance to be used when we want to create a new extension method for the <see cref="T:Diverse.Fuzzer"/>.
+            <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
+            </summary>
+        </member>
         <member name="P:Diverse.Fuzzer.InternalRandom">
             <summary>
             Gives easy access to the <see cref="P:Diverse.IFuzz.Random"/> explicit implementation.
@@ -277,7 +283,7 @@
             Fuzz numbers.
             </summary>
         </member>
-        <member name="M:Diverse.IFuzzStrings.GenerateString(System.Nullable{Diverse.Feeling})">
+        <member name="M:Diverse.IFuzzStrings.GenerateAdjective(System.Nullable{Diverse.Feeling})">
             <summary>
             Generates a random adjective based on a feeling.
             </summary>
@@ -287,6 +293,11 @@
         <member name="T:Diverse.IProvideCorePrimitivesToFuzzer">
             <summary>
             Provides Core primitives for <see cref="T:Diverse.Fuzzer"/> to be able to work.
+            </summary>
+        </member>
+        <member name="P:Diverse.IProvideCorePrimitivesToFuzzer.Random">
+            <summary>
+            Gets a <see cref="P:Diverse.IProvideCorePrimitivesToFuzzer.Random"/> instance to use if you want your extensible Fuzzer to be deterministic when providing a seed.
             </summary>
         </member>
         <member name="M:Diverse.IProvideCorePrimitivesToFuzzer.HeadsOrTails">
@@ -488,6 +499,11 @@
             Returns this instance of <see cref="T:System.String"/>.
             </summary>
             <returns>The current string./</returns>
+        </member>
+        <member name="T:Diverse.StringFuzzer">
+            <summary>
+            Fuzz <see cref="T:System.String"/> values.
+            </summary>
         </member>
     </members>
 </doc>
