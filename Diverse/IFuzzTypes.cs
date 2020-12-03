@@ -1,3 +1,5 @@
+using System;
+
 namespace Diverse
 {
     /// <summary>
@@ -8,7 +10,14 @@ namespace Diverse
         /// <summary>
         /// Generates an instance of a type T.
         /// </summary>
-        /// <returns>An instance with string properties set to random strings</returns>
+        /// <returns>An instance of type T with some fuzzed properties.</returns>
         T GenerateInstance<T>();
+
+        /// <summary>
+        /// Generates an instance of an <see cref="Enum"/> type.
+        /// </summary>
+        /// <typeparam name="T">Type of the <see cref="Enum"/></typeparam>
+        /// <returns>An random value of the specified <see cref="Enum"/> type.</returns>
+        T GenerateEnum<T>();
     }
 }

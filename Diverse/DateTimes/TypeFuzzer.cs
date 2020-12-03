@@ -24,12 +24,16 @@ namespace Diverse.DateTimes
             _personFuzzer = personFuzzer;
         }
 
+        /// <summary>
+        /// Generates an instance of a type T.
+        /// </summary>
+        /// <returns>An instance of type T with some fuzzed properties.</returns>
         public T GenerateInstance<T>()
         {
-            Type genericType = typeof(T);
-            T instance = (T)Activator.CreateInstance(genericType);
+            var genericType = typeof(T);
+            var instance = (T)Activator.CreateInstance(genericType);
 
-            IEnumerable<PropertyInfo> stringProperties = GetWritableStringProperties(genericType);
+            var stringProperties = GetWritableStringProperties(genericType);
             
             foreach (var stringPropertyInfo in stringProperties)
             {
@@ -37,6 +41,17 @@ namespace Diverse.DateTimes
             }
 
             return instance;
+        }
+
+        /// <summary>
+        /// Generates an instance of an <see cref="Enum"/> type.
+        /// </summary>
+        /// <typeparam name="T">Type of the <see cref="Enum"/></typeparam>
+        /// <returns>An random value of the specified <see cref="Enum"/> type.</returns>
+        public T GenerateEnum<T>()
+        {
+            var enumValues = Enum.GetValues(typeof(T));
+            return (T)enumValues.GetValue(_fuzzerPrimitives.Random.Next(0, enumValues.Length));
         }
 
         private static IEnumerable<PropertyInfo> GetWritableStringProperties(Type genericType)

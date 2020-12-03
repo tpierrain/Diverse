@@ -308,6 +308,11 @@ namespace Diverse
             return _typeFuzzer.GenerateInstance<T>();
         }
 
+        public T GenerateEnum<T>()
+        {
+            return _typeFuzzer.GenerateEnum<T>();
+        }
+
         #endregion
     }
 }

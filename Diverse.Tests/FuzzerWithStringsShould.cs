@@ -6,14 +6,14 @@ using NUnit.Framework;
 namespace Diverse.Tests
 {
     [TestFixture]
-    public class FuzzerWithStringShould
+    public class FuzzerWithStringsShould
     {
         [Test]
         public void Be_able_to_generate_a_random_adjective()
         {
-            Fuzzer fuzzer = new Fuzzer(438709238);
+            var fuzzer = new Fuzzer(438709238);
 
-            string randomString = fuzzer.GenerateAdjective();
+            var randomString = fuzzer.GenerateAdjective();
 
             Check.That(randomString).IsEqualTo("upbeat");
         }
