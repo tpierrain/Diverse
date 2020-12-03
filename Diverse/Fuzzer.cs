@@ -34,7 +34,7 @@ namespace Diverse
         /// Gets the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
         /// <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
         /// </summary>
-        Random IProvideCorePrimitivesToFuzzer.Random => _internalRandom;
+        Random IFuzz.Random => _internalRandom;
 
         /// <summary>
         /// Gives easy access to the <see cref="IFuzz.Random"/> explicit implementation.
@@ -59,6 +59,8 @@ namespace Diverse
             Seed = seed.Value;
 
             _internalRandom = new Random(seed.Value);
+
+            _fuzzStrings = new FuzzerStrings(_internalRandom);
 
             name = name ?? GenerateFuzzerName();
             Name = name;
@@ -483,6 +485,13 @@ namespace Diverse
             }
 
             throw new ArgumentException(message);
+        }
+
+        private IFuzzStrings _fuzzStrings;
+
+        public string GenerateString(Feeling? feeling = null)
+        {
+            return _fuzzStrings.GenerateString(feeling);
         }
     }
 }
