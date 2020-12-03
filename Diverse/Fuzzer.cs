@@ -17,12 +17,13 @@ namespace Diverse
         private readonly IFuzzNumbers _numberFuzzer;
         private readonly IFuzzPersons _personFuzzer;
         private readonly IFuzzDatesAndTime _dateTimeFuzzer;
+        private readonly IFuzzTypes _typeFuzzer;
 
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
         /// </summary>
         public int Seed { get; }
-        
+
         /// <summary>
         /// Gets the name of this <see cref="Fuzzer"/> instance.
         /// </summary>
@@ -74,8 +75,9 @@ namespace Diverse
             _numberFuzzer = new NumberFuzzer(this);
             _personFuzzer = new PersonFuzzer(this, _numberFuzzer);
             _dateTimeFuzzer = new DateTimeFuzzer(this, _numberFuzzer);
+            _typeFuzzer = new TypeFuzzer(this, _personFuzzer);
         }
-        
+
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
         {
             var testName = FindTheNameOfTheTestInvolved();
@@ -292,6 +294,15 @@ namespace Diverse
         public string GenerateAdjective(Feeling? feeling = null)
         {
             return _stringFuzzer.GenerateAdjective(feeling);
+        }
+
+        #endregion
+
+        #region TypeFuzzer
+
+        public T GenerateInstance<T>()
+        {
+            return _typeFuzzer.GenerateInstance<T>();
         }
 
         #endregion

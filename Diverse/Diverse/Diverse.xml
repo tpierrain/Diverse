@@ -108,6 +108,12 @@
             <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
             <param name="name">The name you want to specify for this <see cref="T:Diverse.Fuzzer"/> instance (useful for debuging purpose).</param>
         </member>
+        <member name="M:Diverse.Fuzzer.HeadsOrTails">
+            <summary>
+            Flips a coin.
+            </summary>
+            <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
+        </member>
         <member name="M:Diverse.Fuzzer.GenerateInteger(System.Int32,System.Int32)">
             <summary>
             Generates a random integer value between a min (inclusive) and a max (exclusive) value.
@@ -169,12 +175,6 @@
             Generates a password following some common rules asked on the internet.
             </summary>
             <returns>The generated password</returns>
-        </member>
-        <member name="M:Diverse.Fuzzer.HeadsOrTails">
-            <summary>
-            Flips a coin.
-            </summary>
-            <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
         <member name="M:Diverse.Fuzzer.GenerateDateTime">
             <summary>
@@ -336,6 +336,17 @@
             </summary>
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        </member>
+        <member name="T:Diverse.IFuzzTypes">
+            <summary>
+            Fuzz instance of Types.
+            </summary>
+        </member>
+        <member name="M:Diverse.IFuzzTypes.GenerateInstance``1">
+            <summary>
+            Generates an instance of a type T.
+            </summary>
+            <returns>An instance with string properties set to random strings</returns>
         </member>
         <member name="T:Diverse.IProvideCorePrimitivesToFuzzer">
             <summary>
@@ -649,6 +660,18 @@
             </summary>
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        </member>
+        <member name="T:Diverse.TypeFuzzer">
+            <summary>
+            Fuzz instance of Types.
+            </summary>
+        </member>
+        <member name="M:Diverse.TypeFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzPersons)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.TypeFuzzer"/>.
+            </summary>
+            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="personFuzzer">Instance of <see cref="T:Diverse.IFuzzPersons"/> to use.</param>
         </member>
     </members>
 </doc>
