@@ -53,7 +53,7 @@
         </member>
         <member name="P:Diverse.Fuzzer.Diverse#IProvideCorePrimitivesToFuzzer#Random">
             <summary>
-            Gets the Random instance to be used when we want to create a new extension method for the <see cref="T:Diverse.Fuzzer"/>.
+            Gets a <see cref="T:System.Random"/> instance to use if you want your Fuzzer to be deterministic when providing a seed.
             <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
             </summary>
         </member>
@@ -136,12 +136,6 @@
             </summary>
             <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
-        <member name="M:Diverse.Fuzzer.GeneratePassword(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Boolean})">
-            <summary>
-            Generates a password following some common rules asked on the internet.
-            </summary>
-            <returns>The generated password</returns>
-        </member>
         <member name="M:Diverse.Fuzzer.GenerateDateTime">
             <summary>
             Generates a random <see cref="T:System.DateTime"/>.
@@ -160,9 +154,16 @@
             <summary>
             Generates a random <see cref="T:System.DateTime"/> in a Time Range.
             </summary>
-            <param name="minValue">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
-            <param name="maxValue">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+            <param name="minDate">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+            <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateAdjective(System.Nullable{Diverse.Feeling})">
+            <summary>
+            Generates a random adjective based on a feeling.
+            </summary>
+            <param name="feeling">The expected feeling of the adjective</param>
+            <returns>An adjective based on a particular feeling or random one if not provided</returns>
         </member>
         <member name="T:Diverse.FuzzerException">
             <summary>
@@ -208,8 +209,8 @@
             <summary>
             Generates a random <see cref="T:System.DateTime"/> in a Time Range.
             </summary>
-            <param name="minValue">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
-            <param name="maxValue">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+            <param name="minDate">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+            <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
         </member>
         <member name="T:Diverse.IFuzzNumbers">
@@ -297,7 +298,7 @@
         </member>
         <member name="P:Diverse.IProvideCorePrimitivesToFuzzer.Random">
             <summary>
-            Gets a <see cref="P:Diverse.IProvideCorePrimitivesToFuzzer.Random"/> instance to use if you want your extensible Fuzzer to be deterministic when providing a seed.
+            Gets a <see cref="P:Diverse.IProvideCorePrimitivesToFuzzer.Random"/> instance to use if you want your Fuzzer to be deterministic when providing a seed.
             </summary>
         </member>
         <member name="M:Diverse.IProvideCorePrimitivesToFuzzer.HeadsOrTails">
@@ -305,6 +306,78 @@
             Flips a coin.
             </summary>
             <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
+        </member>
+        <member name="T:Diverse.NumberFuzzer">
+            <summary>
+            Fuzz numbers.
+            </summary>
+        </member>
+        <member name="M:Diverse.NumberFuzzer.GenerateInteger(System.Int32,System.Int32)">
+            <summary>
+            Generates a random integer value between a min (inclusive) and a max (exclusive) value.
+            </summary>
+            <param name="minValue">The inclusive lower bound of the random number returned.</param>
+            <param name="maxValue">The inclusive upper bound of the random number returned.</param>
+            <returns>An integer value generated randomly.</returns>
+        </member>
+        <member name="M:Diverse.NumberFuzzer.GenerateInteger">
+            <summary>
+            Generates a random integer value.
+            </summary>
+            <returns>An integer value generated randomly.</returns>
+        </member>
+        <member name="M:Diverse.NumberFuzzer.GeneratePositiveInteger(System.Nullable{System.Int32})">
+            <summary>
+            Generates a random positive integer value.
+            </summary>
+            <param name="maxValue">The inclusive upper bound of the random number returned.</param>
+            <returns>A positive integer value generated randomly.</returns>
+        </member>
+        <member name="M:Diverse.NumberFuzzer.GeneratePositiveDecimal">
+            <summary>
+            Generates a random positive decimal value.
+            </summary>
+            <returns>A positive decimal value generated randomly.</returns>
+        </member>
+        <member name="T:Diverse.PersonFuzzer">
+            <summary>
+            Fuzz <see cref="T:Diverse.Person"/>.
+            </summary>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
+            <summary>
+            Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
+            </summary>
+            <param name="gender">The <see cref="T:Diverse.Gender"/> to be used as indication (optional).</param>
+            <returns>A 'Diverse' first name.</returns>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GenerateLastName(System.String)">
+            <summary>
+            Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
+            </summary>
+            <param name="firstName">The first name of this person.</param>
+            <returns>A 'Diverse' last name.</returns>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GeneratePerson(System.Nullable{Diverse.Gender})">
+            <summary>
+            Generates a 'Diverse' <see cref="T:Diverse.Person"/> (i.e. from all around the world and different cultures). 
+            </summary>
+            <param name="gender">The (optional) <see cref="T:Diverse.Gender"/> of this <see cref="T:Diverse.Person"/></param>
+            <returns>A 'Diverse' <see cref="T:Diverse.Person"/> instance.</returns>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GenerateEMail(System.String,System.String)">
+            <summary>
+            Generates a random Email.
+            </summary>
+            <param name="firstName">The (optional) first name for this Email</param>
+            <param name="lastName">The (option) last name for this Email.</param>
+            <returns>A random Email.</returns>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GeneratePassword(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Boolean})">
+            <summary>
+            Generates a password following some common rules asked on the internet.
+            </summary>
+            <returns>The generated password</returns>
         </member>
         <member name="T:Diverse.ContextualizedFirstName">
             <summary>

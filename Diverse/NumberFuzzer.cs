@@ -5,7 +5,7 @@ namespace Diverse
     /// <summary>
     /// Fuzz numbers.
     /// </summary>
-    public class NumberFuzzer
+    public class NumberFuzzer : IFuzzNumbers
     {
         private readonly IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
 

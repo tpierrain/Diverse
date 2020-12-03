@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Diverse
 {
@@ -15,13 +14,9 @@ namespace Diverse
     {
         private readonly Random _internalRandom;
 
-        private static char[] _specialCharacters = "+-_$%£&!?*$€'|[]()".ToCharArray();
-        private static char[] _upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-        private static char[] _lowerCharacters = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
-        private static char[] _numericCharacters = "0123456789".ToCharArray();
-
         private readonly IFuzzStrings _stringFuzzer;
-        private readonly NumberFuzzer _numberFuzzer;
+        private readonly IFuzzNumbers _numberFuzzer;
+        private readonly IFuzzPersons _personFuzzer;
 
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
@@ -69,14 +64,14 @@ namespace Diverse
 
             _internalRandom = new Random(seed.Value);
 
-            _stringFuzzer = new StringFuzzer(this);
-            _numberFuzzer = new NumberFuzzer(this);
-
             name = name ?? GenerateFuzzerName();
             Name = name;
 
             LogSeedAndTestInformations(seed.Value, seedWasProvided, name);
+
+            _stringFuzzer = new StringFuzzer(this);
             _numberFuzzer = new NumberFuzzer(this);
+            _personFuzzer = new PersonFuzzer(this, _numberFuzzer);
         }
 
         /// <summary>
@@ -125,20 +120,7 @@ namespace Diverse
         /// <returns>A 'Diverse' first name.</returns>
         public string GenerateFirstName(Gender? gender = null)
         {
-            string[] firstNameCandidates;
-            if (gender == null)
-            {
-                var isFemale = HeadsOrTails();
-                firstNameCandidates = isFemale ? Female.FirstNames : Male.FirstNames;
-            }
-            else
-            {
-                firstNameCandidates = gender == Gender.Female ? Female.FirstNames : Male.FirstNames;
-            }
-
-            var randomLocaleIndex = InternalRandom.Next(0, firstNameCandidates.Length);
-
-            return firstNameCandidates[randomLocaleIndex];
+            return _personFuzzer.GenerateFirstName(gender);
         }
 
         /// <summary>
@@ -148,13 +130,7 @@ namespace Diverse
         /// <returns>A 'Diverse' last name.</returns>
         public string GenerateLastName(string firstName)
         {
-            Continent continent = FindContinent(firstName);
-
-            var lastNames = LastNames.PerContinent[continent];
-
-            var randomLocaleIndex = InternalRandom.Next(0, lastNames.Length);
-
-            return lastNames[randomLocaleIndex];
+            return _personFuzzer.GenerateLastName(firstName);
         }
 
         /// <summary>
@@ -164,27 +140,7 @@ namespace Diverse
         /// <returns>A 'Diverse' <see cref="Person"/> instance.</returns>
         public Person GeneratePerson(Gender? gender = null)
         {
-            if (gender == null)
-            {
-                var isFemale = HeadsOrTails();
-                if (isFemale)
-                {
-                    gender = Gender.Female;
-                }
-                else
-                {
-                    var isNonBinary = HeadsOrTails();
-                    gender = isNonBinary ? Gender.NonBinary : Gender.Male;
-                }
-            }
-
-            var firstName = GenerateFirstName(gender);
-            var lastName = GenerateLastName(firstName);
-            var eMail = GenerateEMail(firstName, lastName);
-            var isMarried = HeadsOrTails();
-            var age = GenerateInteger(18, 97);
-
-            return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
+            return _personFuzzer.GeneratePerson(gender);
         }
 
         /// <summary>
@@ -195,34 +151,18 @@ namespace Diverse
         /// <returns>A random Email.</returns>
         public string GenerateEMail(string firstName = null, string lastName = null)
         {
-            if (firstName == null)
-            {
-                firstName = GenerateFirstName();
-            }
-
-            if (lastName == null)
-            {
-                lastName = GenerateLastName(firstName);
-            }
-
-            var domainNames = new string[] { "kolab.com", "protonmail.com", "gmail.com", "yahoo.fr", "42skillz.com", "gmail.com", "ibm.com", "gmail.com", "yopmail.com", "microsoft.com", "gmail.com", "aol.com" };
-            var index = InternalRandom.Next(0, domainNames.Length);
-
-            var domainName = domainNames[index];
-
-
-            if (HeadsOrTails())
-            {
-                var shortVersion = $"{firstName.Substring(0, 1)}{lastName}@{domainName}".ToLower();
-                shortVersion = TransformIntoValidEmailFormat(shortVersion);
-                return shortVersion;
-            }
-
-            var longVersion = $"{firstName}.{lastName}@{domainName}".ToLower();
-            longVersion = TransformIntoValidEmailFormat(longVersion);
-            return longVersion;
+            return _personFuzzer.GenerateEMail(firstName, lastName);
         }
 
+
+        /// <summary>
+        /// Generates a password following some common rules asked on the internet.
+        /// </summary>
+        /// <returns>The generated password</returns>
+        public string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null)
+        {
+            return _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
+        }
 
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
         {
@@ -289,55 +229,6 @@ namespace Diverse
             return $"fuzzer{index}";
         }
 
-        private static Continent FindContinent(string firstName)
-        {
-            Continent continent;
-            var contextualizedFirstName = Male.ContextualizedFirstNames.FirstOrDefault(c => c.FirstName == firstName);
-            if (contextualizedFirstName != null)
-            {
-                continent = contextualizedFirstName.Origin;
-            }
-            else
-            {
-                contextualizedFirstName = Female.ContextualizedFirstNames.FirstOrDefault(c => c.FirstName == firstName);
-                if (contextualizedFirstName != null)
-                {
-                    continent = contextualizedFirstName.Origin;
-                }
-                else
-                {
-                    continent = Continent.Africa;
-                }
-            }
-
-            return continent;
-        }
-
-        private string TransformIntoValidEmailFormat(string eMail)
-        {
-            var validFormat = eMail.Replace(' ', '-');
-            validFormat = RemoveDiacritics(validFormat);
-
-            return validFormat;
-        }
-
-        // from https://stackoverflow.com/questions/249087/how-do-i-remove-diacritics-accents-from-a-string-in-net
-        private static string RemoveDiacritics(string text)
-        {
-            var normalizedString = text.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
-
-            foreach (var c in normalizedString)
-            {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
-            }
-
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
-        }
 
         /// <summary>
         /// Flips a coin.
@@ -348,70 +239,6 @@ namespace Diverse
             return InternalRandom.Next(0, 2) == 1;
         }
 
-        /// <summary>
-        /// Generates a password following some common rules asked on the internet.
-        /// </summary>
-        /// <returns>The generated password</returns>
-        public string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null)
-        {
-            var defaultMinSize = 7;
-            var defaultMaxSize = 12;
-
-            var minimumSize = minSize ?? defaultMinSize;
-            var maximumSize = maxSize ?? defaultMaxSize;
-
-            CheckGuardMinAndMaximumSizes(minSize, maxSize, minimumSize, maximumSize, defaultMinSize, defaultMaxSize);
-
-            var passwordSize = InternalRandom.Next(minimumSize, maximumSize + 1);
-
-            var pwd = new StringBuilder(passwordSize);
-            for (var i = 0; i < passwordSize; i++)
-            {
-                if ((i == 0 || i == 10) && (includeSpecialCharacters.HasValue && includeSpecialCharacters.Value))
-                {
-                    pwd.Append(_specialCharacters[InternalRandom.Next(0, _specialCharacters.Length)]);
-                    continue;
-                }
-
-                if (i == 4 || i == 14)
-                {
-                    pwd.Append(_upperCharacters[InternalRandom.Next(1, 26)]);
-                    continue;
-                }
-
-                if (i == 6 || i == 13)
-                {
-                    pwd.Append(_numericCharacters[InternalRandom.Next(4, 10)]);
-                    continue;
-                }
-
-                if (i == 3 || i == 9)
-                {
-                    pwd.Append(_numericCharacters[InternalRandom.Next(1, 5)]);
-                    continue;
-                }
-
-                // by default
-                pwd.Append(_lowerCharacters[InternalRandom.Next(1, 26)]);
-            }
-
-            return pwd.ToString();
-        }
-
-        private static void CheckGuardMinAndMaximumSizes(int? minSize, int? maxSize, int minimumSize, int maximumSize, int defaultMinSize, int defaultMaxSize)
-        {
-            if (minimumSize > maximumSize)
-            {
-                var parameterName = minSize == null ? "maxSize" : "minSize";
-                if (minSize.HasValue && maxSize.HasValue)
-                {
-                    parameterName = "maxSize";
-                }
-
-                throw new ArgumentOutOfRangeException(parameterName,
-                    $"maxSize ({maximumSize}) can't be inferior to minSize({minimumSize}). Specify 2 values if you don't want to use the default values of the library (i.e.: [{defaultMinSize}, {defaultMaxSize}]).");
-            }
-        }
 
         /// <summary>
         /// Generates a random <see cref="DateTime"/>.
