@@ -12,7 +12,7 @@ namespace Diverse.Tests
         {
             Fuzzer fuzzer = new Fuzzer(438709238);
 
-            string randomString = fuzzer.GenerateString();
+            string randomString = fuzzer.GenerateAdjective();
 
             Check.That(randomString).IsEqualTo("upbeat");
         }
@@ -20,13 +20,13 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_generate_a_positive_adjective()
         {
-            Fuzzer fuzzer = new Fuzzer(43930430);
+            var fuzzer = new Fuzzer(43930430);
 
-            List<string> positiveAdjectives = new List<string>();
+            var positiveAdjectives = new List<string>();
 
-            for(int i = 0; i < 3; i++)
+            for(var i = 0; i < 3; i++)
             {
-                positiveAdjectives.Add(fuzzer.GenerateString(Feeling.Positive));
+                positiveAdjectives.Add(fuzzer.GenerateAdjective(Feeling.Positive));
             }
 
             Check.That(positiveAdjectives).ContainsExactly("gifted", "sharp", "peaceful");

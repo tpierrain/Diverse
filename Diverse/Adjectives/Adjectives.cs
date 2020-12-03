@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Diverse
 {
+    /// <summary>
+    /// Contains all the adjectives used by the library.
+    /// </summary>
     public static class Adjectives
     {
         /// <summary>
