@@ -19,6 +19,11 @@ namespace Diverse
 
         private IFuzzNumbers _numberFuzzer;
 
+        /// <summary>
+        /// Instantiates a <see cref="PersonFuzzer"/>.
+        /// </summary>
+        /// <param name="fuzzerPrimitives">Instance of <see cref="IProvideCorePrimitivesToFuzzer"/> to use.</param>
+        /// <param name="numberFuzzer">Instance of <see cref="IFuzzNumbers"/> to use.</param>
         public PersonFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives, IFuzzNumbers numberFuzzer)
         {
             _fuzzerPrimitives = fuzzerPrimitives;

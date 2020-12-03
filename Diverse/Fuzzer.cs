@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -17,6 +16,7 @@ namespace Diverse
         private readonly IFuzzStrings _stringFuzzer;
         private readonly IFuzzNumbers _numberFuzzer;
         private readonly IFuzzPersons _personFuzzer;
+        private readonly DateTimeFuzzer _dateTimeFuzzer;
 
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
@@ -69,9 +69,11 @@ namespace Diverse
 
             LogSeedAndTestInformations(seed.Value, seedWasProvided, name);
 
+            // Instantiates implementation types for the various Fuzzer
             _stringFuzzer = new StringFuzzer(this);
             _numberFuzzer = new NumberFuzzer(this);
             _personFuzzer = new PersonFuzzer(this, _numberFuzzer);
+            _dateTimeFuzzer = new DateTimeFuzzer(this, _numberFuzzer);
         }
 
         /// <summary>
@@ -154,7 +156,6 @@ namespace Diverse
             return _personFuzzer.GenerateEMail(firstName, lastName);
         }
 
-
         /// <summary>
         /// Generates a password following some common rules asked on the internet.
         /// </summary>
@@ -229,7 +230,6 @@ namespace Diverse
             return $"fuzzer{index}";
         }
 
-
         /// <summary>
         /// Flips a coin.
         /// </summary>
@@ -239,14 +239,13 @@ namespace Diverse
             return InternalRandom.Next(0, 2) == 1;
         }
 
-
         /// <summary>
         /// Generates a random <see cref="DateTime"/>.
         /// </summary>
         /// <returns>A <see cref="DateTime"/> value generated randomly.</returns>
         public DateTime GenerateDateTime()
         {
-            return GenerateDateTimeBetween(DateTime.MinValue, DateTime.MaxValue);
+            return _dateTimeFuzzer.GenerateDateTime();
         }
 
         /// <summary>
@@ -257,15 +256,7 @@ namespace Diverse
         /// <returns>A <see cref="DateTime"/> instance between the min and the max inclusive boundaries.</returns>
         public DateTime GenerateDateTimeBetween(DateTime minValue, DateTime maxValue)
         {
-            var nbDays = (maxValue - minValue).Days;
-
-            var midInterval = (minValue.AddDays(nbDays/2));
-
-            var maxDaysAllowedBefore = (midInterval - minValue).Days;
-            var maxDaysAllowedAfter = (maxValue - midInterval).Days;
-            var maxDays = Math.Min(maxDaysAllowedBefore, maxDaysAllowedAfter);
-
-            return midInterval.AddDays(GenerateInteger(-maxDays, maxDays));
+            return _dateTimeFuzzer.GenerateDateTimeBetween(minValue, maxValue);
         }
 
         /// <summary>
@@ -276,48 +267,7 @@ namespace Diverse
         /// <returns>A <see cref="DateTime"/> instance between the min and the max inclusive boundaries.</returns>
         public DateTime GenerateDateTimeBetween(string minDate, string maxDate)
         {
-            var minDateOk = DateTime.TryParseExact(minDate, "yyyy/MM/dd", null, DateTimeStyles.None,  out var minDateTime);
-            var maxDateOk = DateTime.TryParseExact(maxDate, "yyyy/MM/dd", null, DateTimeStyles.None, out var maxDateTime);
-
-            if (!minDateOk || !maxDateOk)
-            {
-                ThrowProperArgumentException(minDateOk, minDate, maxDateOk, maxDate);
-            }
-
-            return GenerateDateTimeBetween(minDateTime, maxDateTime);
-        }
-
-        private static void ThrowProperArgumentException(bool minDateOk, string minDate, bool maxDateOk, string maxDate)
-        {
-            string message;
-
-            if (!minDateOk && !maxDateOk)
-            {
-                message =
-                    $"Min and Max dates are missing or incorrect. minDate: '{minDate}' maxDate: '{maxDate}'. minDate and maxDate should follow the pattern: yyyy/MM/dd";
-            }
-            else
-            {
-                var paramName = string.Empty;
-                var incorrectValue = string.Empty;
-
-                if (!minDateOk)
-                {
-                    paramName = nameof(minDate);
-                    incorrectValue = minDate;
-                }
-
-                if (!maxDateOk)
-                {
-                    paramName = nameof(maxDate);
-                    incorrectValue = maxDate;
-                }
-
-                message =
-                    $"{paramName} is missing or incorrect. {paramName}: '{incorrectValue}'. {paramName} should follow the pattern: yyyy/MM/dd";
-            }
-
-            throw new ArgumentException(message);
+            return _dateTimeFuzzer.GenerateDateTimeBetween(minDate, maxDate);
         }
 
         /// <summary>

@@ -29,6 +29,40 @@
             Negative <see cref="T:Diverse.Feeling"/>.
             </summary>
         </member>
+        <member name="T:Diverse.DateTimeFuzzer">
+            <summary>
+            Fuzz <see cref="T:System.DateTime"/>.
+            </summary>
+        </member>
+        <member name="M:Diverse.DateTimeFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzNumbers)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.DateTimeFuzzer"/>.
+            </summary>
+            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
+        </member>
+        <member name="M:Diverse.DateTimeFuzzer.GenerateDateTime">
+            <summary>
+            Generates a random <see cref="T:System.DateTime"/>.
+            </summary>
+            <returns>A <see cref="T:System.DateTime"/> value generated randomly.</returns>
+        </member>
+        <member name="M:Diverse.DateTimeFuzzer.GenerateDateTimeBetween(System.DateTime,System.DateTime)">
+            <summary>
+            Generates a random <see cref="T:System.DateTime"/> in a Time Range.
+            </summary>
+            <param name="minValue">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation.</param>
+            <param name="maxValue">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation.</param>
+            <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
+        </member>
+        <member name="M:Diverse.DateTimeFuzzer.GenerateDateTimeBetween(System.String,System.String)">
+            <summary>
+            Generates a random <see cref="T:System.DateTime"/> in a Time Range.
+            </summary>
+            <param name="minDate">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+            <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
+            <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
+        </member>
         <member name="T:Diverse.Fuzzer">
             <summary>
             Allows to generate lots of combination of things. <see cref="T:Diverse.Fuzzer"/> are very useful to detect hard coded values in our implementations.
@@ -129,6 +163,12 @@
             <param name="firstName">The (optional) first name for this Email</param>
             <param name="lastName">The (option) last name for this Email.</param>
             <returns>A random Email.</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GeneratePassword(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Boolean})">
+            <summary>
+            Generates a password following some common rules asked on the internet.
+            </summary>
+            <returns>The generated password</returns>
         </member>
         <member name="M:Diverse.Fuzzer.HeadsOrTails">
             <summary>
@@ -279,6 +319,12 @@
             <param name="lastName">The (option) last name for this Email.</param>
             <returns>A random Email.</returns>
         </member>
+        <member name="M:Diverse.IFuzzPersons.GeneratePassword(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Boolean})">
+            <summary>
+            Generates a password following some common rules asked on the internet.
+            </summary>
+            <returns>The generated password</returns>
+        </member>
         <member name="T:Diverse.IFuzzStrings">
             <summary>
             Fuzz numbers.
@@ -312,6 +358,12 @@
             Fuzz numbers.
             </summary>
         </member>
+        <member name="M:Diverse.NumberFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.NumberFuzzer"/>.
+            </summary>
+            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+        </member>
         <member name="M:Diverse.NumberFuzzer.GenerateInteger(System.Int32,System.Int32)">
             <summary>
             Generates a random integer value between a min (inclusive) and a max (exclusive) value.
@@ -343,6 +395,13 @@
             <summary>
             Fuzz <see cref="T:Diverse.Person"/>.
             </summary>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzNumbers)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.PersonFuzzer"/>.
+            </summary>
+            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
         </member>
         <member name="M:Diverse.PersonFuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
             <summary>
@@ -577,6 +636,19 @@
             <summary>
             Fuzz <see cref="T:System.String"/> values.
             </summary>
+        </member>
+        <member name="M:Diverse.StringFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.StringFuzzer"/>.
+            </summary>
+            <param name="fuzzerPrimitives"></param>
+        </member>
+        <member name="M:Diverse.StringFuzzer.GenerateAdjective(System.Nullable{Diverse.Feeling})">
+            <summary>
+            Generates a random adjective based on a feeling.
+            </summary>
+            <param name="feeling">The expected feeling of the adjective</param>
+            <returns>An adjective based on a particular feeling or random one if not provided</returns>
         </member>
     </members>
 </doc>

@@ -10,16 +10,20 @@ namespace Diverse
     {
         private readonly IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
 
+        /// <summary>
+        /// Instantiates a <see cref="StringFuzzer"/>.
+        /// </summary>
+        /// <param name="fuzzerPrimitives"></param>
         public StringFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives)
         {
             _fuzzerPrimitives = fuzzerPrimitives;
         }
 
-        private bool HeadsOrTails()
-        {
-            return _fuzzerPrimitives.Random.Next(0, 2) == 1;
-        }
-
+        /// <summary>
+        /// Generates a random adjective based on a feeling.
+        /// </summary>
+        /// <param name="feeling">The expected feeling of the adjective</param>
+        /// <returns>An adjective based on a particular feeling or random one if not provided</returns>
         public string GenerateAdjective(Feeling? feeling = null)
         {
             string[] adjectives;
@@ -30,7 +34,7 @@ namespace Diverse
             }
             else
             {
-                bool isPositive = HeadsOrTails();
+                bool isPositive = _fuzzerPrimitives.HeadsOrTails();
                 feeling = isPositive ? Feeling.Positive : Feeling.Negative;
                 adjectives = Adjectives.PerFeeling[feeling.Value];
             }

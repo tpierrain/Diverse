@@ -9,6 +9,10 @@ namespace Diverse
     {
         private readonly IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
 
+        /// <summary>
+        /// Instantiates a <see cref="NumberFuzzer"/>.
+        /// </summary>
+        /// <param name="fuzzerPrimitives">Instance of <see cref="IProvideCorePrimitivesToFuzzer"/> to use.</param>
         public NumberFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives)
         {
             _fuzzerPrimitives = fuzzerPrimitives;
