@@ -444,20 +444,45 @@ namespace Diverse
             var minDateOk = DateTime.TryParseExact(minDate, "yyyy/MM/dd", null, DateTimeStyles.None,  out var minDateTime);
             var maxDateOk = DateTime.TryParseExact(maxDate, "yyyy/MM/dd", null, DateTimeStyles.None, out var maxDateTime);
 
-            //if (!minDateOk || !maxDateOk)
-            //{
-            //    var paramName = string.Empty;
-            //    var message = string.Empty;
-
-            //    if (!minDateOk)
-            //    {
-
-            //    }
-            //    throw new ArgumentException(message, paramName);
-            //}
-
+            if (!minDateOk || !maxDateOk)
+            {
+                ThrowProperArgumentException(minDateOk, minDate, maxDateOk, maxDate);
+            }
 
             return GenerateDateTimeBetween(minDateTime, maxDateTime);
+        }
+
+        private static void ThrowProperArgumentException(bool minDateOk, string minDate, bool maxDateOk, string maxDate)
+        {
+            string message;
+
+            if (!minDateOk && !maxDateOk)
+            {
+                message =
+                    $"Min and Max dates are missing or incorrect. minDate: '{minDate}' maxDate: '{maxDate}'. minDate and maxDate should follow the pattern: yyyy/MM/dd";
+            }
+            else
+            {
+                var paramName = string.Empty;
+                var incorrectValue = string.Empty;
+
+                if (!minDateOk)
+                {
+                    paramName = nameof(minDate);
+                    incorrectValue = minDate;
+                }
+
+                if (!maxDateOk)
+                {
+                    paramName = nameof(maxDate);
+                    incorrectValue = maxDate;
+                }
+
+                message =
+                    $"{paramName} is missing or incorrect. {paramName}: '{incorrectValue}'. {paramName} should follow the pattern: yyyy/MM/dd";
+            }
+
+            throw new ArgumentException(message);
         }
     }
 }
