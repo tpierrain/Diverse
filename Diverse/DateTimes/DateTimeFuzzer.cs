@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Diverse
+namespace Diverse.DateTimes
 {
     /// <summary>
     /// Fuzz <see cref="DateTime"/>.

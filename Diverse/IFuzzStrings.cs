@@ -1,3 +1,5 @@
+using Diverse.Strings;
+
 namespace Diverse
 {
     /// <summary>

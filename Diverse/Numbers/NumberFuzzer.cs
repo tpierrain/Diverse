@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Diverse
+namespace Diverse.Numbers
 {
     /// <summary>
     /// Fuzz numbers.

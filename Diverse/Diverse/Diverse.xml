@@ -4,50 +4,25 @@
         <name>Diverse</name>
     </assembly>
     <members>
-        <member name="T:Diverse.Adjectives">
-            <summary>
-            Contains all the adjectives used by the library.
-            </summary>
-        </member>
-        <member name="P:Diverse.Adjectives.PerFeeling">
-            <summary>
-            Gets a dictionary of all the adjective per <see cref="T:Diverse.Feeling"/>.
-            </summary>
-        </member>
-        <member name="T:Diverse.Feeling">
-            <summary>
-            Feeling.
-            </summary>
-        </member>
-        <member name="F:Diverse.Feeling.Positive">
-            <summary>
-            Positive <see cref="T:Diverse.Feeling"/>.
-            </summary>
-        </member>
-        <member name="F:Diverse.Feeling.Negative">
-            <summary>
-            Negative <see cref="T:Diverse.Feeling"/>.
-            </summary>
-        </member>
-        <member name="T:Diverse.DateTimeFuzzer">
+        <member name="T:Diverse.DateTimes.DateTimeFuzzer">
             <summary>
             Fuzz <see cref="T:System.DateTime"/>.
             </summary>
         </member>
-        <member name="M:Diverse.DateTimeFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzNumbers)">
+        <member name="M:Diverse.DateTimes.DateTimeFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzNumbers)">
             <summary>
-            Instantiates a <see cref="T:Diverse.DateTimeFuzzer"/>.
+            Instantiates a <see cref="T:Diverse.DateTimes.DateTimeFuzzer"/>.
             </summary>
             <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
             <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
         </member>
-        <member name="M:Diverse.DateTimeFuzzer.GenerateDateTime">
+        <member name="M:Diverse.DateTimes.DateTimeFuzzer.GenerateDateTime">
             <summary>
             Generates a random <see cref="T:System.DateTime"/>.
             </summary>
             <returns>A <see cref="T:System.DateTime"/> value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.DateTimeFuzzer.GenerateDateTimeBetween(System.DateTime,System.DateTime)">
+        <member name="M:Diverse.DateTimes.DateTimeFuzzer.GenerateDateTimeBetween(System.DateTime,System.DateTime)">
             <summary>
             Generates a random <see cref="T:System.DateTime"/> in a Time Range.
             </summary>
@@ -55,13 +30,25 @@
             <param name="maxValue">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
         </member>
-        <member name="M:Diverse.DateTimeFuzzer.GenerateDateTimeBetween(System.String,System.String)">
+        <member name="M:Diverse.DateTimes.DateTimeFuzzer.GenerateDateTimeBetween(System.String,System.String)">
             <summary>
             Generates a random <see cref="T:System.DateTime"/> in a Time Range.
             </summary>
             <param name="minDate">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
+        </member>
+        <member name="T:Diverse.DateTimes.TypeFuzzer">
+            <summary>
+            Fuzz instance of Types.
+            </summary>
+        </member>
+        <member name="M:Diverse.DateTimes.TypeFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzPersons)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.DateTimes.TypeFuzzer"/>.
+            </summary>
+            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="personFuzzer">Instance of <see cref="T:Diverse.IFuzzPersons"/> to use.</param>
         </member>
         <member name="T:Diverse.Fuzzer">
             <summary>
@@ -198,7 +185,7 @@
             <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
         </member>
-        <member name="M:Diverse.Fuzzer.GenerateAdjective(System.Nullable{Diverse.Feeling})">
+        <member name="M:Diverse.Fuzzer.GenerateAdjective(System.Nullable{Diverse.Strings.Feeling})">
             <summary>
             Generates a random adjective based on a feeling.
             </summary>
@@ -330,7 +317,7 @@
             Fuzz numbers.
             </summary>
         </member>
-        <member name="M:Diverse.IFuzzStrings.GenerateAdjective(System.Nullable{Diverse.Feeling})">
+        <member name="M:Diverse.IFuzzStrings.GenerateAdjective(System.Nullable{Diverse.Strings.Feeling})">
             <summary>
             Generates a random adjective based on a feeling.
             </summary>
@@ -364,18 +351,18 @@
             </summary>
             <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
-        <member name="T:Diverse.NumberFuzzer">
+        <member name="T:Diverse.Numbers.NumberFuzzer">
             <summary>
             Fuzz numbers.
             </summary>
         </member>
-        <member name="M:Diverse.NumberFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer)">
+        <member name="M:Diverse.Numbers.NumberFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer)">
             <summary>
-            Instantiates a <see cref="T:Diverse.NumberFuzzer"/>.
+            Instantiates a <see cref="T:Diverse.Numbers.NumberFuzzer"/>.
             </summary>
             <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
         </member>
-        <member name="M:Diverse.NumberFuzzer.GenerateInteger(System.Int32,System.Int32)">
+        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateInteger(System.Int32,System.Int32)">
             <summary>
             Generates a random integer value between a min (inclusive) and a max (exclusive) value.
             </summary>
@@ -383,71 +370,24 @@
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>An integer value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.NumberFuzzer.GenerateInteger">
+        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateInteger">
             <summary>
             Generates a random integer value.
             </summary>
             <returns>An integer value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.NumberFuzzer.GeneratePositiveInteger(System.Nullable{System.Int32})">
+        <member name="M:Diverse.Numbers.NumberFuzzer.GeneratePositiveInteger(System.Nullable{System.Int32})">
             <summary>
             Generates a random positive integer value.
             </summary>
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A positive integer value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.NumberFuzzer.GeneratePositiveDecimal">
+        <member name="M:Diverse.Numbers.NumberFuzzer.GeneratePositiveDecimal">
             <summary>
             Generates a random positive decimal value.
             </summary>
             <returns>A positive decimal value generated randomly.</returns>
-        </member>
-        <member name="T:Diverse.PersonFuzzer">
-            <summary>
-            Fuzz <see cref="T:Diverse.Person"/>.
-            </summary>
-        </member>
-        <member name="M:Diverse.PersonFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzNumbers)">
-            <summary>
-            Instantiates a <see cref="T:Diverse.PersonFuzzer"/>.
-            </summary>
-            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
-            <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
-        </member>
-        <member name="M:Diverse.PersonFuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
-            <summary>
-            Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
-            </summary>
-            <param name="gender">The <see cref="T:Diverse.Gender"/> to be used as indication (optional).</param>
-            <returns>A 'Diverse' first name.</returns>
-        </member>
-        <member name="M:Diverse.PersonFuzzer.GenerateLastName(System.String)">
-            <summary>
-            Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
-            </summary>
-            <param name="firstName">The first name of this person.</param>
-            <returns>A 'Diverse' last name.</returns>
-        </member>
-        <member name="M:Diverse.PersonFuzzer.GeneratePerson(System.Nullable{Diverse.Gender})">
-            <summary>
-            Generates a 'Diverse' <see cref="T:Diverse.Person"/> (i.e. from all around the world and different cultures). 
-            </summary>
-            <param name="gender">The (optional) <see cref="T:Diverse.Gender"/> of this <see cref="T:Diverse.Person"/></param>
-            <returns>A 'Diverse' <see cref="T:Diverse.Person"/> instance.</returns>
-        </member>
-        <member name="M:Diverse.PersonFuzzer.GenerateEMail(System.String,System.String)">
-            <summary>
-            Generates a random Email.
-            </summary>
-            <param name="firstName">The (optional) first name for this Email</param>
-            <param name="lastName">The (option) last name for this Email.</param>
-            <returns>A random Email.</returns>
-        </member>
-        <member name="M:Diverse.PersonFuzzer.GeneratePassword(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Boolean})">
-            <summary>
-            Generates a password following some common rules asked on the internet.
-            </summary>
-            <returns>The generated password</returns>
         </member>
         <member name="T:Diverse.ContextualizedFirstName">
             <summary>
@@ -643,35 +583,95 @@
             </summary>
             <returns>The current string./</returns>
         </member>
-        <member name="T:Diverse.StringFuzzer">
+        <member name="T:Diverse.PersonFuzzer">
+            <summary>
+            Fuzz <see cref="T:Diverse.Person"/>.
+            </summary>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzNumbers)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.PersonFuzzer"/>.
+            </summary>
+            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
+            <summary>
+            Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
+            </summary>
+            <param name="gender">The <see cref="T:Diverse.Gender"/> to be used as indication (optional).</param>
+            <returns>A 'Diverse' first name.</returns>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GenerateLastName(System.String)">
+            <summary>
+            Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
+            </summary>
+            <param name="firstName">The first name of this person.</param>
+            <returns>A 'Diverse' last name.</returns>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GeneratePerson(System.Nullable{Diverse.Gender})">
+            <summary>
+            Generates a 'Diverse' <see cref="T:Diverse.Person"/> (i.e. from all around the world and different cultures). 
+            </summary>
+            <param name="gender">The (optional) <see cref="T:Diverse.Gender"/> of this <see cref="T:Diverse.Person"/></param>
+            <returns>A 'Diverse' <see cref="T:Diverse.Person"/> instance.</returns>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GenerateEMail(System.String,System.String)">
+            <summary>
+            Generates a random Email.
+            </summary>
+            <param name="firstName">The (optional) first name for this Email</param>
+            <param name="lastName">The (option) last name for this Email.</param>
+            <returns>A random Email.</returns>
+        </member>
+        <member name="M:Diverse.PersonFuzzer.GeneratePassword(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Boolean})">
+            <summary>
+            Generates a password following some common rules asked on the internet.
+            </summary>
+            <returns>The generated password</returns>
+        </member>
+        <member name="T:Diverse.Strings.Adjectives">
+            <summary>
+            Contains all the adjectives used by the library.
+            </summary>
+        </member>
+        <member name="P:Diverse.Strings.Adjectives.PerFeeling">
+            <summary>
+            Gets a dictionary of all the adjective per <see cref="T:Diverse.Strings.Feeling"/>.
+            </summary>
+        </member>
+        <member name="T:Diverse.Strings.Feeling">
+            <summary>
+            Feeling.
+            </summary>
+        </member>
+        <member name="F:Diverse.Strings.Feeling.Positive">
+            <summary>
+            Positive <see cref="T:Diverse.Strings.Feeling"/>.
+            </summary>
+        </member>
+        <member name="F:Diverse.Strings.Feeling.Negative">
+            <summary>
+            Negative <see cref="T:Diverse.Strings.Feeling"/>.
+            </summary>
+        </member>
+        <member name="T:Diverse.Strings.StringFuzzer">
             <summary>
             Fuzz <see cref="T:System.String"/> values.
             </summary>
         </member>
-        <member name="M:Diverse.StringFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer)">
+        <member name="M:Diverse.Strings.StringFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer)">
             <summary>
-            Instantiates a <see cref="T:Diverse.StringFuzzer"/>.
+            Instantiates a <see cref="T:Diverse.Strings.StringFuzzer"/>.
             </summary>
             <param name="fuzzerPrimitives"></param>
         </member>
-        <member name="M:Diverse.StringFuzzer.GenerateAdjective(System.Nullable{Diverse.Feeling})">
+        <member name="M:Diverse.Strings.StringFuzzer.GenerateAdjective(System.Nullable{Diverse.Strings.Feeling})">
             <summary>
             Generates a random adjective based on a feeling.
             </summary>
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
-        </member>
-        <member name="T:Diverse.TypeFuzzer">
-            <summary>
-            Fuzz instance of Types.
-            </summary>
-        </member>
-        <member name="M:Diverse.TypeFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzPersons)">
-            <summary>
-            Instantiates a <see cref="T:Diverse.TypeFuzzer"/>.
-            </summary>
-            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
-            <param name="personFuzzer">Instance of <see cref="T:Diverse.IFuzzPersons"/> to use.</param>
         </member>
     </members>
 </doc>

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Diverse.Strings;
 using NFluent;
 using NUnit.Framework;
 

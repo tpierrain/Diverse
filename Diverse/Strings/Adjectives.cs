@@ -1,7 +1,7 @@
 
 using System.Collections.Generic;
 
-namespace Diverse
+namespace Diverse.Strings
 {
     /// <summary>
     /// Contains all the adjectives used by the library.

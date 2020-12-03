@@ -1,7 +1,4 @@
-using System;
-using System.Linq;
-
-namespace Diverse
+namespace Diverse.Strings
 {
     /// <summary>
     /// Fuzz <see cref="string"/> values.

@@ -2,6 +2,9 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Diverse.DateTimes;
+using Diverse.Numbers;
+using Diverse.Strings;
 
 namespace Diverse
 {
