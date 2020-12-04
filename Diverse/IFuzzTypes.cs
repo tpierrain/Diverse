@@ -11,7 +11,7 @@ namespace Diverse
         /// Generates an instance of a type T.
         /// </summary>
         /// <returns>An instance of type T with some fuzzed properties.</returns>
-        T GenerateInstance<T>();
+        T GenerateInstanceOf<T>();
 
         /// <summary>
         /// Generates an instance of an <see cref="Enum"/> type.

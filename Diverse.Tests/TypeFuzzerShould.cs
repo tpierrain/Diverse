@@ -26,7 +26,7 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer(953064492);
 
-            var player = fuzzer.GenerateInstance<ChessPlayer>();
+            var player = fuzzer.GenerateInstanceOf<ChessPlayer>();
 
             Check.That(player.LastName).IsNotEmpty();
             Check.That(player.FirstName).IsNotEmpty();
@@ -39,7 +39,7 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer(23984398);
 
-            var player = fuzzer.GenerateInstance<Player>();
+            var player = fuzzer.GenerateInstanceOf<Player>();
 
             Check.That(player.LastName).IsNotEmpty();
             Check.That(player.FirstName).IsNotEmpty();

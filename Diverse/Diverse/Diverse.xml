@@ -329,7 +329,7 @@
             Fuzz instance of Types.
             </summary>
         </member>
-        <member name="M:Diverse.IFuzzTypes.GenerateInstance``1">
+        <member name="M:Diverse.IFuzzTypes.GenerateInstanceOf``1">
             <summary>
             Generates an instance of a type T.
             </summary>

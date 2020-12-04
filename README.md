@@ -97,7 +97,7 @@ var dateTimeInRange = fuzzer.GenerateDateTimeBetween("1974/06/08", "2020/11/01")
 var otherDateTimeInRange = fuzzer.GenerateDateTimeBetween(new DateTime(1974,6,8), new DateTime(2020, 11, 1));
 
 // or any type actually (either, class, enum)
-var player = fuzzer.GenerateInstance<ChessPlayer>();
+var player = fuzzer.GenerateInstanceOf<ChessPlayer>();
 
 // Anything you need for your test cases actually
 // Diverse Fuzzers are easily extensible ;-)

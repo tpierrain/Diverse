@@ -25,7 +25,7 @@ namespace Diverse.DateTimes
         /// Generates an instance of a type T.
         /// </summary>
         /// <returns>An instance of type T with some fuzzed properties.</returns>
-        public T GenerateInstance<T>()
+        public T GenerateInstanceOf<T>()
         {
             var genericType = typeof(T);
 

@@ -301,9 +301,9 @@ namespace Diverse
         /// Generates an instance of a type T.
         /// </summary>
         /// <returns>An instance of type T with some fuzzed properties.</returns>
-        public T GenerateInstance<T>()
+        public T GenerateInstanceOf<T>()
         {
-            return _typeFuzzer.GenerateInstance<T>();
+            return _typeFuzzer.GenerateInstanceOf<T>();
         }
 
         /// <summary>
