@@ -82,7 +82,7 @@ But it will soon probably do the second part too.
 var age = fuzzer.GenerateInteger(minValue: 17, maxValue: 54);
 
 // speed up the creation of something relatively 'complicated' and stay *intent driven*
-// with random but coherent values
+// with random but coherent values (here, the Diverse Person)
 var person = fuzzer.GeneratePerson(); 
 
 // or other specific stuffs
@@ -95,6 +95,9 @@ var ingredient = fuzzer.GenerateEnum<Ingredient>();
 var dateTime = fuzzer.GenerateDateTime();
 var dateTimeInRange = fuzzer.GenerateDateTimeBetween("1974/06/08", "2020/11/01");
 var otherDateTimeInRange = fuzzer.GenerateDateTimeBetween(new DateTime(1974,6,8), new DateTime(2020, 11, 1));
+
+// or any type actually (either, class, enum)
+var player = fuzzer.GenerateInstance<ChessPlayer>();
 
 // Anything you need for your test cases actually
 // Diverse Fuzzers are easily extensible ;-)
