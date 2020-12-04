@@ -11,7 +11,7 @@ namespace Diverse.Tests
     /// All about the primitives related to password generation.
     /// </summary>
     [TestFixture]
-    public class FuzzerWithPasswordShould
+    public class PersonFuzzerWithPasswordShould
     {
         [TestCase(500)]
         public void GeneratePasswords_of_various_sizes(int attempts)

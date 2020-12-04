@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Diverse.Tests
 {
     [TestFixture]
-    public class FuzzerWithStringsShould
+    public class StringFuzzerShould
     {
         [Test]
         public void Be_able_to_generate_a_random_adjective()

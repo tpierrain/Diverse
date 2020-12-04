@@ -9,7 +9,7 @@ namespace Diverse.Tests
     /// All about the primitives related to <see cref="Person"/>, Email etc.
     /// </summary>
     [TestFixture]
-    public class FuzzerWithPersonsShould
+    public class PersonFuzzerShould
     {
         [Test]
         public void Be_able_to_Fuzz_FirstNames_for_male()

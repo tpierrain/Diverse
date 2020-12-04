@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Diverse.Tests
 {
     [TestFixture]
-    public class FuzzerWithTypesShould
+    public class TypeFuzzerShould
     {
         [Test]
         public void Be_able_to_generate_random_enum_values()

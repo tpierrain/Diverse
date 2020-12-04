@@ -12,11 +12,10 @@ namespace Diverse
     {
         private readonly IFuzz _fuzzer;
 
-        private static char[] _specialCharacters = "+-_$%£&!?*$€'|[]()".ToCharArray();
-        private static char[] _upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-        private static char[] _lowerCharacters = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
-        private static char[] _numericCharacters = "0123456789".ToCharArray();
-
+        private static readonly char[] _specialCharacters = "+-_$%£&!?*$€'|[]()".ToCharArray();
+        private static readonly char[] _upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+        private static readonly char[] _lowerCharacters = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+        private static readonly char[] _numericCharacters = "0123456789".ToCharArray();
 
         /// <summary>
         /// Instantiates a <see cref="PersonFuzzer"/>.
