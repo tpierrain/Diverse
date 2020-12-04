@@ -1,3 +1,4 @@
+using Diverse.Tests.Utils;
 using NFluent;
 using NUnit.Framework;
 
@@ -21,29 +22,28 @@ namespace Diverse.Tests
         }
 
         [Test]
-        public void Be_able_to_generate_a_diverse_firstname_for_any_object_containing_a_firstname_property()
+        public void Be_able_to_generate_diverse_values_for_every_property_of_an_object_with_getters_only_and_protected_base_class_constructor_involved()
         {
-            var fuzzer = new Fuzzer(23984398);
+            var fuzzer = new Fuzzer(953064492);
 
-            var dummyClass = fuzzer.GenerateInstance<Player>();
+            var player = fuzzer.GenerateInstance<ChessPlayer>();
 
-            Check.That(dummyClass.FirstName).IsEqualTo("Kevin");
+            Check.That(player.LastName).IsNotEmpty();
+            Check.That(player.FirstName).IsNotEmpty();
+            Check.ThatEnum(player.ChessLevel).IsEqualTo(ChessLevel.Expert);
+            Check.That(player.Age).IsInstanceOf<int>().Which.IsNotEqualTo(0);
         }
 
         [Test]
-        public void Be_able_to_generate_a_diverse_lastname_for_any_object_containing_a_lastname_property()
+        public void Be_able_to_generate_diverse_values_for_every_property_of_an_object_with_protected_constructor()
         {
             var fuzzer = new Fuzzer(23984398);
 
-            var dummyClass = fuzzer.GenerateInstance<Player>();
+            var player = fuzzer.GenerateInstance<Player>();
 
-            Check.That(dummyClass.LastName).IsEqualTo("Fantasia");
+            Check.That(player.LastName).IsNotEmpty();
+            Check.That(player.FirstName).IsNotEmpty();
+            Check.That(player.Age).IsInstanceOf<int>().Which.IsNotEqualTo(0);
         }
-    }
-
-    internal class Player
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
     }
 }

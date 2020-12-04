@@ -78,7 +78,7 @@ namespace Diverse
             _numberFuzzer = new NumberFuzzer(this);
             _personFuzzer = new PersonFuzzer(this, _numberFuzzer);
             _dateTimeFuzzer = new DateTimeFuzzer(this, _numberFuzzer);
-            _typeFuzzer = new TypeFuzzer(this, _personFuzzer);
+            _typeFuzzer = new TypeFuzzer(this);
         }
 
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)

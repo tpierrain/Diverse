@@ -10,18 +10,15 @@ namespace Diverse.DateTimes
     /// </summary>
     public class TypeFuzzer : IFuzzTypes
     {
-        private readonly IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
-        private readonly IFuzzPersons _personFuzzer;
+        private readonly IFuzz _fuzzer;
 
         /// <summary>
         /// Instantiates a <see cref="TypeFuzzer"/>.
         /// </summary>
-        /// <param name="fuzzerPrimitives">Instance of <see cref="IProvideCorePrimitivesToFuzzer"/> to use.</param>
-        /// <param name="personFuzzer">Instance of <see cref="IFuzzPersons"/> to use.</param>
-        public TypeFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives, IFuzzPersons personFuzzer)
+        /// <param name="fuzzer">Instance of <see cref="IProvideCorePrimitivesToFuzzer"/> to use.</param>
+        public TypeFuzzer(IFuzz fuzzer)
         {
-            _fuzzerPrimitives = fuzzerPrimitives;
-            _personFuzzer = personFuzzer;
+            _fuzzer = fuzzer;
         }
 
         /// <summary>
@@ -31,16 +28,65 @@ namespace Diverse.DateTimes
         public T GenerateInstance<T>()
         {
             var genericType = typeof(T);
-            var instance = (T)Activator.CreateInstance(genericType);
 
-            var stringProperties = GetWritableStringProperties(genericType);
-            
-            foreach (var stringPropertyInfo in stringProperties)
+            var constructors = ((System.Reflection.TypeInfo) genericType).DeclaredConstructors;
+            var constructor = GetConstructorWithBiggestNumberOfParameters<T>(constructors);
+
+            var constructorParameters = PrepareFuzzedParametersForThisConstructor<T>(constructor);
+            var instance = constructor.Invoke(constructorParameters);
+
+            return (T)instance;
+        }
+
+        private object[] PrepareFuzzedParametersForThisConstructor<T>(ConstructorInfo constructor)
+        {
+            var parameters = new List<object>();
+            var parameterInfos = constructor.GetParameters();
+            foreach (var parameterInfo in parameterInfos)
             {
-                SetProperty<T>(instance, stringPropertyInfo);
+                var type = parameterInfo.ParameterType;
+
+                if (type.IsEnum)
+                {
+                    parameters.Add(FuzzEnumValue(type));
+                    continue;
+                }
+
+                // Default .NET types
+                parameters.Add(FuzzAnyDotNetType<T>(Type.GetTypeCode(type)));
             }
 
-            return instance;
+            return parameters.ToArray();
+        }
+
+        private object FuzzAnyDotNetType<T>(TypeCode typeCode)
+        {
+            object result;
+            switch (typeCode)
+            {
+                case TypeCode.Int32:
+                    result = _fuzzer.GenerateInteger();
+                    break;
+
+                case TypeCode.Decimal:
+                    result = _fuzzer.GeneratePositiveDecimal();
+                    break;
+
+                case TypeCode.String:
+                    result = _fuzzer.GenerateFirstName();
+                    break;
+
+                default:
+                    result = new object();
+                    break;
+            }
+
+            return result;
+        }
+
+        private static ConstructorInfo GetConstructorWithBiggestNumberOfParameters<T>(IEnumerable<ConstructorInfo> constructors)
+        {
+            return constructors.OrderByDescending(c => c.GetParameters().Length).First();
         }
 
         /// <summary>
@@ -51,7 +97,13 @@ namespace Diverse.DateTimes
         public T GenerateEnum<T>()
         {
             var enumValues = Enum.GetValues(typeof(T));
-            return (T)enumValues.GetValue(_fuzzerPrimitives.Random.Next(0, enumValues.Length));
+            return (T)enumValues.GetValue(_fuzzer.Random.Next(0, enumValues.Length));
+        }
+
+        private object FuzzEnumValue(Type enumType)
+        {
+            var enumValues = Enum.GetValues(enumType);
+            return enumValues.GetValue(_fuzzer.Random.Next(0, enumValues.Length));
         }
 
         private static IEnumerable<PropertyInfo> GetWritableStringProperties(Type genericType)
@@ -61,14 +113,14 @@ namespace Diverse.DateTimes
 
         private void SetProperty<T>(T instance, PropertyInfo stringPropertyInfo)
         {
-            var firstName = _personFuzzer.GenerateFirstName();
+            var firstName = _fuzzer.GenerateFirstName();
             if(stringPropertyInfo.Name.Contains("FirstName"))
             {
                 stringPropertyInfo.SetValue(instance, firstName);
             }
             else if(stringPropertyInfo.Name.Contains("LastName"))
             {
-                stringPropertyInfo.SetValue(instance, _personFuzzer.GenerateLastName(firstName));
+                stringPropertyInfo.SetValue(instance, _fuzzer.GenerateLastName(firstName));
             }
         }
     }
