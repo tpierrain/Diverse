@@ -1,4 +1,4 @@
-namespace Diverse.Tests
+namespace Diverse.Tests.Utils
 {
     public enum Ingredient
     {
