@@ -15,7 +15,7 @@ namespace Diverse.DateTimes
         /// <summary>
         /// Instantiates a <see cref="TypeFuzzer"/>.
         /// </summary>
-        /// <param name="fuzzer">Instance of <see cref="IProvideCorePrimitivesToFuzzer"/> to use.</param>
+        /// <param name="fuzzer">Instance of <see cref="IFuzz"/> to use.</param>
         public TypeFuzzer(IFuzz fuzzer)
         {
             _fuzzer = fuzzer;

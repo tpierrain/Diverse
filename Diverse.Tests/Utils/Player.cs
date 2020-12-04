@@ -10,7 +10,7 @@ namespace Diverse.Tests.Utils
         public int Age { get; private set; }
 
         /// <summary>
-        /// Useless contructor but interesting for our tests.
+        /// Useless constructor but interesting for our tests.
         /// </summary>
         private Player()
         {

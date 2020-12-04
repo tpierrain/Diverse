@@ -5,15 +5,15 @@ namespace Diverse.Strings
     /// </summary>
     public class StringFuzzer : IFuzzStrings
     {
-        private readonly IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
+        private readonly IFuzz _fuzzer;
 
         /// <summary>
         /// Instantiates a <see cref="StringFuzzer"/>.
         /// </summary>
-        /// <param name="fuzzerPrimitives"></param>
-        public StringFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives)
+        /// <param name="fuzzer">Instance of <see cref="IFuzz"/> to use.</param>
+        public StringFuzzer(IFuzz fuzzer)
         {
-            _fuzzerPrimitives = fuzzerPrimitives;
+            _fuzzer = fuzzer;
         }
 
         /// <summary>
@@ -25,13 +25,13 @@ namespace Diverse.Strings
         {
             if (!feeling.HasValue)
             {
-                var isPositive = _fuzzerPrimitives.HeadsOrTails();
+                var isPositive = _fuzzer.HeadsOrTails();
                 feeling = isPositive ? Feeling.Positive : Feeling.Negative;
             }
 
             var adjectives = Adjectives.PerFeeling[feeling.Value];
 
-            var randomLocalIndex = _fuzzerPrimitives.Random.Next(0, adjectives.Length);
+            var randomLocalIndex = _fuzzer.Random.Next(0, adjectives.Length);
 
             return adjectives[randomLocalIndex];
         }

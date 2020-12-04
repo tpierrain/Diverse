@@ -7,15 +7,15 @@ namespace Diverse.Numbers
     /// </summary>
     public class NumberFuzzer : IFuzzNumbers
     {
-        private readonly IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
+        private readonly IFuzz _fuzzer;
 
         /// <summary>
         /// Instantiates a <see cref="NumberFuzzer"/>.
         /// </summary>
-        /// <param name="fuzzerPrimitives">Instance of <see cref="IProvideCorePrimitivesToFuzzer"/> to use.</param>
-        public NumberFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives)
+        /// <param name="fuzzer">Instance of <see cref="IFuzz"/> to use.</param>
+        public NumberFuzzer(IFuzz fuzzer)
         {
-            _fuzzerPrimitives = fuzzerPrimitives;
+            _fuzzer = fuzzer;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Diverse.Numbers
             // Adjust the inclusiveness of the Fuzzer API to the exclusiveness of the Random API.
             maxValue = (maxValue == int.MaxValue) ? maxValue : maxValue + 1;
             
-            return _fuzzerPrimitives.Random.Next(minValue, maxValue);
+            return _fuzzer.Random.Next(minValue, maxValue);
         }
 
         /// <summary>

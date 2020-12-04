@@ -13,7 +13,7 @@
             <summary>
             Instantiates a <see cref="T:Diverse.DateTimes.DateTimeFuzzer"/>.
             </summary>
-            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
             <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
         </member>
         <member name="M:Diverse.DateTimes.DateTimeFuzzer.GenerateDateTime">
@@ -47,7 +47,7 @@
             <summary>
             Instantiates a <see cref="T:Diverse.DateTimes.TypeFuzzer"/>.
             </summary>
-            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
             <param name="personFuzzer">Instance of <see cref="T:Diverse.IFuzzPersons"/> to use.</param>
         </member>
         <member name="T:Diverse.Fuzzer">
@@ -360,7 +360,7 @@
             <summary>
             Instantiates a <see cref="T:Diverse.Numbers.NumberFuzzer"/>.
             </summary>
-            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
         </member>
         <member name="M:Diverse.Numbers.NumberFuzzer.GenerateInteger(System.Int32,System.Int32)">
             <summary>
@@ -592,7 +592,7 @@
             <summary>
             Instantiates a <see cref="T:Diverse.PersonFuzzer"/>.
             </summary>
-            <param name="fuzzerPrimitives">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
             <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
         </member>
         <member name="M:Diverse.PersonFuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
@@ -664,7 +664,7 @@
             <summary>
             Instantiates a <see cref="T:Diverse.Strings.StringFuzzer"/>.
             </summary>
-            <param name="fuzzerPrimitives"></param>
+            <param name="fuzzer"></param>
         </member>
         <member name="M:Diverse.Strings.StringFuzzer.GenerateAdjective(System.Nullable{Diverse.Strings.Feeling})">
             <summary>

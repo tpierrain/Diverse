@@ -8,19 +8,15 @@ namespace Diverse.DateTimes
     /// </summary>
     public class DateTimeFuzzer : IFuzzDatesAndTime
     {
-        private IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
+        private IFuzz _fuzzer;
         
-        private readonly IFuzzNumbers _numberFuzzer;
-
         /// <summary>
         /// Instantiates a <see cref="DateTimeFuzzer"/>.
         /// </summary>
-        /// <param name="fuzzerPrimitives">Instance of <see cref="IProvideCorePrimitivesToFuzzer"/> to use.</param>
-        /// <param name="numberFuzzer">Instance of <see cref="IFuzzNumbers"/> to use.</param>
-        public DateTimeFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives, IFuzzNumbers numberFuzzer)
+        /// <param name="fuzzer">Instance of <see cref="IFuzz"/> to use.</param>
+        public DateTimeFuzzer(IFuzz fuzzer)
         {
-            _fuzzerPrimitives = fuzzerPrimitives;
-            _numberFuzzer = numberFuzzer;
+            _fuzzer = fuzzer;
         }
 
         /// <summary>
@@ -48,7 +44,7 @@ namespace Diverse.DateTimes
             var maxDaysAllowedAfter = (maxValue - midInterval).Days;
             var maxDays = Math.Min(maxDaysAllowedBefore, maxDaysAllowedAfter);
 
-            return midInterval.AddDays(_numberFuzzer.GenerateInteger(-maxDays, maxDays));
+            return midInterval.AddDays(_fuzzer.GenerateInteger(-maxDays, maxDays));
         }
 
         /// <summary>

@@ -39,12 +39,6 @@ namespace Diverse
         Random IFuzz.Random => _internalRandom;
 
         /// <summary>
-        /// Gets a <see cref="Random"/> instance to use if you want your Fuzzer to be deterministic when providing a seed.
-        /// <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
-        /// </summary>
-        Random IProvideCorePrimitivesToFuzzer.Random => _internalRandom;
-
-        /// <summary>
         /// Gives easy access to the <see cref="IFuzz.Random"/> explicit implementation.
         /// </summary>
         private Random InternalRandom => ((IFuzz)this).Random;
@@ -76,8 +70,8 @@ namespace Diverse
             // Instantiates implementation types for the various Fuzzer
             _stringFuzzer = new StringFuzzer(this);
             _numberFuzzer = new NumberFuzzer(this);
-            _personFuzzer = new PersonFuzzer(this, _numberFuzzer);
-            _dateTimeFuzzer = new DateTimeFuzzer(this, _numberFuzzer);
+            _personFuzzer = new PersonFuzzer(this);
+            _dateTimeFuzzer = new DateTimeFuzzer(this);
             _typeFuzzer = new TypeFuzzer(this);
         }
 
@@ -303,11 +297,20 @@ namespace Diverse
 
         #region TypeFuzzer
 
+        /// <summary>
+        /// Generates an instance of a type T.
+        /// </summary>
+        /// <returns>An instance of type T with some fuzzed properties.</returns>
         public T GenerateInstance<T>()
         {
             return _typeFuzzer.GenerateInstance<T>();
         }
 
+        /// <summary>
+        /// Generates an instance of an <see cref="Enum"/> type.
+        /// </summary>
+        /// <typeparam name="T">Type of the <see cref="Enum"/></typeparam>
+        /// <returns>An random value of the specified <see cref="Enum"/> type.</returns>
         public T GenerateEnum<T>()
         {
             return _typeFuzzer.GenerateEnum<T>();

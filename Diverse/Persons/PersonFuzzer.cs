@@ -10,24 +10,21 @@ namespace Diverse
     /// </summary>
     public class PersonFuzzer : IFuzzPersons
     {
-        private readonly IProvideCorePrimitivesToFuzzer _fuzzerPrimitives;
+        private readonly IFuzz _fuzzer;
 
         private static char[] _specialCharacters = "+-_$%£&!?*$€'|[]()".ToCharArray();
         private static char[] _upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
         private static char[] _lowerCharacters = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
         private static char[] _numericCharacters = "0123456789".ToCharArray();
 
-        private IFuzzNumbers _numberFuzzer;
 
         /// <summary>
         /// Instantiates a <see cref="PersonFuzzer"/>.
         /// </summary>
-        /// <param name="fuzzerPrimitives">Instance of <see cref="IProvideCorePrimitivesToFuzzer"/> to use.</param>
-        /// <param name="numberFuzzer">Instance of <see cref="IFuzzNumbers"/> to use.</param>
-        public PersonFuzzer(IProvideCorePrimitivesToFuzzer fuzzerPrimitives, IFuzzNumbers numberFuzzer)
+        /// <param name="fuzzer">Instance of <see cref="IFuzz"/> to use.</param>
+        public PersonFuzzer(IFuzz fuzzer)
         {
-            _fuzzerPrimitives = fuzzerPrimitives;
-            _numberFuzzer = numberFuzzer;
+            _fuzzer = fuzzer;
         }
 
         /// <summary>
@@ -40,7 +37,7 @@ namespace Diverse
             string[] firstNameCandidates;
             if (gender == null)
             {
-                var isFemale = _fuzzerPrimitives.HeadsOrTails();
+                var isFemale = _fuzzer.HeadsOrTails();
                 firstNameCandidates = isFemale ? Female.FirstNames : Male.FirstNames;
             }
             else
@@ -48,7 +45,7 @@ namespace Diverse
                 firstNameCandidates = gender == Gender.Female ? Female.FirstNames : Male.FirstNames;
             }
 
-            var randomLocaleIndex = _fuzzerPrimitives.Random.Next(0, firstNameCandidates.Length);
+            var randomLocaleIndex = _fuzzer.Random.Next(0, firstNameCandidates.Length);
 
             return firstNameCandidates[randomLocaleIndex];
         }
@@ -64,7 +61,7 @@ namespace Diverse
 
             var lastNames = LastNames.PerContinent[continent];
 
-            var randomLocaleIndex = _fuzzerPrimitives.Random.Next(0, lastNames.Length);
+            var randomLocaleIndex = _fuzzer.Random.Next(0, lastNames.Length);
 
             return lastNames[randomLocaleIndex];
         }
@@ -78,14 +75,14 @@ namespace Diverse
         {
             if (gender == null)
             {
-                var isFemale = _fuzzerPrimitives.HeadsOrTails();
+                var isFemale = _fuzzer.HeadsOrTails();
                 if (isFemale)
                 {
                     gender = Gender.Female;
                 }
                 else
                 {
-                    var isNonBinary = _fuzzerPrimitives.HeadsOrTails();
+                    var isNonBinary = _fuzzer.HeadsOrTails();
                     gender = isNonBinary ? Gender.NonBinary : Gender.Male;
                 }
             }
@@ -93,8 +90,8 @@ namespace Diverse
             var firstName = GenerateFirstName(gender);
             var lastName = GenerateLastName(firstName);
             var eMail = GenerateEMail(firstName, lastName);
-            var isMarried = _fuzzerPrimitives.HeadsOrTails();
-            var age = _numberFuzzer.GenerateInteger(18, 97);
+            var isMarried = _fuzzer.HeadsOrTails();
+            var age = _fuzzer.GenerateInteger(18, 97);
 
             return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
         }
@@ -122,12 +119,12 @@ namespace Diverse
                 "kolab.com", "protonmail.com", "gmail.com", "yahoo.fr", "42skillz.com", "gmail.com", "ibm.com",
                 "gmail.com", "yopmail.com", "microsoft.com", "gmail.com", "aol.com"
             };
-            var index = _fuzzerPrimitives.Random.Next(0, domainNames.Length);
+            var index = _fuzzer.Random.Next(0, domainNames.Length);
 
             var domainName = domainNames[index];
 
 
-            if (_fuzzerPrimitives.HeadsOrTails())
+            if (_fuzzer.HeadsOrTails())
             {
                 var shortVersion = $"{firstName.Substring(0, 1)}{lastName}@{domainName}".ToLower();
                 shortVersion = TransformIntoValidEmailFormat(shortVersion);
@@ -153,37 +150,37 @@ namespace Diverse
 
             CheckGuardMinAndMaximumSizes(minSize, maxSize, minimumSize, maximumSize, defaultMinSize, defaultMaxSize);
 
-            var passwordSize = _fuzzerPrimitives.Random.Next(minimumSize, maximumSize + 1);
+            var passwordSize = _fuzzer.Random.Next(minimumSize, maximumSize + 1);
 
             var pwd = new StringBuilder(passwordSize);
             for (var i = 0; i < passwordSize; i++)
             {
                 if ((i == 0 || i == 10) && (includeSpecialCharacters.HasValue && includeSpecialCharacters.Value))
                 {
-                    pwd.Append(_specialCharacters[_fuzzerPrimitives.Random.Next(0, _specialCharacters.Length)]);
+                    pwd.Append(_specialCharacters[_fuzzer.Random.Next(0, _specialCharacters.Length)]);
                     continue;
                 }
 
                 if (i == 4 || i == 14)
                 {
-                    pwd.Append(_upperCharacters[_fuzzerPrimitives.Random.Next(1, 26)]);
+                    pwd.Append(_upperCharacters[_fuzzer.Random.Next(1, 26)]);
                     continue;
                 }
 
                 if (i == 6 || i == 13)
                 {
-                    pwd.Append(_numericCharacters[_fuzzerPrimitives.Random.Next(4, 10)]);
+                    pwd.Append(_numericCharacters[_fuzzer.Random.Next(4, 10)]);
                     continue;
                 }
 
                 if (i == 3 || i == 9)
                 {
-                    pwd.Append(_numericCharacters[_fuzzerPrimitives.Random.Next(1, 5)]);
+                    pwd.Append(_numericCharacters[_fuzzer.Random.Next(1, 5)]);
                     continue;
                 }
 
                 // by default
-                pwd.Append(_lowerCharacters[_fuzzerPrimitives.Random.Next(1, 26)]);
+                pwd.Append(_lowerCharacters[_fuzzer.Random.Next(1, 26)]);
             }
 
             return pwd.ToString();
