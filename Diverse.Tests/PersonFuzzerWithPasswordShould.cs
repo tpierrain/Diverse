@@ -126,5 +126,55 @@ namespace Diverse.Tests
                 Check.That(password.Length <= maxSize);
             }
         }
+
+        [Test]
+        public void Contains_only_alphanumerical_characters_by_default()
+        {
+            var fuzzer = new Fuzzer();
+
+            var password = fuzzer.GeneratePassword();
+            
+            Check.That(password).Not.Matches("[^A-Za-z0-9]+");
+        }
+
+        [Test]
+        public void Contains_at_least_a_special_character()
+        {
+            var fuzzer = new Fuzzer();
+
+            var password = fuzzer.GeneratePassword(includeSpecialCharacters: true);
+            
+            Check.That(password).Matches("[^A-Za-z0-9]+");
+        }
+
+        [Test]
+        public void Contains_at_least_a_lowercase_character()
+        {
+            var fuzzer = new Fuzzer();
+
+            var password = fuzzer.GeneratePassword(includeSpecialCharacters: true);
+            
+            Check.That(password).Matches("[a-z]+");
+        }
+
+        [Test]
+        public void Contains_at_least_an_uppercase_character()
+        {
+            var fuzzer = new Fuzzer();
+
+            var password = fuzzer.GeneratePassword(includeSpecialCharacters: true);
+            
+            Check.That(password).Matches("[A-Z]+");
+        }
+
+        [Test]
+        public void Contains_at_least_a_number()
+        {
+            var fuzzer = new Fuzzer();
+
+            var password = fuzzer.GeneratePassword(includeSpecialCharacters: true);
+            
+            Check.That(password).Matches("[0-9]+");
+        }
     }
 }
