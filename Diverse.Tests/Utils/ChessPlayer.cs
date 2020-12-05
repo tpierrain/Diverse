@@ -10,9 +10,12 @@ namespace Diverse.Tests.Utils
         /// </summary>
         public ChessLevel ChessLevel { get; private set; }
 
-        public ChessPlayer(string firstName, string lastName, int age, ChessLevel chessLevel) : base(firstName, lastName, age)
+        public ChessPlayer FavoriteOpponent { get; private set; }
+
+        public ChessPlayer(string firstName, string lastName, int age, ChessLevel chessLevel, ChessPlayer favoriteOpponent = null) : base(firstName, lastName, age)
         {
             ChessLevel = chessLevel;
+            FavoriteOpponent = favoriteOpponent;
         }
     }
 }

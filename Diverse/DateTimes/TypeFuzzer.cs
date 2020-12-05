@@ -27,18 +27,29 @@ namespace Diverse.DateTimes
         /// <returns>An instance of type T with some fuzzed properties.</returns>
         public T GenerateInstanceOf<T>()
         {
+            var instance = GenerateInstanceOf<T>(0);
+
+            return instance;
+        }
+
+        private T GenerateInstanceOf<T>(int recursionLevel)
+        {
+            if (recursionLevel > 500)
+            {
+                return default(T);
+            }
+
             var genericType = typeof(T);
-
             var constructors = ((System.Reflection.TypeInfo) genericType).DeclaredConstructors;
-            var constructor = GetConstructorWithBiggestNumberOfParameters<T>(constructors);
+            var constructor = GetConstructorWithBiggestNumberOfParameters(constructors);
 
-            var constructorParameters = PrepareFuzzedParametersForThisConstructor<T>(constructor);
+            var constructorParameters = PrepareFuzzedParametersForThisConstructor(constructor, recursionLevel);
             var instance = constructor.Invoke(constructorParameters);
 
             return (T)instance;
         }
 
-        private object[] PrepareFuzzedParametersForThisConstructor<T>(ConstructorInfo constructor)
+        private object[] PrepareFuzzedParametersForThisConstructor(ConstructorInfo constructor, int recursionLevel)
         {
             var parameters = new List<object>();
             var parameterInfos = constructor.GetParameters();
@@ -53,13 +64,13 @@ namespace Diverse.DateTimes
                 }
 
                 // Default .NET types
-                parameters.Add(FuzzAnyDotNetType<T>(Type.GetTypeCode(type)));
+                parameters.Add(FuzzAnyDotNetType(Type.GetTypeCode(type), type, ++recursionLevel));
             }
 
             return parameters.ToArray();
         }
 
-        private object FuzzAnyDotNetType<T>(TypeCode typeCode)
+        private object FuzzAnyDotNetType(TypeCode typeCode, Type type, int recursionLevel)
         {
             object result;
             switch (typeCode)
@@ -77,14 +88,31 @@ namespace Diverse.DateTimes
                     break;
 
                 default:
-                    result = new object();
+                    result = GenerateInstanceOf(type, recursionLevel);
                     break;
             }
 
             return result;
         }
 
-        private static ConstructorInfo GetConstructorWithBiggestNumberOfParameters<T>(IEnumerable<ConstructorInfo> constructors)
+        private object GenerateInstanceOf(Type type, int recursionLevel)
+        {
+            return CallPrivateGenericMethod(type, nameof(GenerateInstanceOf), new object[] { recursionLevel });
+        }
+
+        private object CallPrivateGenericMethod(Type typeOfT, string privateMethodName, object[] parameters)
+        {
+            var methodInfo = ((System.Reflection.TypeInfo) typeof(TypeFuzzer)).DeclaredMethods.Single(m =>
+                m.IsGenericMethod && m.IsPrivate && m.Name.Contains(privateMethodName));
+            var generic = methodInfo.MakeGenericMethod(typeOfT);
+            
+            // private T GenerateInstanceOf<T>(int recursionLevel)
+            var result = generic.Invoke(this, parameters);
+            
+            return result;
+        }
+
+        private static ConstructorInfo GetConstructorWithBiggestNumberOfParameters(IEnumerable<ConstructorInfo> constructors)
         {
             return constructors.OrderByDescending(c => c.GetParameters().Length).First();
         }

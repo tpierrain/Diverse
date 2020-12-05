@@ -45,5 +45,19 @@ namespace Diverse.Tests
             Check.That(player.FirstName).IsNotEmpty();
             Check.That(player.Age).IsInstanceOf<int>().Which.IsNotEqualTo(0);
         }
+
+        [Test]
+        public void Not_be_tricked_by_recursion_when_a_Type_constructor_request_another_instance_of_this_Type()
+        {
+            var fuzzer = new Fuzzer();
+
+            var player = fuzzer.GenerateInstanceOf<ChessPlayer>();
+
+            var aggregatedFavOpponent = player.FavoriteOpponent;
+            Check.That(aggregatedFavOpponent).IsNotNull();
+            Check.That(aggregatedFavOpponent.LastName).IsNotEmpty();
+            Check.That(aggregatedFavOpponent.FirstName).IsNotEmpty();
+            Check.That(aggregatedFavOpponent.FirstName).IsNotEmpty();
+        }
     }
 }
