@@ -10,6 +10,7 @@ namespace Diverse.DateTimes
     /// </summary>
     public class TypeFuzzer : IFuzzTypes
     {
+        private const int MaxRecursionAllowedWhileFuzzing = 250;
         private readonly IFuzz _fuzzer;
 
         /// <summary>
@@ -34,7 +35,8 @@ namespace Diverse.DateTimes
 
         private T GenerateInstanceOf<T>(int recursionLevel)
         {
-            if (recursionLevel > 500)
+            recursionLevel++;
+            if (recursionLevel > MaxRecursionAllowedWhileFuzzing)
             {
                 return default(T);
             }
@@ -64,7 +66,7 @@ namespace Diverse.DateTimes
                 }
 
                 // Default .NET types
-                parameters.Add(FuzzAnyDotNetType(Type.GetTypeCode(type), type, ++recursionLevel));
+                parameters.Add(FuzzAnyDotNetType(Type.GetTypeCode(type), type, recursionLevel));
             }
 
             return parameters.ToArray();
