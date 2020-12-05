@@ -4,7 +4,7 @@ namespace Diverse.Tests.Utils
     /// Dummy class for testing purpose (for Property-based Fuzzing).
     /// What matters here is to have one empty (private) constructor only.
     /// </summary>
-    public class TypeWithoutConstructor
+    public class TypeWithPrivateEmptyConstructorOnly
     {
         private string _modifiableSecret;
         public string ModifiableSecret // Property Fuzzable since it has a Setter
@@ -19,7 +19,7 @@ namespace Diverse.Tests.Utils
         public string Name { get;  }
         public int FavoriteNumber { get; private set; } // Property Fuzzable since it has a Setter
 
-        private TypeWithoutConstructor()
+        private TypeWithPrivateEmptyConstructorOnly()
         {
         }
     }

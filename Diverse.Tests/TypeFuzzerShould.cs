@@ -8,7 +8,7 @@ namespace Diverse.Tests
     public class TypeFuzzerShould
     {
         [Test]
-        public void Be_able_to_generate_random_enum_values()
+        public void Be_able_to_Fuzz_enum_values()
         {
             var fuzzer = new Fuzzer(1277808677);
             var ingredient = fuzzer.GenerateEnum<Ingredient>();
@@ -22,36 +22,58 @@ namespace Diverse.Tests
         }
 
         [Test]
-        public void Be_able_to_generate_diverse_values_for_every_property_of_an_object_with_getters_only_and_protected_base_class_constructor_involved()
+        public void Be_able_to_Fuzz_a_Type_with_a_protected_constructor()
+        {
+            var fuzzer = new Fuzzer(23984398);
+
+            var player = fuzzer.GenerateInstanceOf<PlayerWithProtectedConstructor>();
+
+            Check.That(player.LastName).IsNotEmpty();
+            Check.That(player.FirstName).IsNotEmpty();
+            Check.That(player.Age).IsInstanceOf<int>().Which.IsNotEqualTo(0);
+        }
+
+        [Test]
+        public void Be_able_to_Fuzz_a_Type_with_getters_only_and_some_public_constructors_with_a_protected_base_class_constructor_involved()
         {
             var fuzzer = new Fuzzer(953064492);
 
-            var player = fuzzer.GenerateInstanceOf<ChessPlayer>();
+            var player = fuzzer.GenerateInstanceOf<ChessPlayerWithPublicConstructor>();
 
             Check.That(player.LastName).IsNotEmpty();
             Check.That(player.FirstName).IsNotEmpty();
             Check.ThatEnum(player.ChessLevel).IsEqualTo(ChessLevel.Expert);
             Check.That(player.Age).IsInstanceOf<int>().Which.IsNotEqualTo(0);
         }
-
+        
         [Test]
-        public void Be_able_to_generate_diverse_values_for_every_property_of_an_object_with_protected_constructor()
+        public void Be_able_to_Fuzz_the_Properties_of_a_Type_even_when_the_Constructor_is_empty_as_soon_as_they_have_a_public_or_a_private_Setter()
         {
-            var fuzzer = new Fuzzer(23984398);
+            var fuzzer = new Fuzzer(345766738);
 
-            var player = fuzzer.GenerateInstanceOf<Player>();
-
-            Check.That(player.LastName).IsNotEmpty();
-            Check.That(player.FirstName).IsNotEmpty();
-            Check.That(player.Age).IsInstanceOf<int>().Which.IsNotEqualTo(0);
+            var instance = fuzzer.GenerateInstanceOf<TypeWithPrivateEmptyConstructorOnly>();
+            
+            Check.That(instance.ModifiableSecret).IsNotEmpty(); // because we Fuzz properties with public setter
+            Check.That(instance.FavoriteNumber).IsInstanceOf<int>().Which.IsNotEqualTo(0); // because we fuzz properties with private setter
         }
 
         [Test]
-        public void Be_able_to_Fuzz_an_enumerable_of_5_elements_when_fuzzing_a_Type_containing_an_Enumerable_of_something()
+        public void Not_be_able_to_Fuzz_the_setterLess_properties_of_a_Type_when_the_Constructor_is_empty()
+        {
+            var fuzzer = new Fuzzer(345766738);
+
+            var instance = fuzzer.GenerateInstanceOf<TypeWithPrivateEmptyConstructorOnly>();
+
+            Check.That(instance.ConsultableSecret).IsNull(); // because we don't Fuzz properties with no setter
+            Check.That(instance.Name).IsNull(); // because we don't fuzz properties with no setter
+        }
+
+        [Test]
+        public void Be_able_to_Fuzz_an_enumerable_with_5_elements_when_Fuzzing_a_Type_containing_an_Enumerable_of_something()
         {
             var fuzzer = new Fuzzer(977324123);
 
-            var player = fuzzer.GenerateInstanceOf<ChessPlayer>();
+            var player = fuzzer.GenerateInstanceOf<ChessPlayerWithPublicConstructor>();
 
             var aggregatedFavOpponent = player.FavoriteOpponent;
             Check.That(aggregatedFavOpponent).IsNotNull();
@@ -62,28 +84,6 @@ namespace Diverse.Tests
             Check.ThatEnum(aggregatedFavOpponent.CurrentClub.Country).IsEqualTo(Country.Ukraine);
 
             Check.That(player.FormerClubs).HasSize(5);
-        }
-
-        [Test]
-        public void Fuzz_via_Properties_when_the_Constructor_is_empty_and_public_or_private_Setters_exist()
-        {
-            var fuzzer = new Fuzzer(345766738);
-
-            var instance = fuzzer.GenerateInstanceOf<TypeWithoutConstructor>();
-            
-            Check.That(instance.ModifiableSecret).IsNotEmpty(); // because we Fuzz properties with public setter
-            Check.That(instance.FavoriteNumber).IsNotEqualTo(0); // because we fuzz properties with private setter
-        }
-
-        [Test]
-        public void Not_Fuzz_via_Properties_when_the_Constructor_is_empty_and_public_or_private_Setters_DO_NOT_not_exist()
-        {
-            var fuzzer = new Fuzzer(345766738);
-
-            var instance = fuzzer.GenerateInstanceOf<TypeWithoutConstructor>();
-
-            Check.That(instance.ConsultableSecret).IsNull(); // because we don't Fuzz properties with no setter
-            Check.That(instance.Name).IsNull(); // because we don't fuzz properties with no setter
         }
     }
 }
