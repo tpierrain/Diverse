@@ -47,9 +47,9 @@ namespace Diverse.Tests
         }
 
         [Test]
-        public void Not_be_tricked_by_recursion_when_a_Type_constructor_request_another_instance_of_this_Type()
+        public void Be_able_to_Fuzz_an_enumerable_of_5_elements_when_fuzzing_a_Type_containing_an_Enumerable_of_something()
         {
-            var fuzzer = new Fuzzer();
+            var fuzzer = new Fuzzer(977324123);
 
             var player = fuzzer.GenerateInstanceOf<ChessPlayer>();
 
@@ -58,6 +58,10 @@ namespace Diverse.Tests
             Check.That(aggregatedFavOpponent.LastName).IsNotEmpty();
             Check.That(aggregatedFavOpponent.FirstName).IsNotEmpty();
             Check.That(aggregatedFavOpponent.FirstName).IsNotEmpty();
+            Check.That(aggregatedFavOpponent.CurrentClub.Name).IsEqualTo("Aylan");
+            Check.ThatEnum(aggregatedFavOpponent.CurrentClub.Country).IsEqualTo(Country.Ukraine);
+
+            Check.That(player.FormerClubs).HasSize(5);
         }
     }
 }

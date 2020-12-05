@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +11,8 @@ namespace Diverse.DateTimes
     /// </summary>
     public class TypeFuzzer : IFuzzTypes
     {
-        private const int MaxRecursionAllowedWhileFuzzing = 250;
+        private const int MaxRecursionAllowedWhileFuzzing = 400;
+        private const int MaxCountToFuzzInLists = 5;
         private readonly IFuzz _fuzzer;
 
         /// <summary>
@@ -42,8 +44,8 @@ namespace Diverse.DateTimes
             }
 
             var genericType = typeof(T);
-            var constructors = ((System.Reflection.TypeInfo) genericType).DeclaredConstructors;
-            var constructor = GetConstructorWithBiggestNumberOfParameters(constructors);
+            
+            var constructor = GetConstructorWithBiggestNumberOfParameters(genericType);
 
             var constructorParameters = PrepareFuzzedParametersForThisConstructor(constructor, recursionLevel);
             var instance = constructor.Invoke(constructorParameters);
@@ -59,11 +61,7 @@ namespace Diverse.DateTimes
             {
                 var type = parameterInfo.ParameterType;
 
-                if (type.IsEnum)
-                {
-                    parameters.Add(FuzzEnumValue(type));
-                    continue;
-                }
+                
 
                 // Default .NET types
                 parameters.Add(FuzzAnyDotNetType(Type.GetTypeCode(type), type, recursionLevel));
@@ -74,6 +72,16 @@ namespace Diverse.DateTimes
 
         private object FuzzAnyDotNetType(TypeCode typeCode, Type type, int recursionLevel)
         {
+            if (type.IsEnum)
+            {
+                return FuzzEnumValue(type);
+            }
+
+            if (IsEnumerable(type))
+            {
+                return GenerateListOf(type, recursionLevel);
+            }
+
             object result;
             switch (typeCode)
             {
@@ -88,13 +96,39 @@ namespace Diverse.DateTimes
                 case TypeCode.String:
                     result = _fuzzer.GenerateFirstName();
                     break;
-
+               
                 default:
+                    // is it an IEnumerable?
                     result = GenerateInstanceOf(type, recursionLevel);
+
                     break;
             }
 
             return result;
+        }
+
+        private static bool IsEnumerable(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+        }
+
+        private IEnumerable GenerateListOf(Type type, int recursionLevel)
+        {
+            var typeGenericTypeArguments = type.GenericTypeArguments;
+
+            var listType = typeof(List<>);
+            var constructedListType = listType.MakeGenericType(typeGenericTypeArguments);
+
+            // Instantiates a collection of ...
+            var list = Activator.CreateInstance(constructedListType) as IList;
+
+            // Add 5 elements of this type
+            for (var i = 0; i < MaxCountToFuzzInLists; i++)
+            {
+                list.Add(GenerateInstanceOf(typeGenericTypeArguments.Single(), recursionLevel));
+            }
+
+            return list;
         }
 
         private object GenerateInstanceOf(Type type, int recursionLevel)
@@ -114,8 +148,9 @@ namespace Diverse.DateTimes
             return result;
         }
 
-        private static ConstructorInfo GetConstructorWithBiggestNumberOfParameters(IEnumerable<ConstructorInfo> constructors)
+        private static ConstructorInfo GetConstructorWithBiggestNumberOfParameters(Type genericType)
         {
+            var constructors = ((System.Reflection.TypeInfo)genericType).DeclaredConstructors;
             return constructors.OrderByDescending(c => c.GetParameters().Length).First();
         }
 
