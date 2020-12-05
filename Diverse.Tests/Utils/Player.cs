@@ -1,7 +1,8 @@
 namespace Diverse.Tests.Utils
 {
     /// <summary>
-    /// Player for any game (dummy class for testing purpose).
+    /// Player for any game. Dummy class for testing purpose (for Constructor-based Fuzzing).
+    /// What matters here is to have at least one non-empty constructor.
     /// </summary>
     internal class Player
     {

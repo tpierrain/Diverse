@@ -4,7 +4,8 @@ using System.Collections.Generic;
 namespace Diverse.Tests.Utils
 {
     /// <summary>
-    /// Chess Player (dummy class for testing purpose).
+    /// Chess Player. Dummy class for testing purpose (for Constructor-based Fuzzing).
+    /// What matters here is to have at least one non-empty constructor.
     /// </summary>
     internal class ChessPlayer : Player
     {
@@ -18,6 +19,14 @@ namespace Diverse.Tests.Utils
         public ChessClub CurrentClub { get; }
 
         public IEnumerable<ChessClub> FormerClubs { get;  }
+
+        public ChessPlayer() : base("obsolete", "should not be used", 0)
+        {
+        }
+
+        public ChessPlayer(string firstName) : base(firstName, "obsolete constructor that should not be used", 0)
+        {
+        }
 
         public ChessPlayer(string firstName, string lastName, int age, ChessLevel chessLevel, ChessPlayer favoriteOpponent = null, ChessClub currentClub = null, IEnumerable<ChessClub> formerClubs = null) : base(firstName, lastName, age)
         {

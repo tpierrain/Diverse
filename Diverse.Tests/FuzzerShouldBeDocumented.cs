@@ -62,7 +62,7 @@ namespace Diverse.Tests
             TestContext.WriteLine($"First name: {person.FirstName}");
             TestContext.WriteLine($"Last name: {person.LastName}");
             TestContext.WriteLine($"Gender: {person.Gender}");
-            TestContext.WriteLine($"Age: {person.Age}");
+            TestContext.WriteLine($"FavoriteNumber: {person.Age}");
             TestContext.WriteLine($"IsMarried: {person.IsMarried}");
         }
 

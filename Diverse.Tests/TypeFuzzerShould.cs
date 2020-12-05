@@ -63,5 +63,27 @@ namespace Diverse.Tests
 
             Check.That(player.FormerClubs).HasSize(5);
         }
+
+        [Test]
+        public void Fuzz_via_Properties_when_the_Constructor_is_empty_and_public_or_private_Setters_exist()
+        {
+            var fuzzer = new Fuzzer(345766738);
+
+            var instance = fuzzer.GenerateInstanceOf<TypeWithoutConstructor>();
+            
+            Check.That(instance.ModifiableSecret).IsNotEmpty(); // because we Fuzz properties with public setter
+            Check.That(instance.FavoriteNumber).IsNotEqualTo(0); // because we fuzz properties with private setter
+        }
+
+        [Test]
+        public void Not_Fuzz_via_Properties_when_the_Constructor_is_empty_and_public_or_private_Setters_DO_NOT_not_exist()
+        {
+            var fuzzer = new Fuzzer(345766738);
+
+            var instance = fuzzer.GenerateInstanceOf<TypeWithoutConstructor>();
+
+            Check.That(instance.ConsultableSecret).IsNull(); // because we don't Fuzz properties with no setter
+            Check.That(instance.Name).IsNull(); // because we don't fuzz properties with no setter
+        }
     }
 }

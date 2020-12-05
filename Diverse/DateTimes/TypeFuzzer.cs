@@ -46,11 +46,44 @@ namespace Diverse.DateTimes
             var genericType = typeof(T);
             
             var constructor = GetConstructorWithBiggestNumberOfParameters(genericType);
+            if (IsEmptyConstructor(constructor))
+            {
+                var instance = InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(constructor, recursionLevel, genericType);
+                return instance;
+            }
+            else
+            {
+                var instance = InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructor, recursionLevel);
+                return instance;
+            }
+        }
 
+        private T InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(ConstructorInfo constructor, int recursionLevel)
+        {
             var constructorParameters = PrepareFuzzedParametersForThisConstructor(constructor, recursionLevel);
             var instance = constructor.Invoke(constructorParameters);
+            return (T)instance;
+        }
+
+        private T InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(ConstructorInfo constructor, int recursionLevel, Type genericType)
+        {
+            var instance = constructor.Invoke(new object[0]);
+
+            var propertyInfos = genericType.GetProperties().Where(prop => prop.CanWrite);
+            foreach (var propertyInfo in propertyInfos)
+            {
+                var propertyType = propertyInfo.PropertyType;
+                var propertyValue = FuzzAnyDotNetType(Type.GetTypeCode(propertyType), propertyType, recursionLevel);
+
+                propertyInfo.SetValue(instance, propertyValue);
+            }
 
             return (T)instance;
+        }
+
+        private static bool IsEmptyConstructor(ConstructorInfo constructor)
+        {
+            return constructor.GetParameters().Length == 0;
         }
 
         private object[] PrepareFuzzedParametersForThisConstructor(ConstructorInfo constructor, int recursionLevel)
@@ -60,8 +93,6 @@ namespace Diverse.DateTimes
             foreach (var parameterInfo in parameterInfos)
             {
                 var type = parameterInfo.ParameterType;
-
-                
 
                 // Default .NET types
                 parameters.Add(FuzzAnyDotNetType(Type.GetTypeCode(type), type, recursionLevel));
@@ -169,24 +200,6 @@ namespace Diverse.DateTimes
         {
             var enumValues = Enum.GetValues(enumType);
             return enumValues.GetValue(_fuzzer.Random.Next(0, enumValues.Length));
-        }
-
-        private static IEnumerable<PropertyInfo> GetWritableStringProperties(Type genericType)
-        {
-            return genericType.GetProperties().Where(prop => prop.PropertyType == typeof(String) && prop.CanWrite);
-        }
-
-        private void SetProperty<T>(T instance, PropertyInfo stringPropertyInfo)
-        {
-            var firstName = _fuzzer.GenerateFirstName();
-            if(stringPropertyInfo.Name.Contains("FirstName"))
-            {
-                stringPropertyInfo.SetValue(instance, firstName);
-            }
-            else if(stringPropertyInfo.Name.Contains("LastName"))
-            {
-                stringPropertyInfo.SetValue(instance, _fuzzer.GenerateLastName(firstName));
-            }
         }
     }
 }
