@@ -59,33 +59,14 @@ namespace Diverse
             }
             else
             {
-                T instance;
                 try
                 {
-                    instance = InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructor, recursionLevel);
+                    return InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructor, recursionLevel);
                 }
                 catch (Exception)
                 {
-                    // Some constructor are complicated to use (e.g. those accepting abstract classes as input)
-                    // Try other constructors until it works
-                    var constructors = type.GetConstructorsOrderedByNumberOfParametersDesc().Skip(1);
-                    foreach (var constructorInfo in constructors)
-                    {
-                        try
-                        {
-                            instance = InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructorInfo, recursionLevel);
-                            return instance;
-                        }
-                        catch (Exception)
-                        {
-                            continue;
-                        }
-                    }
-
-                    instance = default(T);
+                    return InstantiateAndFuzzViaConstructorIteratingOnAllThemUntilItWorks<T>(recursionLevel, type);
                 }
-
-                return instance;
             }
         }
 
@@ -138,7 +119,7 @@ namespace Diverse
                 return FuzzEnumValue(type);
             }
 
-            if (IsEnumerable(type))
+            if (type.IsEnumerable())
             {
                 return GenerateListOf(type, recursionLevel);
             }
@@ -179,9 +160,29 @@ namespace Diverse
             return result;
         }
 
-        private static bool IsEnumerable(Type type)
+        private T InstantiateAndFuzzViaConstructorIteratingOnAllThemUntilItWorks<T>(int recursionLevel, Type type)
         {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+            T instance;
+            // Some constructor are complicated to use (e.g. those accepting abstract classes as input)
+            // Try other constructors until it works
+            var constructors = type.GetConstructorsOrderedByNumberOfParametersDesc().Skip(1);
+            foreach (var constructorInfo in constructors)
+            {
+                try
+                {
+                    instance = InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructorInfo, recursionLevel);
+                    return instance;
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+
+            // We couldn't use any of its Constructor. Let's return a default instance (degraded mode)
+            instance = default(T);
+
+            return instance;
         }
 
         private IEnumerable GenerateListOf(Type type, int recursionLevel)

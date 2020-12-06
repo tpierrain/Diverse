@@ -11,7 +11,7 @@ namespace Diverse
     public static class ReflectionExtensions
     {
         /// <summary>
-        /// Indicates whether or not a given <see cref="Type"/> is already covered by the lib for Fuzzing.
+        /// Gets a value indicating whether a given <see cref="Type"/> is already covered by the lib for Fuzzing.
         /// </summary>
         /// <param name="type">The <see cref="Type"/> to check.</param>
         /// <returns><b>true</b> if the <see cref="Type"/> is already covered by the lib for Fuzzing, <b>false</b> otherwise.</returns>
@@ -21,7 +21,17 @@ namespace Diverse
         }
 
         /// <summary>
-        /// Gets a value indicated whether or not a <see cref="ConstructorInfo"/> has no parameter defined.
+        /// Gets a value indicating whether a given <see cref="Type"/> is <see cref="IEnumerable{T}"/>.
+        /// </summary>
+        /// <param name="type">The <see cref="Type"/> to check.</param>
+        /// <returns><b>true</b> if the <see cref="Type"/> is a <see cref="IEnumerable{T}"/> instance, <b>false</b> otherwise.</returns>
+        public static bool IsEnumerable(this Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+        }
+
+        /// <summary>
+        /// Gets a value indicated whether a given <see cref="ConstructorInfo"/> has no parameter defined.
         /// </summary>
         /// <param name="constructor">The <see cref="ConstructorInfo"/> to check absence of parameters for.</param>
         /// <returns><b>true</b> if the <see cref="ConstructorInfo"/> has no parameter defined, <b>false</b> otherwise.</returns>
@@ -58,6 +68,5 @@ namespace Diverse
 
             return constructors.OrderByDescending(c => c.GetParameters().Length);
         }
-
     }
 }
