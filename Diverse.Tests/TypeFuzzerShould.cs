@@ -156,12 +156,15 @@ namespace Diverse.Tests
             Check.That(result).IsInstanceOf<bool>();
         }
 
-        //[Test]
-        //public void Be_able_to_Fuzz_Self_Referencing_Types_Aggregating_a_collection_of_the_same_Type()
-        //{
-        //    var fuzzer = new Fuzzer();
+        [Test]
+        [Ignore("Because it timeouts NCrunch for the moment due to excessive recursion. Time to find another solution than recursion.")]
+        public void Be_able_to_Fuzz_Self_Referencing_Types_Aggregating_a_collection_of_the_same_Type()
+        {
+            var fuzzer = new Fuzzer();
 
-        //    fuzzer.GenerateInstanceOf<SelfReferencingTypeWithACollectionOfItself>();
-        //}
+            var result = fuzzer.GenerateInstanceOf<SelfReferencingTypeWithACollectionOfItself>();
+
+            Check.That(result.Friends).HasSize(5);
+        }
     }
 }
