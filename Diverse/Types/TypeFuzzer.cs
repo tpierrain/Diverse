@@ -65,7 +65,7 @@ namespace Diverse
                 }
                 catch (Exception)
                 {
-                    return InstantiateAndFuzzViaConstructorIteratingOnAllThemUntilItWorks<T>(recursionLevel, type);
+                    return InstantiateAndFuzzViaOtherConstructorIteratingOnAllThemUntilItWorks<T>(recursionLevel, type);
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace Diverse
             return result;
         }
 
-        private T InstantiateAndFuzzViaConstructorIteratingOnAllThemUntilItWorks<T>(int recursionLevel, Type type)
+        private T InstantiateAndFuzzViaOtherConstructorIteratingOnAllThemUntilItWorks<T>(int recursionLevel, Type type)
         {
             T instance;
             // Some constructor are complicated to use (e.g. those accepting abstract classes as input)
