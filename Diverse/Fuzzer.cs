@@ -81,7 +81,7 @@ namespace Diverse
 
             if (Log == null)
             {
-                throw new FuzzerException($"You must (at least once) set a value for the static {nameof(Log)} property of the {nameof(Fuzzer)} type in order to be able to retrieve the seeds used for each one of your Fuzzer/Tests (which is a prerequisite for deterministic test runs). Suggested value: ex. {nameof(Fuzzer)}.{nameof(Log)} = TestContext.WriteLine; in the [OneTimeSetUp] initialization method of your [SetUpFixture] class.");
+                throw new FuzzerException(BuildErrorMessageForMissingLogRegistration());
             }
 
             Log($"----------------------------------------------------------------------------------------------------------------------");
@@ -98,6 +98,33 @@ namespace Diverse
             }
 
             Log($"----------------------------------------------------------------------------------------------------------------------");
+        }
+
+        private static string BuildErrorMessageForMissingLogRegistration()
+        {
+            var message = @"You must register (at least once) a log handler in your Test project for the Diverse library to be able to publish all the seeds used for every test (which is a prerequisite for deterministic test runs afterward).
+The only thing you have to do is to set a value for the static " + $"{nameof(Log)} property of the {nameof(Fuzzer)} type." + @"
+
+The best location for this call is within a unique AllFixturesSetup class.
+e.g.: with NUnit:
+
+using NUnit.Framework;
+
+namespace YouNameSpaceHere.Tests
+{
+    [SetUpFixture]
+    public class AllTestFixtures
+    {
+        [OneTimeSetUp]
+        public void Init()
+        {
+            "+ $"{nameof(Fuzzer)}.{nameof(Log)} = TestContext.WriteLine;" + @"
+        }
+    }
+}
+
+";
+            return message;
         }
 
         private static string FindTheNameOfTheTestInvolved()
