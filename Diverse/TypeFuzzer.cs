@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
+using Diverse.Reflection;
 
 namespace Diverse
 {
@@ -45,14 +47,14 @@ namespace Diverse
 
             var type = typeof(T);
 
-            var constructor = GetConstructorWithBiggestNumberOfParameters(type);
-            if (constructor == null || type == typeof(DateTime)) // the case with some BCL types
+            var constructor = type.GetConstructorWithBiggestNumberOfParameters();
+            if (constructor == null || type.IsCoveredByAFuzzer()) // the case with some BCL types
             {
                 var instance = FuzzAnyDotNetType(Type.GetTypeCode(type), type, recursionLevel);
                 return (T)instance;
             }
 
-            if (IsEmptyConstructor(constructor))
+            if (constructor.IsEmpty())
             {
                 var instance = InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(constructor, recursionLevel, type);
                 return instance;
@@ -66,9 +68,9 @@ namespace Diverse
                 }
                 catch (Exception)
                 {
-                    // Some constructor are complicated to use (e.g. those accepting abstract classes)
+                    // Some constructor are complicated to use (e.g. those accepting abstract classes as input)
                     // Try other constructors until it works
-                    var constructors = GetConstructorsOrderedByNumberOfParametersDesc(type).Skip(1);
+                    var constructors = type.GetConstructorsOrderedByNumberOfParametersDesc().Skip(1);
                     foreach (var constructorInfo in constructors)
                     {
                         try
@@ -116,11 +118,6 @@ namespace Diverse
             return (T)instance;
         }
 
-        private static bool IsEmptyConstructor(ConstructorInfo constructor)
-        {
-            return constructor.GetParameters().Length == 0;
-        }
-
         private object[] PrepareFuzzedParametersForThisConstructor(ConstructorInfo constructor, int recursionLevel)
         {
             var parameters = new List<object>();
@@ -151,6 +148,10 @@ namespace Diverse
             object result;
             switch (typeCode)
             {
+                case TypeCode.Boolean:
+                    result = _fuzzer.HeadsOrTails();
+                    break;
+
                 case TypeCode.Int32:
                     result = _fuzzer.GenerateInteger();
                     break;
@@ -219,25 +220,6 @@ namespace Diverse
             var result = generic.Invoke(this, parameters);
             
             return result;
-        }
-
-        private static ConstructorInfo GetConstructorWithBiggestNumberOfParameters(Type genericType)
-        {
-            var constructors = GetConstructorsOrderedByNumberOfParametersDesc(genericType);
-
-            if (constructors.Count() == 0)
-            {
-                return null;
-            }
-
-            return constructors.First();
-        }
-
-        private static IEnumerable<ConstructorInfo> GetConstructorsOrderedByNumberOfParametersDesc(Type genericType)
-        {
-            var constructors = ((System.Reflection.TypeInfo) genericType).DeclaredConstructors;
-
-            return constructors.OrderByDescending(c => c.GetParameters().Length);
         }
 
         /// <summary>

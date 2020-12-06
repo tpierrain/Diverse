@@ -14,17 +14,16 @@
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
     <PackageReleaseNotes>
-
-- Provide some Fuzzer primitives related to numbers (Integers, decimal)
-- Provide some Fuzzer primitives related to the concept of Diverse Person (firstName, lastName, Title, Gender, Email, Age, Married or not)
-- Expose an extensible IFuzz interface for everyone to add its own context-specific Fuzzer methods (via extension method)
-
-BREAKING change:
- - Rename IFuzz.GenerateAPerson() to GeneratePerson() in order to be consistent with the other methods of the lib.
-</PackageReleaseNotes>
-    <AssemblyVersion>0.4.3.0</AssemblyVersion>
-    <FileVersion>0.4.3.0</FileVersion>
-    <Version>0.4.3.0</Version>
+      - Allow to Fuzz any Type you want with fuzzer.GenerateInstanceOf&lt;PropertyOfAllTypes&gt;(); . Diverse will use the biggest constructor it may use or fuzz via Properties with (private or public) setters otherwise.
+      - Provide fuzzing of DateTime
+      - Provide fuzzing of string
+      - Provide fuzzing of any Enum type
+      - Provide fuzzing of any IEnumerable&lt;T&gt;
+      
+    </PackageReleaseNotes>
+    <AssemblyVersion>0.5.0.0</AssemblyVersion>
+    <FileVersion>0.5.0.0</FileVersion>
+    <Version>0.5.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
