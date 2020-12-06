@@ -10,6 +10,20 @@ namespace Diverse.Tests
     public class TypeFuzzerShould
     {
         [Test]
+        public void Be_able_to_Fuzz_a_Type_aggregating_a_bunch_of_various_type_of_Properties()
+        {
+            var fuzzer = new Fuzzer(140481483);
+
+            var instance = fuzzer.GenerateInstanceOf<PropertyOfAllTypes>();
+
+            Check.That(instance.Name).IsNotEmpty();
+            Check.That(instance.Age).IsInstanceOf<int>().Which.IsNotZero();
+            Check.That(instance.Gender).IsNotEqualTo(default(Gender));
+            Check.That(instance.FavoriteNumbers).HasSize(5).And.Not.Contains(0);
+            Check.That(instance.Birthday).IsNotEqualTo(default(DateTime));
+        }
+
+        [Test]
         public void Be_able_to_Fuzz_enum_values()
         {
             var fuzzer = new Fuzzer(1277808677);
@@ -89,27 +103,30 @@ namespace Diverse.Tests
         }
 
         [Test]
-        [Ignore("TBF")]
-        public void Be_able_to_Fuzz_a_Type_aggregating_a_bunch_of_various_type_of_Properties()
-        {
-            var fuzzer = new Fuzzer(140481483);
-
-            var instance = fuzzer.GenerateInstanceOf<PropertyOfAllTypes>();
-
-            Check.That(instance.Name).IsNotEmpty();
-            Check.That(instance.Age).IsInstanceOf<int>().Which.IsNotZero();
-            Check.That(instance.Gender).IsNotEqualTo(default(Gender));
-            Check.That(instance.FavoriteNumbers).HasSize(5).And.Not.Contains(0);
-            //Check.That(instance.Birthday).IsNotEqualTo(default(DateTime));
-        }
-
-        [Test]
         public void Be_able_to_GenerateInstanceOf_int()
         {
             var fuzzer = new Fuzzer();
 
             var result = fuzzer.GenerateInstanceOf<int>();
             Check.That(result).IsInstanceOf<int>().And.IsNotZero();
+        }
+
+        [Test]
+        public void Be_able_to_GenerateInstanceOf_long()
+        {
+            var fuzzer = new Fuzzer();
+
+            var result = fuzzer.GenerateInstanceOf<long>();
+            Check.That(result).IsInstanceOf<long>().And.IsNotZero();
+        }
+
+        [Test]
+        public void Be_able_to_GenerateInstanceOf_decimal()
+        {
+            var fuzzer = new Fuzzer();
+
+            var result = fuzzer.GenerateInstanceOf<decimal>();
+            Check.That(result).IsInstanceOf<decimal>().And.IsNotZero();
         }
 
         [Test]
@@ -120,7 +137,7 @@ namespace Diverse.Tests
             var result = fuzzer.GenerateInstanceOf<IEnumerable<int>>();
             Check.That(result).HasSize(5);
         }
-
+        
         [Test]
         public void Be_able_to_GenerateInstanceOf_DateTime()
         {
@@ -130,6 +147,14 @@ namespace Diverse.Tests
             Check.That(result).IsNotEqualTo(default(DateTime));
         }
 
+        [Test]
+        public void Be_able_to_GenerateInstanceOf_Bool()
+        {
+            var fuzzer = new Fuzzer();
+
+            var result = fuzzer.GenerateInstanceOf<bool>();
+            Check.That(result).IsInstanceOf<bool>();
+        }
 
         //[Test]
         //public void Be_able_to_Fuzz_Self_Referencing_Types_Aggregating_a_collection_of_the_same_Type()
@@ -138,34 +163,5 @@ namespace Diverse.Tests
 
         //    fuzzer.GenerateInstanceOf<SelfReferencingTypeWithACollectionOfItself>();
         //}
-    }
-
-    public class PropertyOfAllTypes
-    {
-        public string Name { get; set; }
-        public int Age { get; set; }
-        //public DateTime Birthday { get; set; }
-
-        public Gender Gender { get; set; }
-        public IEnumerable<int> FavoriteNumbers { get; set; }
-
-        public PropertyOfAllTypes()
-        {
-        }
-    }
-
-    public class SelfReferencingTypeWithACollectionOfItself
-    {
-        public string Name { get; }
-        public DateTime Birthday { get; }
-
-        public IEnumerable<SelfReferencingTypeWithACollectionOfItself> Friends { get; }
-
-        public SelfReferencingTypeWithACollectionOfItself(string name, DateTime birthday, IEnumerable<SelfReferencingTypeWithACollectionOfItself> friends)
-        {
-            Name = name;
-            Birthday = birthday;
-            Friends = friends;
-        }
     }
 }
