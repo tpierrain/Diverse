@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Diverse.Reflection
+namespace Diverse
 {
     /// <summary>
     /// Extension methods related to the usage of Reflection.

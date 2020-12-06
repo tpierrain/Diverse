@@ -13,7 +13,7 @@ namespace Diverse.Tests.Utils
             set => _modifiableSecret = value;
         }
 
-        private string _consultableSecret;
+        private string _consultableSecret = null;
         public string ConsultableSecret => _consultableSecret;
 
         public string Name { get;  }

@@ -109,6 +109,12 @@
             </summary>
             <returns>A positive decimal value generated randomly.</returns>
         </member>
+        <member name="M:Diverse.Fuzzer.GenerateLong">
+            <summary>
+            Generates a random long value.
+            </summary>
+            <returns>A long value generated randomly.</returns>
+        </member>
         <member name="M:Diverse.Fuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
             <summary>
             Generates a 'Diverse' first name (i.e. from all around the world and different cultures).
@@ -272,6 +278,12 @@
             </summary>
             <returns>A positive decimal value generated randomly.</returns>
         </member>
+        <member name="M:Diverse.IFuzzNumbers.GenerateLong">
+            <summary>
+            Generates a random long value.
+            </summary>
+            <returns>A long value generated randomly.</returns>
+        </member>
         <member name="T:Diverse.IFuzzPersons">
             <summary>
             Fuzz <see cref="T:Diverse.Person"/> related information.
@@ -379,6 +391,12 @@
             Generates a random positive decimal value.
             </summary>
             <returns>A positive decimal value generated randomly.</returns>
+        </member>
+        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateLong">
+            <summary>
+            Generates a random long value.
+            </summary>
+            <returns>A long value generated randomly.</returns>
         </member>
         <member name="T:Diverse.ContextualizedFirstName">
             <summary>
@@ -662,6 +680,49 @@
             </summary>
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        </member>
+        <member name="T:Diverse.Types">
+            <summary>
+            List a set of Types that are...
+            </summary>
+        </member>
+        <member name="F:Diverse.Types.CoveredByAFuzzer">
+            <summary>
+            Gets a set of <see cref="T:System.Type"/> that are covered by a Fuzzer.
+            </summary>
+        </member>
+        <member name="T:Diverse.ReflectionExtensions">
+            <summary>
+            Extension methods related to the usage of Reflection.
+            </summary>
+        </member>
+        <member name="M:Diverse.ReflectionExtensions.IsCoveredByAFuzzer(System.Type)">
+            <summary>
+            Indicates whether or not a given <see cref="T:System.Type"/> is already covered by the lib for Fuzzing.
+            </summary>
+            <param name="type">The <see cref="T:System.Type"/> to check.</param>
+            <returns><b>true</b> if the <see cref="T:System.Type"/> is already covered by the lib for Fuzzing, <b>false</b> otherwise.</returns>
+        </member>
+        <member name="M:Diverse.ReflectionExtensions.IsEmpty(System.Reflection.ConstructorInfo)">
+            <summary>
+            Gets a value indicated whether or not a <see cref="T:System.Reflection.ConstructorInfo"/> has no parameter defined.
+            </summary>
+            <param name="constructor">The <see cref="T:System.Reflection.ConstructorInfo"/> to check absence of parameters for.</param>
+            <returns><b>true</b> if the <see cref="T:System.Reflection.ConstructorInfo"/> has no parameter defined, <b>false</b> otherwise.</returns>
+        </member>
+        <member name="M:Diverse.ReflectionExtensions.GetConstructorWithBiggestNumberOfParameters(System.Type)">
+            <summary>
+            Gets the constructor with the biggest number of Parameters of a <see cref="T:System.Type"/>.
+            </summary>
+            <param name="type">The considered <see cref="T:System.Type"/>.</param>
+            <returns>The <see cref="T:System.Reflection.ConstructorInfo"/> which has the biggest number of Parameters defined for this <see cref="T:System.Type"/>.</returns>
+        </member>
+        <member name="M:Diverse.ReflectionExtensions.GetConstructorsOrderedByNumberOfParametersDesc(System.Type)">
+            <summary>
+            Gets all the constructors of a <see cref="T:System.Type"/> ordered by their number of parameters desc.
+            </summary>
+            <param name="type">The considered <see cref="T:System.Type"/>.</param>
+            <returns>All the constructors of a <see cref="T:System.Type"/> ordered by their number of parameters desc.</returns>
         </member>
         <member name="T:Diverse.TypeFuzzer">
             <summary>
