@@ -30,9 +30,14 @@ namespace Diverse.Reflection
             return constructor.GetParameters().Length == 0;
         }
 
+        /// <summary>
+        /// Gets the constructor with the biggest number of Parameters of a <see cref="Type"/>.
+        /// </summary>
+        /// <param name="type">The considered <see cref="Type"/>.</param>
+        /// <returns>The <see cref="ConstructorInfo"/> which has the biggest number of Parameters defined for this <see cref="Type"/>.</returns>
         public static ConstructorInfo GetConstructorWithBiggestNumberOfParameters(this Type type)
         {
-            var constructors = type.GetConstructorsOrderedByNumberOfParametersDesc();
+            var constructors = type.GetConstructorsOrderedByNumberOfParametersDesc().ToArray();
 
             if (!constructors.Any())
             {
@@ -42,6 +47,11 @@ namespace Diverse.Reflection
             return constructors.First();
         }
 
+        /// <summary>
+        /// Gets all the constructors of a <see cref="Type"/> ordered by their number of parameters desc.
+        /// </summary>
+        /// <param name="type">The considered <see cref="Type"/>.</param>
+        /// <returns>All the constructors of a <see cref="Type"/> ordered by their number of parameters desc.</returns>
         public static IEnumerable<ConstructorInfo> GetConstructorsOrderedByNumberOfParametersDesc(this Type type)
         {
             var constructors = ((System.Reflection.TypeInfo)type).DeclaredConstructors;

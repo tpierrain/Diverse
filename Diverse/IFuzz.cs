@@ -10,7 +10,7 @@ namespace Diverse
         /// <summary>
         /// Gets a <see cref="Random"/> instance to use if you want your extensible Fuzzer to be deterministic when providing a seed.
         /// </summary>
-        new Random Random { get; }
+        Random Random { get; }
 
         /// <summary>
         /// Flips a coin.
