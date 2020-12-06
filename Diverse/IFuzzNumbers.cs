@@ -31,5 +31,11 @@
         /// </summary>
         /// <returns>A positive decimal value generated randomly.</returns>
         decimal GeneratePositiveDecimal();
+
+        /// <summary>
+        /// Generates a random long value.
+        /// </summary>
+        /// <returns>A long value generated randomly.</returns>
+        long GenerateLong();
     }
 }

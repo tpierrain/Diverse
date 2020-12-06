@@ -190,6 +190,15 @@ namespace Diverse
             return _numberFuzzer.GeneratePositiveDecimal();
         }
 
+        /// <summary>
+        /// Generates a random long value.
+        /// </summary>
+        /// <returns>A long value generated randomly.</returns>
+        public long GenerateLong()
+        {
+            return _numberFuzzer.GenerateLong();
+        }
+
         #endregion
 
         #region PersonFuzzer

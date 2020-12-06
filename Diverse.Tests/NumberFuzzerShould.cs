@@ -45,5 +45,11 @@ namespace Diverse.Tests
             Check.That(generatedPositiveNumbers.Any(n => n > 3)).IsFalse();
         }
 
+        [Test]
+        public void GenerateLong()
+        {
+            
+        }
+
     }
 }

@@ -61,5 +61,23 @@ namespace Diverse.Numbers
         {
             return Convert.ToDecimal(GenerateInteger(0, int.MaxValue));
         }
+
+        /// <summary>
+        /// Generates a random long value.
+        /// </summary>
+        /// <returns>A long value generated randomly.</returns>
+        public long GenerateLong()
+        {
+            // found here: https://stackoverflow.com/questions/6651554/random-number-in-long-range-is-this-the-way
+
+            var min = long.MinValue;
+            var max = long.MaxValue;
+            var buf = new byte[8];
+            _fuzzer.Random.NextBytes(buf);
+
+            long longRand = BitConverter.ToInt64(buf, 0);
+
+            return (Math.Abs(longRand % (max - min)) + min);
+        }
     }
 }

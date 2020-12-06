@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Diverse.DateTimes
+namespace Diverse
 {
     /// <summary>
     /// Fuzz instance of Types.
@@ -43,17 +43,48 @@ namespace Diverse.DateTimes
                 return default(T);
             }
 
-            var genericType = typeof(T);
-            
-            var constructor = GetConstructorWithBiggestNumberOfParameters(genericType);
+            var type = typeof(T);
+
+            var constructor = GetConstructorWithBiggestNumberOfParameters(type);
+            if (constructor == null || type == typeof(DateTime)) // the case with some BCL types
+            {
+                var instance = FuzzAnyDotNetType(Type.GetTypeCode(type), type, recursionLevel);
+                return (T)instance;
+            }
+
             if (IsEmptyConstructor(constructor))
             {
-                var instance = InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(constructor, recursionLevel, genericType);
+                var instance = InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(constructor, recursionLevel, type);
                 return instance;
             }
             else
             {
-                var instance = InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructor, recursionLevel);
+                T instance;
+                try
+                {
+                    instance = InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructor, recursionLevel);
+                }
+                catch (Exception)
+                {
+                    // Some constructor are complicated to use (e.g. those accepting abstract classes)
+                    // Try other constructors until it works
+                    var constructors = GetConstructorsOrderedByNumberOfParametersDesc(type).Skip(1);
+                    foreach (var constructorInfo in constructors)
+                    {
+                        try
+                        {
+                            instance = InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructorInfo, recursionLevel);
+                            return instance;
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
+                    }
+
+                    instance = default(T);
+                }
+
                 return instance;
             }
         }
@@ -65,9 +96,13 @@ namespace Diverse.DateTimes
             return (T)instance;
         }
 
-        private T InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(ConstructorInfo constructor, int recursionLevel, Type genericType)
+        private T InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(ConstructorInfo constructor, int recursionLevel,
+            Type genericType, object instance = null)
         {
-            var instance = constructor.Invoke(new object[0]);
+            if (instance == null)
+            {
+                instance = constructor.Invoke(new object[0]);
+            }
 
             var propertyInfos = genericType.GetProperties().Where(prop => prop.CanWrite);
             foreach (var propertyInfo in propertyInfos)
@@ -120,6 +155,10 @@ namespace Diverse.DateTimes
                     result = _fuzzer.GenerateInteger();
                     break;
 
+                case TypeCode.Int64:
+                    result = _fuzzer.GenerateLong();
+                    break;
+
                 case TypeCode.Decimal:
                     result = _fuzzer.GeneratePositiveDecimal();
                     break;
@@ -127,11 +166,14 @@ namespace Diverse.DateTimes
                 case TypeCode.String:
                     result = _fuzzer.GenerateFirstName();
                     break;
-               
+
+                case TypeCode.DateTime:
+                    result = _fuzzer.GenerateDateTime();
+                    break;
+
                 default:
                     // is it an IEnumerable?
                     result = GenerateInstanceOf(type, recursionLevel);
-
                     break;
             }
 
@@ -169,7 +211,7 @@ namespace Diverse.DateTimes
 
         private object CallPrivateGenericMethod(Type typeOfT, string privateMethodName, object[] parameters)
         {
-            var methodInfo = ((System.Reflection.TypeInfo) typeof(TypeFuzzer)).DeclaredMethods.Single(m =>
+            var methodInfo = ((TypeInfo) typeof(TypeFuzzer)).DeclaredMethods.Single(m =>
                 m.IsGenericMethod && m.IsPrivate && m.Name.Contains(privateMethodName));
             var generic = methodInfo.MakeGenericMethod(typeOfT);
             
@@ -181,8 +223,21 @@ namespace Diverse.DateTimes
 
         private static ConstructorInfo GetConstructorWithBiggestNumberOfParameters(Type genericType)
         {
-            var constructors = ((System.Reflection.TypeInfo)genericType).DeclaredConstructors;
-            return constructors.OrderByDescending(c => c.GetParameters().Length).First();
+            var constructors = GetConstructorsOrderedByNumberOfParametersDesc(genericType);
+
+            if (constructors.Count() == 0)
+            {
+                return null;
+            }
+
+            return constructors.First();
+        }
+
+        private static IEnumerable<ConstructorInfo> GetConstructorsOrderedByNumberOfParametersDesc(Type genericType)
+        {
+            var constructors = ((System.Reflection.TypeInfo) genericType).DeclaredConstructors;
+
+            return constructors.OrderByDescending(c => c.GetParameters().Length);
         }
 
         /// <summary>

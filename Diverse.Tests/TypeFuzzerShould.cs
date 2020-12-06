@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Diverse.Tests.Utils;
 using NFluent;
 using NUnit.Framework;
@@ -84,6 +86,86 @@ namespace Diverse.Tests
             Check.ThatEnum(aggregatedFavOpponent.CurrentClub.Country).IsEqualTo(Country.Ukraine);
 
             Check.That(player.FormerClubs).HasSize(5);
+        }
+
+        [Test]
+        [Ignore("TBF")]
+        public void Be_able_to_Fuzz_a_Type_aggregating_a_bunch_of_various_type_of_Properties()
+        {
+            var fuzzer = new Fuzzer(140481483);
+
+            var instance = fuzzer.GenerateInstanceOf<PropertyOfAllTypes>();
+
+            Check.That(instance.Name).IsNotEmpty();
+            Check.That(instance.Age).IsInstanceOf<int>().Which.IsNotZero();
+            Check.That(instance.Gender).IsNotEqualTo(default(Gender));
+            Check.That(instance.FavoriteNumbers).HasSize(5).And.Not.Contains(0);
+            //Check.That(instance.Birthday).IsNotEqualTo(default(DateTime));
+        }
+
+        [Test]
+        public void Be_able_to_GenerateInstanceOf_int()
+        {
+            var fuzzer = new Fuzzer();
+
+            var result = fuzzer.GenerateInstanceOf<int>();
+            Check.That(result).IsInstanceOf<int>().And.IsNotZero();
+        }
+
+        [Test]
+        public void Be_able_to_GenerateInstanceOf_IEnumerable_of_int()
+        {
+            var fuzzer = new Fuzzer();
+
+            var result = fuzzer.GenerateInstanceOf<IEnumerable<int>>();
+            Check.That(result).HasSize(5);
+        }
+
+        [Test]
+        public void Be_able_to_GenerateInstanceOf_DateTime()
+        {
+            var fuzzer = new Fuzzer();
+            
+            var result = fuzzer.GenerateInstanceOf<DateTime>();
+            Check.That(result).IsNotEqualTo(default(DateTime));
+        }
+
+
+        //[Test]
+        //public void Be_able_to_Fuzz_Self_Referencing_Types_Aggregating_a_collection_of_the_same_Type()
+        //{
+        //    var fuzzer = new Fuzzer();
+
+        //    fuzzer.GenerateInstanceOf<SelfReferencingTypeWithACollectionOfItself>();
+        //}
+    }
+
+    public class PropertyOfAllTypes
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        //public DateTime Birthday { get; set; }
+
+        public Gender Gender { get; set; }
+        public IEnumerable<int> FavoriteNumbers { get; set; }
+
+        public PropertyOfAllTypes()
+        {
+        }
+    }
+
+    public class SelfReferencingTypeWithACollectionOfItself
+    {
+        public string Name { get; }
+        public DateTime Birthday { get; }
+
+        public IEnumerable<SelfReferencingTypeWithACollectionOfItself> Friends { get; }
+
+        public SelfReferencingTypeWithACollectionOfItself(string name, DateTime birthday, IEnumerable<SelfReferencingTypeWithACollectionOfItself> friends)
+        {
+            Name = name;
+            Birthday = birthday;
+            Friends = friends;
         }
     }
 }

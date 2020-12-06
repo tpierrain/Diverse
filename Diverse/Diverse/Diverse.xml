@@ -9,12 +9,11 @@
             Fuzz <see cref="T:System.DateTime"/>.
             </summary>
         </member>
-        <member name="M:Diverse.DateTimes.DateTimeFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzNumbers)">
+        <member name="M:Diverse.DateTimes.DateTimeFuzzer.#ctor(Diverse.IFuzz)">
             <summary>
             Instantiates a <see cref="T:Diverse.DateTimes.DateTimeFuzzer"/>.
             </summary>
-            <param name="fuzzer">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
-            <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
         </member>
         <member name="M:Diverse.DateTimes.DateTimeFuzzer.GenerateDateTime">
             <summary>
@@ -38,18 +37,6 @@
             <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
         </member>
-        <member name="T:Diverse.DateTimes.TypeFuzzer">
-            <summary>
-            Fuzz instance of Types.
-            </summary>
-        </member>
-        <member name="M:Diverse.DateTimes.TypeFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzPersons)">
-            <summary>
-            Instantiates a <see cref="T:Diverse.DateTimes.TypeFuzzer"/>.
-            </summary>
-            <param name="fuzzer">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
-            <param name="personFuzzer">Instance of <see cref="T:Diverse.IFuzzPersons"/> to use.</param>
-        </member>
         <member name="T:Diverse.Fuzzer">
             <summary>
             Allows to generate lots of combination of things. <see cref="T:Diverse.Fuzzer"/> are very useful to detect hard coded values in our implementations.
@@ -69,12 +56,6 @@
         <member name="P:Diverse.Fuzzer.Diverse#IFuzz#Random">
             <summary>
             Gets the Random instance to be used when we want to create a new extension method for the <see cref="T:Diverse.Fuzzer"/>.
-            <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
-            </summary>
-        </member>
-        <member name="P:Diverse.Fuzzer.Diverse#IProvideCorePrimitivesToFuzzer#Random">
-            <summary>
-            Gets a <see cref="T:System.Random"/> instance to use if you want your Fuzzer to be deterministic when providing a seed.
             <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
             </summary>
         </member>
@@ -192,6 +173,19 @@
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
         </member>
+        <member name="M:Diverse.Fuzzer.GenerateInstanceOf``1">
+            <summary>
+            Generates an instance of a type T.
+            </summary>
+            <returns>An instance of type T with some fuzzed properties.</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateEnum``1">
+            <summary>
+            Generates an instance of an <see cref="T:System.Enum"/> type.
+            </summary>
+            <typeparam name="T">Type of the <see cref="T:System.Enum"/></typeparam>
+            <returns>An random value of the specified <see cref="T:System.Enum"/> type.</returns>
+        </member>
         <member name="T:Diverse.FuzzerException">
             <summary>
             An exception related to Fuzzing.
@@ -212,6 +206,12 @@
             <summary>
             Gets a <see cref="P:Diverse.IFuzz.Random"/> instance to use if you want your extensible Fuzzer to be deterministic when providing a seed.
             </summary>
+        </member>
+        <member name="M:Diverse.IFuzz.HeadsOrTails">
+            <summary>
+            Flips a coin.
+            </summary>
+            <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
         <member name="T:Diverse.IFuzzDatesAndTime">
             <summary>
@@ -333,34 +333,25 @@
             <summary>
             Generates an instance of a type T.
             </summary>
-            <returns>An instance with string properties set to random strings</returns>
+            <returns>An instance of type T with some fuzzed properties.</returns>
         </member>
-        <member name="T:Diverse.IProvideCorePrimitivesToFuzzer">
+        <member name="M:Diverse.IFuzzTypes.GenerateEnum``1">
             <summary>
-            Provides Core primitives for <see cref="T:Diverse.Fuzzer"/> to be able to work.
+            Generates an instance of an <see cref="T:System.Enum"/> type.
             </summary>
-        </member>
-        <member name="P:Diverse.IProvideCorePrimitivesToFuzzer.Random">
-            <summary>
-            Gets a <see cref="P:Diverse.IProvideCorePrimitivesToFuzzer.Random"/> instance to use if you want your Fuzzer to be deterministic when providing a seed.
-            </summary>
-        </member>
-        <member name="M:Diverse.IProvideCorePrimitivesToFuzzer.HeadsOrTails">
-            <summary>
-            Flips a coin.
-            </summary>
-            <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
+            <typeparam name="T">Type of the <see cref="T:System.Enum"/></typeparam>
+            <returns>An random value of the specified <see cref="T:System.Enum"/> type.</returns>
         </member>
         <member name="T:Diverse.Numbers.NumberFuzzer">
             <summary>
             Fuzz numbers.
             </summary>
         </member>
-        <member name="M:Diverse.Numbers.NumberFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer)">
+        <member name="M:Diverse.Numbers.NumberFuzzer.#ctor(Diverse.IFuzz)">
             <summary>
             Instantiates a <see cref="T:Diverse.Numbers.NumberFuzzer"/>.
             </summary>
-            <param name="fuzzer">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
         </member>
         <member name="M:Diverse.Numbers.NumberFuzzer.GenerateInteger(System.Int32,System.Int32)">
             <summary>
@@ -588,12 +579,11 @@
             Fuzz <see cref="T:Diverse.Person"/>.
             </summary>
         </member>
-        <member name="M:Diverse.PersonFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer,Diverse.IFuzzNumbers)">
+        <member name="M:Diverse.PersonFuzzer.#ctor(Diverse.IFuzz)">
             <summary>
             Instantiates a <see cref="T:Diverse.PersonFuzzer"/>.
             </summary>
-            <param name="fuzzer">Instance of <see cref="T:Diverse.IProvideCorePrimitivesToFuzzer"/> to use.</param>
-            <param name="numberFuzzer">Instance of <see cref="T:Diverse.IFuzzNumbers"/> to use.</param>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
         </member>
         <member name="M:Diverse.PersonFuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
             <summary>
@@ -660,11 +650,11 @@
             Fuzz <see cref="T:System.String"/> values.
             </summary>
         </member>
-        <member name="M:Diverse.Strings.StringFuzzer.#ctor(Diverse.IProvideCorePrimitivesToFuzzer)">
+        <member name="M:Diverse.Strings.StringFuzzer.#ctor(Diverse.IFuzz)">
             <summary>
             Instantiates a <see cref="T:Diverse.Strings.StringFuzzer"/>.
             </summary>
-            <param name="fuzzer"></param>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
         </member>
         <member name="M:Diverse.Strings.StringFuzzer.GenerateAdjective(System.Nullable{Diverse.Strings.Feeling})">
             <summary>
@@ -672,6 +662,30 @@
             </summary>
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        </member>
+        <member name="T:Diverse.TypeFuzzer">
+            <summary>
+            Fuzz instance of Types.
+            </summary>
+        </member>
+        <member name="M:Diverse.TypeFuzzer.#ctor(Diverse.IFuzz)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.TypeFuzzer"/>.
+            </summary>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
+        </member>
+        <member name="M:Diverse.TypeFuzzer.GenerateInstanceOf``1">
+            <summary>
+            Generates an instance of a type T.
+            </summary>
+            <returns>An instance of type T with some fuzzed properties.</returns>
+        </member>
+        <member name="M:Diverse.TypeFuzzer.GenerateEnum``1">
+            <summary>
+            Generates an instance of an <see cref="T:System.Enum"/> type.
+            </summary>
+            <typeparam name="T">Type of the <see cref="T:System.Enum"/></typeparam>
+            <returns>An random value of the specified <see cref="T:System.Enum"/> type.</returns>
         </member>
     </members>
 </doc>
