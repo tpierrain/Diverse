@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -228,28 +227,9 @@ namespace Diverse
         private string TransformIntoValidEmailFormat(string eMail)
         {
             var validFormat = eMail.Replace(' ', '-');
-            validFormat = RemoveDiacritics(validFormat);
+            validFormat = validFormat.RemoveDiacritics();
 
             return validFormat;
         }
-
-        // from https://stackoverflow.com/questions/249087/how-do-i-remove-diacritics-accents-from-a-string-in-net
-        private static string RemoveDiacritics(string text)
-        {
-            var normalizedString = text.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
-
-            foreach (var c in normalizedString)
-            {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
-            }
-
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
-        }
-
     }
 }
