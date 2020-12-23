@@ -3,7 +3,7 @@ namespace Diverse.Strings
     /// <summary>
     /// Fuzz <see cref="string"/> values.
     /// </summary>
-    public class StringFuzzer : IFuzzStrings
+    internal class StringFuzzer : IFuzzStrings
     {
         private readonly IFuzz _fuzzer;
 

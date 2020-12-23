@@ -21,6 +21,7 @@ namespace Diverse
         private readonly IFuzzPersons _personFuzzer;
         private readonly IFuzzDatesAndTime _dateTimeFuzzer;
         private readonly IFuzzTypes _typeFuzzer;
+        private readonly GuidFuzzer _guidFuzzer;
 
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
@@ -73,6 +74,7 @@ namespace Diverse
             _personFuzzer = new PersonFuzzer(this);
             _dateTimeFuzzer = new DateTimeFuzzer(this);
             _typeFuzzer = new TypeFuzzer(this);
+            _guidFuzzer = new GuidFuzzer(this);
         }
 
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
@@ -327,6 +329,19 @@ namespace YouNameSpaceHere.Tests
         public string GenerateAdjective(Feeling? feeling = null)
         {
             return _stringFuzzer.GenerateAdjective(feeling);
+        }
+
+        #endregion
+
+        #region GuidFuzzer
+
+        /// <summary>
+        /// Generates a random <see cref="Guid"/>
+        /// </summary>
+        /// <returns>A random <see cref="Guid"/>.</returns>
+        public Guid GenerateGuid()
+        {
+            return _guidFuzzer.GenerateGuid();
         }
 
         #endregion

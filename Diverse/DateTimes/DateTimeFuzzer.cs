@@ -6,7 +6,7 @@ namespace Diverse.DateTimes
     /// <summary>
     /// Fuzz <see cref="DateTime"/>.
     /// </summary>
-    public class DateTimeFuzzer : IFuzzDatesAndTime
+    internal class DateTimeFuzzer : IFuzzDatesAndTime
     {
         private IFuzz _fuzzer;
         

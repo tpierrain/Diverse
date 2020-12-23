@@ -9,7 +9,7 @@ namespace Diverse
     /// <summary>
     /// Fuzz instance of Types.
     /// </summary>
-    public class TypeFuzzer : IFuzzTypes
+    internal class TypeFuzzer : IFuzzTypes
     {
         private const int MaxRecursionAllowedWhileFuzzing = 400;
         private const int MaxCountToFuzzInLists = 5;

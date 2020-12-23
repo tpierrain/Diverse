@@ -7,7 +7,7 @@ namespace Diverse
     /// <summary>
     /// Fuzz <see cref="Person"/>.
     /// </summary>
-    public class PersonFuzzer : IFuzzPersons
+    internal class PersonFuzzer : IFuzzPersons
     {
         private readonly IFuzz _fuzzer;
 

@@ -5,7 +5,7 @@ namespace Diverse.Numbers
     /// <summary>
     /// Fuzz numbers.
     /// </summary>
-    public class NumberFuzzer : IFuzzNumbers
+    internal class NumberFuzzer : IFuzzNumbers
     {
         private readonly IFuzz _fuzzer;
 
