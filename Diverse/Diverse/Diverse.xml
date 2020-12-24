@@ -37,6 +37,13 @@
             <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
         </member>
+        <member name="T:Diverse.DuplicationException">
+            <summary>
+            Represents errors that occur when <see cref="!:AvoidDuplicates"/> is set to <b>true</b>
+            and we couldn't find a non-already provided value after the max number
+            of attempts configured within Diverse. 
+            </summary>
+        </member>
         <member name="T:Diverse.Fuzzer">
             <summary>
             Allows to generate lots of combination of things. <see cref="T:Diverse.Fuzzer"/> are very useful to detect hard coded values in our implementations.
@@ -69,12 +76,13 @@
             Sets the way you want to log or receive what the <see cref="T:Diverse.Fuzzer"/> has to say about every generated seeds used for every fuzzer instance and test.
             </summary>
         </member>
-        <member name="M:Diverse.Fuzzer.#ctor(System.Nullable{System.Int32},System.String)">
+        <member name="M:Diverse.Fuzzer.#ctor(System.Nullable{System.Int32},System.String,System.Nullable{System.Boolean})">
             <summary>
             Instantiates a <see cref="T:Diverse.Fuzzer"/>.
             </summary>
             <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
             <param name="name">The name you want to specify for this <see cref="T:Diverse.Fuzzer"/> instance (useful for debuging purpose).</param>
+            <param name="avoidDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
         </member>
         <member name="M:Diverse.Fuzzer.HeadsOrTails">
             <summary>
@@ -179,6 +187,12 @@
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
         </member>
+        <member name="M:Diverse.Fuzzer.GenerateGuid">
+            <summary>
+            Generates a random <see cref="T:System.Guid"/>
+            </summary>
+            <returns>A random <see cref="T:System.Guid"/>.</returns>
+        </member>
         <member name="M:Diverse.Fuzzer.GenerateInstanceOf``1">
             <summary>
             Generates an instance of a type T.
@@ -202,6 +216,40 @@
             Instantiates a <see cref="T:Diverse.FuzzerException"/>.
             </summary>
             <param name="message">The message of the <see cref="T:Diverse.FuzzerException"/>.</param>
+        </member>
+        <member name="T:Diverse.GuidFuzzer">
+            <summary>
+            <see cref="T:System.Guid"/> Fuzzer.
+            </summary>
+        </member>
+        <member name="M:Diverse.GuidFuzzer.#ctor(Diverse.IFuzz)">
+            <summary>
+            Instantiate a <see cref="T:Diverse.GuidFuzzer"/>.
+            </summary>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
+        </member>
+        <member name="T:Diverse.Maybe`1">
+            <summary>
+            Maybe type.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:Diverse.MemoizerKey">
+            <summary>
+            Key used by the internal Memoizer (enabled if AvoidDuplication is set to <see cref="!:true"/>.
+            </summary>
+        </member>
+        <member name="T:Diverse.StringExtensions">
+            <summary>
+            Extension methods for <see cref="T:System.String"/>.
+            </summary>
+        </member>
+        <member name="M:Diverse.StringExtensions.RemoveDiacritics(System.String)">
+            <summary>
+            Remove diacritics (accents etc) from a given <see cref="T:System.String"/>.
+            </summary>
+            <param name="text">The <see cref="T:System.String"/> you want to remove diacritics from.</param>
+            <returns>The string without accents/diacritic.</returns>
         </member>
         <member name="T:Diverse.IFuzz">
             <summary>
@@ -245,6 +293,17 @@
             <param name="minDate">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
+        </member>
+        <member name="T:Diverse.IFuzzGuid">
+            <summary>
+            Fuzz <see cref="T:System.Guid"/>.
+            </summary>
+        </member>
+        <member name="M:Diverse.IFuzzGuid.GenerateGuid">
+            <summary>
+            Generates a random <see cref="T:System.Guid"/>
+            </summary>
+            <returns>A random <see cref="T:System.Guid"/>.</returns>
         </member>
         <member name="T:Diverse.IFuzzNumbers">
             <summary>
@@ -698,14 +757,21 @@
         </member>
         <member name="M:Diverse.ReflectionExtensions.IsCoveredByAFuzzer(System.Type)">
             <summary>
-            Indicates whether or not a given <see cref="T:System.Type"/> is already covered by the lib for Fuzzing.
+            Gets a value indicating whether a given <see cref="T:System.Type"/> is already covered by the lib for Fuzzing.
             </summary>
             <param name="type">The <see cref="T:System.Type"/> to check.</param>
             <returns><b>true</b> if the <see cref="T:System.Type"/> is already covered by the lib for Fuzzing, <b>false</b> otherwise.</returns>
         </member>
+        <member name="M:Diverse.ReflectionExtensions.IsEnumerable(System.Type)">
+            <summary>
+            Gets a value indicating whether a given <see cref="T:System.Type"/> is <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <param name="type">The <see cref="T:System.Type"/> to check.</param>
+            <returns><b>true</b> if the <see cref="T:System.Type"/> is a <see cref="T:System.Collections.Generic.IEnumerable`1"/> instance, <b>false</b> otherwise.</returns>
+        </member>
         <member name="M:Diverse.ReflectionExtensions.IsEmpty(System.Reflection.ConstructorInfo)">
             <summary>
-            Gets a value indicated whether or not a <see cref="T:System.Reflection.ConstructorInfo"/> has no parameter defined.
+            Gets a value indicated whether a given <see cref="T:System.Reflection.ConstructorInfo"/> has no parameter defined.
             </summary>
             <param name="constructor">The <see cref="T:System.Reflection.ConstructorInfo"/> to check absence of parameters for.</param>
             <returns><b>true</b> if the <see cref="T:System.Reflection.ConstructorInfo"/> has no parameter defined, <b>false</b> otherwise.</returns>

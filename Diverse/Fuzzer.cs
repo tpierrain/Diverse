@@ -198,6 +198,11 @@ namespace YouNameSpaceHere.Tests
         /// <returns>An integer value generated randomly.</returns>
         public int GenerateInteger(int minValue, int maxValue)
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(minValue, maxValue), () => _numberFuzzer.GenerateInteger(minValue, maxValue));
+            }
+
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
         }
 
@@ -376,34 +381,64 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                var currentMethod = GetCurrentMethod();
-                var memoizerKey = new MemoizerKey(currentMethod, 0);
-
-                var alreadyProvidedValues = _memoizer.GetAlreadyProvidedValues(memoizerKey);
-
-                T result = default(T);
-                var found = false;
-                for (var i = 0; i < MaxAttemptsToFindNotAlreadyProvidedValue; i++)
-                {
-                    result = _typeFuzzer.GenerateEnum<T>();
-
-                    if (!alreadyProvidedValues.Contains(result))
-                    {
-                        alreadyProvidedValues.Add(result);
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found)
-                {
-                    return result;
-                }
-
-                throw new DuplicationException(typeof(T), MaxAttemptsToFindNotAlreadyProvidedValue, alreadyProvidedValues);
+                return GenerateWithoutDuplication<T>(GetCurrentMethod(), HashArguments(), () => _typeFuzzer.GenerateEnum<T>());
             }
 
             return _typeFuzzer.GenerateEnum<T>();
+        }
+
+        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, Func<T> generationFunction)
+        {
+            var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
+            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues,
+                generationFunction);
+
+            if (!maybe.HasItem)
+            {
+                throw new DuplicationException(typeof(T), MaxAttemptsToFindNotAlreadyProvidedValue, alreadyProvidedValues);
+            }
+
+            alreadyProvidedValues.Add(maybe.Item);
+            return maybe.Item;
+        }
+
+        private Maybe<T> TryGetNonAlreadyProvidedValues<T>(MemoizerKey memoizerKey, out HashSet<object> alreadyProvidedValues, Func<T> generationFunction)
+        {
+            alreadyProvidedValues = _memoizer.GetAlreadyProvidedValues(memoizerKey);
+
+            var maybe = GenerateNotAlreadyProvidedValue<T>(alreadyProvidedValues, MaxAttemptsToFindNotAlreadyProvidedValue,
+                generationFunction);
+            return maybe;
+        }
+
+        private int HashArguments(params object[] parameters)
+        {
+            int hash = 17;
+            foreach (var parameter in parameters)
+            {
+                var parameterHashCode = parameter.GetHashCode();
+                hash = hash * 23 + parameterHashCode;
+            }
+
+            return hash;
+        }
+
+        private Maybe<T> GenerateNotAlreadyProvidedValue<T>(ISet<object> alreadyProvidedValues, int maxAttempts, Func<T> generationFunction)
+        {
+            var maybe = new Maybe<T>();
+            T result = default(T);
+            for (var i = 0; i < maxAttempts; i++)
+            {
+                result = generationFunction();
+
+                if (!alreadyProvidedValues.Contains(result))
+                {
+                    maybe = new Maybe<T>(result);
+                    break;
+                }
+            }
+
+            return maybe;
         }
 
         #endregion
@@ -412,35 +447,10 @@ namespace YouNameSpaceHere.Tests
         private MethodBase GetCurrentMethod()
         {
             var st = new StackTrace();
-            var sf = st.GetFrame(1);
+            var sf = st.GetFrame(1); 
+
 
             return sf.GetMethod();
-        }
-    }
-
-    internal class Memoizer
-    {
-        private readonly Dictionary<MemoizerKey, HashSet<object>> _memoizer = new Dictionary<MemoizerKey, HashSet<object>>();
-
-        public Memoizer()
-        {
-        }
-
-        public HashSet<object> GetAlreadyProvidedValues(MemoizerKey memoizerKey)
-        {
-            HashSet<object> alreadyProvidedValues = null;
-            
-            if (!_memoizer.ContainsKey(memoizerKey))
-            {
-                alreadyProvidedValues = new HashSet<object>();
-                _memoizer[memoizerKey] = alreadyProvidedValues;
-            }
-            else
-            {
-                alreadyProvidedValues = _memoizer[memoizerKey];
-            }
-
-            return alreadyProvidedValues;
         }
     }
 }
