@@ -11,7 +11,7 @@ namespace Diverse
     public class DuplicationException : Exception
     {
         public DuplicationException(Type typeRequested, int maxAttemptsToFindNotAlreadyProvidedValue,
-            HashSet<object> alreadyProvidedValues) : base($"Couldn't find a non-already provided value of {typeRequested} after {maxAttemptsToFindNotAlreadyProvidedValue} attempts. Already provided values: {string.Join(", ", alreadyProvidedValues) }.")
+            HashSet<object> alreadyProvidedValues) : base($"Couldn't find a non-already provided value of {typeRequested} after {maxAttemptsToFindNotAlreadyProvidedValue} attempts. Already provided values: {string.Join(", ", alreadyProvidedValues) }. In your case, try to increase the value of the {nameof(Fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue)} property for your Fuzzer.")
         {
             
         }

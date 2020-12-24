@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NFluent;
+using NFluent.ApiChecks;
 using NUnit.Framework;
 
 namespace Diverse.Tests
@@ -28,6 +29,26 @@ namespace Diverse.Tests
 
             Check.That(returnedElements).HasSize(numberOfMagnificent);
         }
+
+        [Test]
+        public void Throw_DuplicationException_with_fix_explanation_when_number_of_attempts_is_too_low()
+        {
+            var fuzzer = new Fuzzer(707888174, avoidDuplication: true);
+            fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue = 1;
+
+            Check.ThatCode(() =>
+            {
+                const int maxValue = 10;
+                for (var i = 0; i < maxValue; i++)
+                {
+                    var integer = fuzzer.GenerateInteger(0, maxValue);
+                }
+            }).Throws<DuplicationException>()
+                .AndWhichMessage()
+                .StartsWith("Couldn't find a non-already provided value of System.Int32 after 1 attempts. Already provided values:").
+                And.EndsWith($". In your case, try to increase the value of the {nameof(Fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue)} property for your Fuzzer.");
+        }
+
 
         [Test]
         [Repeat(200)]

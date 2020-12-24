@@ -24,9 +24,17 @@ namespace Diverse
         private readonly IFuzzDatesAndTime _dateTimeFuzzer;
         private readonly IFuzzTypes _typeFuzzer;
         private readonly GuidFuzzer _guidFuzzer;
-        private int MaxAttemptsToFindNotAlreadyProvidedValue = 100;
+        
+        private const int MaxAttemptsToFindNotAlreadyProvidedDefaultValue = 100;
         private readonly Memoizer _memoizer = new Memoizer();
 
+        /// <summary>
+        /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
+        /// a not already provided value when <see cref="AvoidDuplication"/> mode is enabled (via constructor).
+        /// </summary>
+        public int MaxAttemptsToFindNotAlreadyProvidedValue { get; set; } =
+            MaxAttemptsToFindNotAlreadyProvidedDefaultValue;
+    
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
         /// </summary>
@@ -37,7 +45,10 @@ namespace Diverse
         /// </summary>
         public string Name { get; }
 
-        public bool AvoidDuplication { get; }
+        /// <summary>
+        /// Gets of sets a value indicating whether the <see cref="Fuzzer"/> should avoid providing twice the same value or not.
+        /// </summary>
+        public bool AvoidDuplication { get; set; }
 
         /// <summary>
         /// Gets the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
