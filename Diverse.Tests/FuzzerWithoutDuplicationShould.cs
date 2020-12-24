@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using NFluent;
 using NFluent.ApiChecks;
 using NUnit.Framework;
@@ -10,6 +11,7 @@ namespace Diverse.Tests
     /// All about some intrinsic behaviours of the <see cref="Fuzzer"/>.
     /// </summary>
     [TestFixture]
+    [SuppressMessage("ReSharper", "ConvertToLambdaExpression")]
     public class FuzzerWithoutDuplicationShould
     {
         [Test]
@@ -18,16 +20,37 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer(avoidDuplication: true);
 
-            var returnedElements = new HashSet<MagnificentSeven>();
-            var numberOfMagnificent = Enum.GetValues(typeof(MagnificentSeven)).Length;
-            for (var i = 0; i < numberOfMagnificent; i++)
+            var maxNumberOfElements = Enum.GetValues(typeof(MagnificentSeven)).Length;
+            CheckThatNoDuplicationIsMadeWhileGenerating<MagnificentSeven>(fuzzer, maxNumberOfElements, () =>
             {
-                var aMagnificent = fuzzer.GenerateEnum<MagnificentSeven>();
-                returnedElements.Add(aMagnificent);
-                TestContext.WriteLine(aMagnificent.ToString());
-            }
+                return fuzzer.GenerateEnum<MagnificentSeven>();
+            });
+        }
 
-            Check.That(returnedElements).HasSize(numberOfMagnificent);
+        [Test]
+        [Repeat(200)]
+        public void Be_able_to_provide_always_different_values_of_The_good_the_bad_and_the_ugly_Enum()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var maxNumberOfElements = Enum.GetValues(typeof(TheGoodTheBadAndTheUgly)).Length;
+            CheckThatNoDuplicationIsMadeWhileGenerating<TheGoodTheBadAndTheUgly>(fuzzer, maxNumberOfElements, () =>
+            {
+                return fuzzer.GenerateEnum<TheGoodTheBadAndTheUgly>();
+            });
+        }
+
+        [Test]
+        [Repeat(200)]
+        public void Be_able_to_provide_always_different_values_of_integers_within_a_range()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var maxNumberOfElements = 10;
+            CheckThatNoDuplicationIsMadeWhileGenerating<int>(fuzzer, maxNumberOfElements, () =>
+            {
+                return fuzzer.GenerateInteger(0, maxNumberOfElements);
+            });
         }
 
         [Test]
@@ -37,53 +60,30 @@ namespace Diverse.Tests
             fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue = 1;
 
             Check.ThatCode(() =>
-            {
-                const int maxValue = 10;
-                for (var i = 0; i < maxValue; i++)
                 {
-                    var integer = fuzzer.GenerateInteger(0, maxValue);
-                }
-            }).Throws<DuplicationException>()
+                    const int maxValue = 10;
+                    for (var i = 0; i < maxValue; i++)
+                    {
+                        var integer = fuzzer.GenerateInteger(0, maxValue);
+                    }
+                }).Throws<DuplicationException>()
                 .AndWhichMessage()
                 .StartsWith("Couldn't find a non-already provided value of System.Int32 after 1 attempts. Already provided values:").
                 And.EndsWith($". In your case, try to increase the value of the {nameof(Fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue)} property for your Fuzzer.");
         }
 
-
-        [Test]
-        [Repeat(200)]
-        public void Be_able_to_provide_always_different_values_of_The_good_the_bad_and_the_ugly_Enum()
+        private static void CheckThatNoDuplicationIsMadeWhileGenerating<T>(Fuzzer fuzzer,
+            int maxNumberOfElements, Func<T> fuzzingFunction)
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
-
-            var returnedElements = new HashSet<TheGoodTheBadAndTheUgly>();
-            var numberOfPersonas = Enum.GetValues(typeof(TheGoodTheBadAndTheUgly)).Length;
-            for (var i = 0; i < numberOfPersonas; i++)
+            var returnedElements = new HashSet<T>(); //T
+            for (var i = 0; i < maxNumberOfElements; i++)
             {
-                var someone = fuzzer.GenerateEnum<TheGoodTheBadAndTheUgly>();
-                returnedElements.Add(someone);
-                TestContext.WriteLine(someone.ToString());
+                var element = fuzzingFunction();
+                returnedElements.Add(element);
+                TestContext.WriteLine(element.ToString());
             }
 
-            Check.That(returnedElements).HasSize(numberOfPersonas);
-        }
-
-        [Test]
-        [Repeat(200)]
-        public void Be_able_to_provide_always_different_values_of_integers_within_a_range()
-        {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
-
-            var generatedIntegers = new HashSet<int>();
-            const int maxValue = 10;
-            for (var i = 0; i < maxValue; i++)
-            {
-                var integer = fuzzer.GenerateInteger(0, maxValue);
-                generatedIntegers.Add(integer);
-                TestContext.WriteLine(integer.ToString());
-            }
-
-            Check.That(generatedIntegers).HasSize(maxValue);
+            Check.That(returnedElements).HasSize(maxNumberOfElements);
         }
     }
 
