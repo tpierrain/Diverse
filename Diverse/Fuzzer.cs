@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Diverse.DateTimes;
 using Diverse.Numbers;
 using Diverse.Strings;
@@ -22,6 +24,8 @@ namespace Diverse
         private readonly IFuzzDatesAndTime _dateTimeFuzzer;
         private readonly IFuzzTypes _typeFuzzer;
         private readonly GuidFuzzer _guidFuzzer;
+        private int MaxAttemptsToFindNotAlreadyProvidedValue = 100;
+        private readonly Memoizer _memoizer = new Memoizer();
 
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
@@ -32,6 +36,8 @@ namespace Diverse
         /// Gets the name of this <see cref="Fuzzer"/> instance.
         /// </summary>
         public string Name { get; }
+
+        public bool AvoidDuplication { get; }
 
         /// <summary>
         /// Gets the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
@@ -54,7 +60,8 @@ namespace Diverse
         /// </summary>
         /// <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
         /// <param name="name">The name you want to specify for this <see cref="Fuzzer"/> instance (useful for debuging purpose).</param>
-        public Fuzzer(int? seed = null, string name = null)
+        /// <param name="avoidDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
+        public Fuzzer(int? seed = null, string name = null, bool? avoidDuplication = false)
         {
             var seedWasProvided = seed.HasValue;
 
@@ -65,6 +72,9 @@ namespace Diverse
 
             name = name ?? GenerateFuzzerName();
             Name = name;
+
+            avoidDuplication = avoidDuplication ?? false;
+            AvoidDuplication = avoidDuplication.Value;
 
             LogSeedAndTestInformations(seed.Value, seedWasProvided, name);
 
@@ -120,7 +130,7 @@ namespace YouNameSpaceHere.Tests
         [OneTimeSetUp]
         public void Init()
         {
-            "+ $"{nameof(Fuzzer)}.{nameof(Log)} = TestContext.WriteLine;" + @"
+            " + $"{nameof(Fuzzer)}.{nameof(Log)} = TestContext.WriteLine;" + @"
         }
     }
 }
@@ -364,9 +374,73 @@ namespace YouNameSpaceHere.Tests
         /// <returns>An random value of the specified <see cref="Enum"/> type.</returns>
         public T GenerateEnum<T>()
         {
+            if (AvoidDuplication)
+            {
+                var currentMethod = GetCurrentMethod();
+                var memoizerKey = new MemoizerKey(currentMethod, 0);
+
+                var alreadyProvidedValues = _memoizer.GetAlreadyProvidedValues(memoizerKey);
+
+                T result = default(T);
+                var found = false;
+                for (var i = 0; i < MaxAttemptsToFindNotAlreadyProvidedValue; i++)
+                {
+                    result = _typeFuzzer.GenerateEnum<T>();
+
+                    if (!alreadyProvidedValues.Contains(result))
+                    {
+                        alreadyProvidedValues.Add(result);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    return result;
+                }
+
+                throw new DuplicationException(typeof(T), MaxAttemptsToFindNotAlreadyProvidedValue, alreadyProvidedValues);
+            }
+
             return _typeFuzzer.GenerateEnum<T>();
         }
 
         #endregion
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private MethodBase GetCurrentMethod()
+        {
+            var st = new StackTrace();
+            var sf = st.GetFrame(1);
+
+            return sf.GetMethod();
+        }
+    }
+
+    internal class Memoizer
+    {
+        private readonly Dictionary<MemoizerKey, HashSet<object>> _memoizer = new Dictionary<MemoizerKey, HashSet<object>>();
+
+        public Memoizer()
+        {
+        }
+
+        public HashSet<object> GetAlreadyProvidedValues(MemoizerKey memoizerKey)
+        {
+            HashSet<object> alreadyProvidedValues = null;
+            
+            if (!_memoizer.ContainsKey(memoizerKey))
+            {
+                alreadyProvidedValues = new HashSet<object>();
+                _memoizer[memoizerKey] = alreadyProvidedValues;
+            }
+            else
+            {
+                alreadyProvidedValues = _memoizer[memoizerKey];
+            }
+
+            return alreadyProvidedValues;
+        }
     }
 }

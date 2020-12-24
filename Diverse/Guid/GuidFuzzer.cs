@@ -17,7 +17,6 @@ namespace Diverse
         {
             _fuzzer = fuzzer;
         }
-
         
         public Guid GenerateGuid()
         {
