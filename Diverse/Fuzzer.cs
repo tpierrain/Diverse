@@ -207,7 +207,7 @@ namespace YouNameSpaceHere.Tests
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
         /// <returns>An integer value generated randomly.</returns>
-        public int GenerateInteger(int minValue, int maxValue)
+        public int GenerateInteger(int? minValue = null, int? maxValue = null)
         {
             if (AvoidDuplication)
             {
@@ -218,40 +218,79 @@ namespace YouNameSpaceHere.Tests
         }
 
         /// <summary>
-        /// Generates a random integer value.
-        /// </summary>
-        /// <returns>An integer value generated randomly.</returns>
-        public int GenerateInteger()
-        {
-            return _numberFuzzer.GenerateInteger();
-        }
-
-        /// <summary>
         /// Generates a random positive integer value.
         /// </summary>
         /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
         /// <returns>A positive integer value generated randomly.</returns>
         public int GeneratePositiveInteger(int? maxValue = null)
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(maxValue), () => _numberFuzzer.GeneratePositiveInteger(maxValue));
+            }
+
             return _numberFuzzer.GeneratePositiveInteger(maxValue);
+        }
+
+        /// <summary>
+        /// Generates a random decimal value.
+        /// </summary>
+        /// <param name="minValue">(optional) The inclusive lower bound of the random number returned.</param>
+        /// <param name="maxValue">(optional) The inclusive upper bound of the random number returned.</param>
+        /// <returns>A decimal value generated randomly.</returns>
+        /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minValue">minValue</paramref> is greater than <paramref name="maxValue">maxValue</paramref>.</exception>
+        public decimal GenerateDecimal(decimal? minValue = null, decimal? maxValue = null)
+        {
+            // No need to memoize decimals here since it is very unlikely that the lib generate twice the same decimal
+            return _numberFuzzer.GenerateDecimal(minValue, maxValue);
         }
 
         /// <summary>
         /// Generates a random positive decimal value.
         /// </summary>
+        /// <param name="minValue">(optional) The inclusive positive lower bound of the random number returned.</param>
+        /// <param name="maxValue">(optional) The inclusive positive upper bound of the random number returned.</param>
         /// <returns>A positive decimal value generated randomly.</returns>
-        public decimal GeneratePositiveDecimal()
+        public decimal GeneratePositiveDecimal(decimal? minValue = null, decimal? maxValue = null)
         {
-            return _numberFuzzer.GeneratePositiveDecimal();
+            // No need to memoize decimals here since it is very unlikely that the lib generate twice the same decimal
+            return _numberFuzzer.GeneratePositiveDecimal(minValue, maxValue);
         }
 
         /// <summary>
         /// Generates a random long value.
         /// </summary>
+        /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
+        /// <param name="maxValue">The inclusive upper bound of the random number returned.</param>
         /// <returns>A long value generated randomly.</returns>
-        public long GenerateLong()
+        public long GenerateLong(long? minValue = null, long? maxValue = null)
         {
-            return _numberFuzzer.GenerateLong();
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication<long>(GetCurrentMethod(), HashArguments(maxValue), () => _numberFuzzer.GenerateLong(minValue, maxValue),
+                    set =>
+                    {
+                        var min = minValue ?? long.MinValue;
+                        var max = maxValue ?? long.MaxValue;
+                        
+                        var allPosibleOptions = new SortedSet<long>();
+                        for (var i = min; i <  max+1 ; i++)
+                        {
+                            allPosibleOptions.Add(i);
+                        }
+
+                        var remainingNumbers = allPosibleOptions.Where(n => !set.Contains(n));
+
+                        if (remainingNumbers.Count() > 0)
+                        {
+                            return new Maybe<long>(remainingNumbers.First());
+                        }
+
+                        return new Maybe<long>();
+                    });
+            }
+
+            return _numberFuzzer.GenerateLong(minValue, maxValue);
         }
 
         #endregion
@@ -367,6 +406,7 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A random <see cref="Guid"/>.</returns>
         public Guid GenerateGuid()
         {
+            // No need to memoize Guids here since it is very unlikely that the lib generate twice the same value
             return _guidFuzzer.GenerateGuid();
         }
 
@@ -398,12 +438,17 @@ namespace YouNameSpaceHere.Tests
             return _typeFuzzer.GenerateEnum<T>();
         }
 
-        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, Func<T> generationFunction)
+        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, Func<T> generationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceFunc = null)
         {
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
-            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues,
-                generationFunction);
+            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, generationFunction);
 
+            if (!maybe.HasItem && lastChanceFunc != null)
+            {
+                // last attempt, we randomly pick the missing bits from the memoizer
+                maybe = lastChanceFunc(_memoizer.GetAlreadyProvidedValues(memoizerKey));
+            }
+            
             if (!maybe.HasItem)
             {
                 throw new DuplicationException(typeof(T), MaxAttemptsToFindNotAlreadyProvidedValue, alreadyProvidedValues);
@@ -413,7 +458,7 @@ namespace YouNameSpaceHere.Tests
             return maybe.Item;
         }
 
-        private Maybe<T> TryGetNonAlreadyProvidedValues<T>(MemoizerKey memoizerKey, out HashSet<object> alreadyProvidedValues, Func<T> generationFunction)
+        private Maybe<T> TryGetNonAlreadyProvidedValues<T>(MemoizerKey memoizerKey, out SortedSet<object> alreadyProvidedValues, Func<T> generationFunction)
         {
             alreadyProvidedValues = _memoizer.GetAlreadyProvidedValues(memoizerKey);
 
@@ -424,10 +469,10 @@ namespace YouNameSpaceHere.Tests
 
         private int HashArguments(params object[] parameters)
         {
-            int hash = 17;
+            var hash = 17;
             foreach (var parameter in parameters)
             {
-                var parameterHashCode = parameter.GetHashCode();
+                var parameterHashCode = parameter?.GetHashCode() ?? 17;
                 hash = hash * 23 + parameterHashCode;
             }
 

@@ -4,19 +4,19 @@ namespace Diverse
 {
     internal class Memoizer
     {
-        private readonly Dictionary<MemoizerKey, HashSet<object>> _memoizer = new Dictionary<MemoizerKey, HashSet<object>>();
+        private readonly Dictionary<MemoizerKey, SortedSet<object>> _memoizer = new Dictionary<MemoizerKey, SortedSet<object>>();
 
         public Memoizer()
         {
         }
 
-        public HashSet<object> GetAlreadyProvidedValues(MemoizerKey memoizerKey)
+        public SortedSet<object> GetAlreadyProvidedValues(MemoizerKey memoizerKey)
         {
-            HashSet<object> alreadyProvidedValues = null;
+            SortedSet<object> alreadyProvidedValues = null;
             
             if (!_memoizer.ContainsKey(memoizerKey))
             {
-                alreadyProvidedValues = new HashSet<object>();
+                alreadyProvidedValues = new SortedSet<object>();
                 _memoizer[memoizerKey] = alreadyProvidedValues;
             }
             else

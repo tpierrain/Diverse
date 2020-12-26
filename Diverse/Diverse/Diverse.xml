@@ -50,6 +50,12 @@
             Note: you can instantiate another Deterministic Fuzzer by providing it the Seed you want to reuse.
             </summary>
         </member>
+        <member name="P:Diverse.Fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue">
+            <summary>
+            Gets or sets the max number of attempts the Fuzzer should make in order to generate
+            a not already provided value when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode is enabled (via constructor).
+            </summary>
+        </member>
         <member name="P:Diverse.Fuzzer.Seed">
             <summary>
             Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="T:Diverse.Fuzzer"/> involved.
@@ -58,6 +64,11 @@
         <member name="P:Diverse.Fuzzer.Name">
             <summary>
             Gets the name of this <see cref="T:Diverse.Fuzzer"/> instance.
+            </summary>
+        </member>
+        <member name="P:Diverse.Fuzzer.AvoidDuplication">
+            <summary>
+            Gets of sets a value indicating whether the <see cref="T:Diverse.Fuzzer"/> should avoid providing twice the same value or not.
             </summary>
         </member>
         <member name="P:Diverse.Fuzzer.Diverse#IFuzz#Random">
@@ -90,18 +101,12 @@
             </summary>
             <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
-        <member name="M:Diverse.Fuzzer.GenerateInteger(System.Int32,System.Int32)">
+        <member name="M:Diverse.Fuzzer.GenerateInteger(System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Generates a random integer value between a min (inclusive) and a max (exclusive) value.
             </summary>
             <param name="minValue">The inclusive lower bound of the random number returned.</param>
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
-            <returns>An integer value generated randomly.</returns>
-        </member>
-        <member name="M:Diverse.Fuzzer.GenerateInteger">
-            <summary>
-            Generates a random integer value.
-            </summary>
             <returns>An integer value generated randomly.</returns>
         </member>
         <member name="M:Diverse.Fuzzer.GeneratePositiveInteger(System.Nullable{System.Int32})">
@@ -111,16 +116,29 @@
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A positive integer value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.Fuzzer.GeneratePositiveDecimal">
+        <member name="M:Diverse.Fuzzer.GenerateDecimal(System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
+            <summary>
+            Generates a random decimal value.
+            </summary>
+            <param name="minValue">(optional) The inclusive lower bound of the random number returned.</param>
+            <param name="maxValue">(optional) The inclusive upper bound of the random number returned.</param>
+            <returns>A decimal value generated randomly.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minValue">minValue</paramref> is greater than <paramref name="maxValue">maxValue</paramref>.</exception>
+        </member>
+        <member name="M:Diverse.Fuzzer.GeneratePositiveDecimal(System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
             <summary>
             Generates a random positive decimal value.
             </summary>
+            <param name="minValue">(optional) The inclusive positive lower bound of the random number returned.</param>
+            <param name="maxValue">(optional) The inclusive positive upper bound of the random number returned.</param>
             <returns>A positive decimal value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.Fuzzer.GenerateLong">
+        <member name="M:Diverse.Fuzzer.GenerateLong(System.Nullable{System.Int64},System.Nullable{System.Int64})">
             <summary>
             Generates a random long value.
             </summary>
+            <param name="minValue">The inclusive lower bound of the random number returned.</param>
+            <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A long value generated randomly.</returns>
         </member>
         <member name="M:Diverse.Fuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
@@ -239,6 +257,27 @@
             Key used by the internal Memoizer (enabled if AvoidDuplication is set to <see cref="!:true"/>.
             </summary>
         </member>
+        <member name="T:Diverse.NumberExtensions">
+            <summary>
+            Extension methods for numbers.
+            </summary>
+        </member>
+        <member name="M:Diverse.NumberExtensions.ExtractScale(System.Decimal)">
+            <summary>
+            Extract the scale of a <see cref="T:System.Decimal"/>.
+            </summary>
+            <param name="number">The <see cref="T:System.Decimal"/> number.</param>
+            <returns>The scale of the <see cref="T:System.Decimal"/> number.</returns>
+        </member>
+        <member name="M:Diverse.NumberExtensions.FuzzDecimalScaleBetween(System.Byte,System.Byte,System.Random)">
+            <summary>
+            Fuzz a scale for a <see cref="T:System.Decimal"/> number that is included between a min scale and a max scale.
+            </summary>
+            <param name="minValue">The lower bound for this scale to be fuzzed.</param>
+            <param name="maxValue">The upper bound for this scale to be fuzzed.</param>
+            <param name="random">The <see cref="T:System.Random"/> instance to be used to fuzz.</param>
+            <returns>A scale for a <see cref="T:System.Decimal"/> number that is included between the min and max provided (inclusive).</returns>
+        </member>
         <member name="T:Diverse.StringExtensions">
             <summary>
             Extension methods for <see cref="T:System.String"/>.
@@ -310,18 +349,12 @@
             Fuzz numbers.
             </summary>
         </member>
-        <member name="M:Diverse.IFuzzNumbers.GenerateInteger(System.Int32,System.Int32)">
+        <member name="M:Diverse.IFuzzNumbers.GenerateInteger(System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Generates a random integer value between a min (inclusive) and a max (exclusive) value.
             </summary>
             <param name="minValue">The inclusive lower bound of the random number returned.</param>
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
-            <returns>An integer value generated randomly.</returns>
-        </member>
-        <member name="M:Diverse.IFuzzNumbers.GenerateInteger">
-            <summary>
-            Generates a random integer value.
-            </summary>
             <returns>An integer value generated randomly.</returns>
         </member>
         <member name="M:Diverse.IFuzzNumbers.GeneratePositiveInteger(System.Nullable{System.Int32})">
@@ -331,16 +364,30 @@
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A positive integer value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.IFuzzNumbers.GeneratePositiveDecimal">
+        <member name="M:Diverse.IFuzzNumbers.GenerateDecimal(System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
+            <summary>
+            Generates a random decimal value.
+            </summary>
+            <param name="minValue">(optional) The inclusive lower bound of the random number returned.</param>
+            <param name="maxValue">(optional) The inclusive upper bound of the random number returned.</param>
+            <returns>A decimal value generated randomly.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minValue">minValue</paramref> is greater than <paramref name="maxValue">maxValue</paramref>.</exception>
+        </member>
+        <member name="M:Diverse.IFuzzNumbers.GeneratePositiveDecimal(System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
             <summary>
             Generates a random positive decimal value.
             </summary>
+            <param name="minValue">(optional) The inclusive positive lower bound of the random number returned.</param>
+            <param name="maxValue">(optional) The inclusive positive upper bound of the random number returned.</param>
             <returns>A positive decimal value generated randomly.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minValue">minValue</paramref> is greater than <paramref name="maxValue">maxValue</paramref>.</exception>
         </member>
-        <member name="M:Diverse.IFuzzNumbers.GenerateLong">
+        <member name="M:Diverse.IFuzzNumbers.GenerateLong(System.Nullable{System.Int64},System.Nullable{System.Int64})">
             <summary>
             Generates a random long value.
             </summary>
+            <param name="minValue">The inclusive lower bound of the random number returned.</param>
+            <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A long value generated randomly.</returns>
         </member>
         <member name="T:Diverse.IFuzzPersons">
@@ -424,18 +471,12 @@
             </summary>
             <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
         </member>
-        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateInteger(System.Int32,System.Int32)">
+        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateInteger(System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Generates a random integer value between a min (inclusive) and a max (exclusive) value.
             </summary>
             <param name="minValue">The inclusive lower bound of the random number returned.</param>
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
-            <returns>An integer value generated randomly.</returns>
-        </member>
-        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateInteger">
-            <summary>
-            Generates a random integer value.
-            </summary>
             <returns>An integer value generated randomly.</returns>
         </member>
         <member name="M:Diverse.Numbers.NumberFuzzer.GeneratePositiveInteger(System.Nullable{System.Int32})">
@@ -445,16 +486,29 @@
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A positive integer value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.Numbers.NumberFuzzer.GeneratePositiveDecimal">
+        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateDecimal(System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
+            <summary>
+            Generates a random decimal value.
+            </summary>
+            <param name="minValue">(optional) The inclusive lower bound of the random number returned.</param>
+            <param name="maxValue">(optional) The inclusive upper bound of the random number returned.</param>
+            <returns>A decimal value generated randomly.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minValue">minValue</paramref> is greater than <paramref name="maxValue">maxValue</paramref>.</exception>
+        </member>
+        <member name="M:Diverse.Numbers.NumberFuzzer.GeneratePositiveDecimal(System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
             <summary>
             Generates a random positive decimal value.
             </summary>
+            <param name="minValue">(optional) The inclusive positive lower bound of the random number returned.</param>
+            <param name="maxValue">(optional) The inclusive positive upper bound of the random number returned.</param>
             <returns>A positive decimal value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateLong">
+        <member name="M:Diverse.Numbers.NumberFuzzer.GenerateLong(System.Nullable{System.Int64},System.Nullable{System.Int64})">
             <summary>
             Generates a random long value.
             </summary>
+            <param name="minValue">The inclusive lower bound of the random number returned.</param>
+            <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A long value generated randomly.</returns>
         </member>
         <member name="T:Diverse.ContextualizedFirstName">

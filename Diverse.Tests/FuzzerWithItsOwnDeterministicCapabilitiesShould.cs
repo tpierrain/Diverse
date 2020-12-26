@@ -39,13 +39,12 @@ namespace Diverse.Tests
             var fuzzedIntegers = new List<int>();
             for (var i = 0; i < 10; i++)
             {
-                fuzzedIntegers.Add(fuzzer.GeneratePositiveInteger());
+                var positiveInteger = fuzzer.GeneratePositiveInteger();
+                fuzzedIntegers.Add(positiveInteger);
             }
 
-            var fuzzedDecimal = fuzzer.GeneratePositiveDecimal();
-
+            //Check.That(fuzzedDecimal).IsEqualTo(720612366.000000740230018m);
             Check.That(fuzzedIntegers).ContainsExactly(33828652, 221134346, 1868176041, 1437724735, 1202622988, 974525956, 1605572379, 1127364048, 1453698000, 141079432);
-            Check.That(fuzzedDecimal).IsEqualTo(720612366m);
         }
 
         [Test]

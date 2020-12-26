@@ -114,7 +114,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_GenerateInstanceOf_long()
         {
-            var fuzzer = new Fuzzer();
+            var fuzzer = new Fuzzer(1128739598);
 
             var result = fuzzer.GenerateInstanceOf<long>();
             Check.That(result).IsInstanceOf<long>().And.IsNotZero();
