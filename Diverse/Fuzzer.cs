@@ -211,7 +211,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(minValue, maxValue), () => _numberFuzzer.GenerateInteger(minValue, maxValue));
+                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(minValue, maxValue), MaxAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GenerateInteger(minValue, maxValue));
             }
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
@@ -226,7 +226,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(maxValue), () => _numberFuzzer.GeneratePositiveInteger(maxValue));
+                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(maxValue), MaxAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GeneratePositiveInteger(maxValue));
             }
 
             return _numberFuzzer.GeneratePositiveInteger(maxValue);
@@ -268,7 +268,8 @@ namespace YouNameSpaceHere.Tests
             if (AvoidDuplication)
             {
                 return GenerateWithoutDuplication<long>(GetCurrentMethod(), HashArguments(maxValue), 
-                    generationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue),
+                    maxFailingAttempts: MaxAttemptsToFindNotAlreadyProvidedValue,
+                    generationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
                     lastChanceFunction: alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet));
             }
 
@@ -442,16 +443,17 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<T>(GetCurrentMethod(), HashArguments(), () => _typeFuzzer.GenerateEnum<T>());
+                return GenerateWithoutDuplication<T>(GetCurrentMethod(), HashArguments(), MaxAttemptsToFindNotAlreadyProvidedValue, () => _typeFuzzer.GenerateEnum<T>());
             }
 
             return _typeFuzzer.GenerateEnum<T>();
         }
 
-        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, Func<T> generationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceFunction = null)
+        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, int maxFailingAttempts,
+            Func<T> generationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceFunction = null)
         {
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
-            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, generationFunction);
+            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, generationFunction, maxFailingAttempts);
 
             if (!maybe.HasItem && lastChanceFunction != null)
             {
@@ -461,18 +463,18 @@ namespace YouNameSpaceHere.Tests
             
             if (!maybe.HasItem)
             {
-                throw new DuplicationException(typeof(T), MaxAttemptsToFindNotAlreadyProvidedValue, alreadyProvidedValues);
+                throw new DuplicationException(typeof(T), maxFailingAttempts, alreadyProvidedValues);
             }
 
             alreadyProvidedValues.Add(maybe.Item);
             return maybe.Item;
         }
 
-        private Maybe<T> TryGetNonAlreadyProvidedValues<T>(MemoizerKey memoizerKey, out SortedSet<object> alreadyProvidedValues, Func<T> generationFunction)
+        private Maybe<T> TryGetNonAlreadyProvidedValues<T>(MemoizerKey memoizerKey, out SortedSet<object> alreadyProvidedValues, Func<T> generationFunction, int maxFailingAttempts)
         {
             alreadyProvidedValues = _memoizer.GetAlreadyProvidedValues(memoizerKey);
 
-            var maybe = GenerateNotAlreadyProvidedValue<T>(alreadyProvidedValues, MaxAttemptsToFindNotAlreadyProvidedValue,
+            var maybe = GenerateNotAlreadyProvidedValue<T>(alreadyProvidedValues, maxFailingAttempts,
                 generationFunction);
             return maybe;
         }
