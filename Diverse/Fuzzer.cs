@@ -268,8 +268,8 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication<long>(CaptureCurrentMethod(), HashArguments(maxValue), 
                     maxFailingAttemptsBeforeLastChanceFunctionIsCalled: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    standardGenerationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
-                    lastChanceFunction: alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
+                    regularGenerationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
+                    lastChanceGenerationFunction: (alreadyProvidedSortedSet) => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
             }
 
             return _numberFuzzer.GenerateLong(minValue, maxValue);
@@ -452,15 +452,15 @@ namespace YouNameSpaceHere.Tests
         }
 
         private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, int maxFailingAttemptsBeforeLastChanceFunctionIsCalled,
-            Func<T> standardGenerationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceFunction = null)
+            Func<T> regularGenerationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
         {
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
-            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, standardGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
+            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, regularGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
 
-            if (!maybe.HasItem && lastChanceFunction != null)
+            if (!maybe.HasItem && lastChanceGenerationFunction != null)
             {
                 // last attempt, we randomly pick the missing bits from the memoizer
-                maybe = lastChanceFunction(_memoizer.GetAlreadyProvidedValues(memoizerKey));
+                maybe = lastChanceGenerationFunction(_memoizer.GetAlreadyProvidedValues(memoizerKey));
             }
             
             if (!maybe.HasItem)
