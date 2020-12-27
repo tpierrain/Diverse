@@ -268,29 +268,38 @@ namespace YouNameSpaceHere.Tests
             if (AvoidDuplication)
             {
                 return GenerateWithoutDuplication<long>(GetCurrentMethod(), HashArguments(maxValue), () => _numberFuzzer.GenerateLong(minValue, maxValue),
-                    set =>
-                    {
-                        var min = minValue ?? long.MinValue;
-                        var max = maxValue ?? long.MaxValue;
-                        
-                        var allPosibleOptions = new SortedSet<long>();
-                        for (var i = min; i <  max+1 ; i++)
-                        {
-                            allPosibleOptions.Add(i);
-                        }
-
-                        var remainingNumbers = allPosibleOptions.Where(n => !set.Contains(n));
-
-                        if (remainingNumbers.Count() > 0)
-                        {
-                            return new Maybe<long>(remainingNumbers.First());
-                        }
-
-                        return new Maybe<long>();
-                    });
+                    alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet));
             }
 
             return _numberFuzzer.GenerateLong(minValue, maxValue);
+        }
+
+        private static Maybe<long> FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedSortedSet)
+        {
+            minValue = minValue ?? long.MinValue;
+            maxValue = maxValue ?? long.MaxValue;
+
+            var allPossibleOptions = GenerateAllPossibleOptions(minValue.Value, maxValue.Value);
+
+            var remainingNumbers = allPossibleOptions.Where(n => !alreadyProvidedSortedSet.Contains(n));
+
+            if (remainingNumbers.Any())
+            {
+                return new Maybe<long>(remainingNumbers.First());
+            }
+
+            return new Maybe<long>();
+        }
+
+        private static SortedSet<long> GenerateAllPossibleOptions(long min, long max)
+        {
+            var allPossibleOptions = new SortedSet<long>();
+            for (var i = min; i < max + 1; i++)
+            {
+                allPossibleOptions.Add(i);
+            }
+
+            return allPossibleOptions;
         }
 
         #endregion

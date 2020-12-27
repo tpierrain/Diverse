@@ -182,19 +182,35 @@ namespace Diverse.Numbers
         {
             minValue = minValue ?? long.MinValue;
             maxValue = maxValue ?? long.MaxValue;
-            return _fuzzer.Random.NextLong(minValue.Value, maxValue.Value);
+            
+            if (maxValue.Value <= minValue.Value)
+            {
+                throw new ArgumentOutOfRangeException("maxValue", "maxValue must be > minValue!");
+            }
 
-            // found here: https://stackoverflow.com/questions/6651554/random-number-in-long-range-is-this-the-way
-            var buf = new byte[8];
-            _fuzzer.Random.NextBytes(buf);
-            var longRand = BitConverter.ToInt64(buf, 0);
+            //Working with ulong so that modulo works correctly with values > long.MaxValue
+            var inclusiveMaxBound = maxValue.Value + 1;
+            if (maxValue.Value == long.MaxValue)
+            {
+                inclusiveMaxBound = long.MaxValue;
+            }
+            var uRange = (ulong)(inclusiveMaxBound - minValue.Value);
 
-            var nbOfElements = maxValue.Value - minValue.Value + 1;
-            nbOfElements = (nbOfElements == 0) ? 1 : nbOfElements; // avoid division by zero
+            //Prevent a modolo bias; see https://stackoverflow.com/a/10984975/238419
+            //for more information.
+            //In the worst case, the expected number of calls is 2 (though usually it's
+            //much closer to 1) so this loop doesn't really hurt performance at all.
+            ulong ulongRand;
+            var maxValue1 = ulong.MaxValue - ((ulong.MaxValue % uRange) + 1) % uRange;
+            do
+            {
+                var buf = new byte[8];
+                _fuzzer.Random.NextBytes(buf);
+                ulongRand = (ulong)BitConverter.ToInt64(buf, 0);
+            } while (ulongRand > maxValue1);
 
-            var modulo = longRand % nbOfElements;
-            var abs = Math.Abs(modulo);
-            var result = (abs + minValue.Value);
+            var modulo = (long)(ulongRand % uRange);
+            var result = modulo + minValue.Value;
 
             return result;
         }

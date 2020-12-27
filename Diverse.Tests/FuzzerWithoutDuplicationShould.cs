@@ -112,6 +112,8 @@ namespace Diverse.Tests
         [TestCase(-1, 1)]
         [TestCase(-5, 5)]
         [TestCase(0, 600)]
+        [TestCase(-1000, 1000)]
+        [TestCase(-10000, 10000)]
         public void Be_able_to_provide_always_different_values_of_long_within_a_wide_range(int minValue, int maxValue)
         {
             var fuzzer = new Fuzzer(/*624013454,*/ avoidDuplication: true);
