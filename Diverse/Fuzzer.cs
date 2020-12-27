@@ -210,7 +210,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(minValue, maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GenerateInteger(minValue, maxValue));
+                return GenerateWithoutDuplication<int>(CaptureCurrentMethod(), HashArguments(minValue, maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GenerateInteger(minValue, maxValue));
             }
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
@@ -225,7 +225,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GeneratePositiveInteger(maxValue));
+                return GenerateWithoutDuplication<int>(CaptureCurrentMethod(), HashArguments(maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GeneratePositiveInteger(maxValue));
             }
 
             return _numberFuzzer.GeneratePositiveInteger(maxValue);
@@ -266,7 +266,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<long>(GetCurrentMethod(), HashArguments(maxValue), 
+                return GenerateWithoutDuplication<long>(CaptureCurrentMethod(), HashArguments(maxValue), 
                     maxFailingAttempts: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
                     generationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
                     lastChanceFunction: alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
@@ -445,7 +445,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<T>(GetCurrentMethod(), HashArguments(), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _typeFuzzer.GenerateEnum<T>());
+                return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _typeFuzzer.GenerateEnum<T>());
             }
 
             return _typeFuzzer.GenerateEnum<T>();
@@ -514,7 +514,7 @@ namespace YouNameSpaceHere.Tests
         #endregion
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private MethodBase GetCurrentMethod()
+        private MethodBase CaptureCurrentMethod()
         {
             var st = new StackTrace();
             var sf = st.GetFrame(1); 
