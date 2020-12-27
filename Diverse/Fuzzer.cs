@@ -269,24 +269,27 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication<long>(GetCurrentMethod(), HashArguments(maxValue), 
                     maxFailingAttempts: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
                     generationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
-                    lastChanceFunction: alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet));
+                    lastChanceFunction: alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
             }
 
             return _numberFuzzer.GenerateLong(minValue, maxValue);
         }
 
-        private static Maybe<long> FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedSortedSet)
+        private static Maybe<long> FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
         {
             minValue = minValue ?? long.MinValue;
             maxValue = maxValue ?? long.MaxValue;
 
             var allPossibleOptions = GenerateAllPossibleOptions(minValue.Value, maxValue.Value);
 
-            var remainingNumbers = allPossibleOptions.Where(n => !alreadyProvidedSortedSet.Contains(n));
+            var remainingNumbers = allPossibleOptions.Where(n => !alreadyProvidedSortedSet.Contains(n)).ToArray();
 
             if (remainingNumbers.Any())
             {
-                return new Maybe<long>(remainingNumbers.First());
+                var index = fuzzer.GenerateInteger(0, remainingNumbers.Length - 1);
+                var randomRemainingNumber = remainingNumbers[index];
+
+                return new Maybe<long>(randomRemainingNumber);
             }
 
             return new Maybe<long>();
