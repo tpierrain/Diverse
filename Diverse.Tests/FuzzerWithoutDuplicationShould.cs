@@ -129,7 +129,7 @@ namespace Diverse.Tests
         public void Throw_DuplicationException_with_fix_explanation_when_number_of_attempts_is_too_low()
         {
             var fuzzer = new Fuzzer(707888174, avoidDuplication: true);
-            fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue = 1;
+            fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue = 1;
 
             Check.ThatCode(() =>
                 {
@@ -140,8 +140,8 @@ namespace Diverse.Tests
                     }
                 }).Throws<DuplicationException>()
                 .AndWhichMessage()
-                .StartsWith($"Couldn't find a non-already provided value of System.Int32 after {fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue} attempts. Already provided values:").
-                And.EndsWith($". In your case, try to increase the value of the {nameof(Fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue)} property for your Fuzzer.");
+                .StartsWith($"Couldn't find a non-already provided value of System.Int32 after {fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue} attempts. Already provided values:").
+                And.EndsWith($". In your case, try to increase the value of the {nameof(Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue)} property for your Fuzzer.");
         }
 
         private static void CheckThatNoDuplicationIsMadeWhileGenerating<T>(Fuzzer fuzzer, int maxNumberOfElements, Func<T> fuzzingFunction)

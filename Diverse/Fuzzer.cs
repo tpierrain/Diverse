@@ -25,15 +25,14 @@ namespace Diverse
         private readonly IFuzzTypes _typeFuzzer;
         private readonly GuidFuzzer _guidFuzzer;
         
-        private const int MaxAttemptsToFindNotAlreadyProvidedDefaultValue = 100;
+        private const int MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue = 100;
         private readonly Memoizer _memoizer = new Memoizer();
 
         /// <summary>
         /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
         /// a not already provided value when <see cref="AvoidDuplication"/> mode is enabled (via constructor).
         /// </summary>
-        public int MaxAttemptsToFindNotAlreadyProvidedValue { get; set; } =
-            MaxAttemptsToFindNotAlreadyProvidedDefaultValue;
+        public int MaxFailingAttemptsToFindNotAlreadyProvidedValue { get; set; } = MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue;
     
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
@@ -211,7 +210,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(minValue, maxValue), MaxAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GenerateInteger(minValue, maxValue));
+                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(minValue, maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GenerateInteger(minValue, maxValue));
             }
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
@@ -226,7 +225,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(maxValue), MaxAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GeneratePositiveInteger(maxValue));
+                return GenerateWithoutDuplication<int>(GetCurrentMethod(), HashArguments(maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GeneratePositiveInteger(maxValue));
             }
 
             return _numberFuzzer.GeneratePositiveInteger(maxValue);
@@ -268,7 +267,7 @@ namespace YouNameSpaceHere.Tests
             if (AvoidDuplication)
             {
                 return GenerateWithoutDuplication<long>(GetCurrentMethod(), HashArguments(maxValue), 
-                    maxFailingAttempts: MaxAttemptsToFindNotAlreadyProvidedValue,
+                    maxFailingAttempts: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
                     generationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
                     lastChanceFunction: alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet));
             }
@@ -443,7 +442,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<T>(GetCurrentMethod(), HashArguments(), MaxAttemptsToFindNotAlreadyProvidedValue, () => _typeFuzzer.GenerateEnum<T>());
+                return GenerateWithoutDuplication<T>(GetCurrentMethod(), HashArguments(), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _typeFuzzer.GenerateEnum<T>());
             }
 
             return _typeFuzzer.GenerateEnum<T>();

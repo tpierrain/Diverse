@@ -50,7 +50,7 @@
             Note: you can instantiate another Deterministic Fuzzer by providing it the Seed you want to reuse.
             </summary>
         </member>
-        <member name="P:Diverse.Fuzzer.MaxAttemptsToFindNotAlreadyProvidedValue">
+        <member name="P:Diverse.Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue">
             <summary>
             Gets or sets the max number of attempts the Fuzzer should make in order to generate
             a not already provided value when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode is enabled (via constructor).
