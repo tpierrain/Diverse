@@ -267,8 +267,8 @@ namespace YouNameSpaceHere.Tests
             if (AvoidDuplication)
             {
                 return GenerateWithoutDuplication<long>(CaptureCurrentMethod(), HashArguments(maxValue), 
-                    maxFailingAttempts: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    generationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
+                    maxFailingAttemptsBeforeLastChanceFunctionIsCalled: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    standardGenerationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
                     lastChanceFunction: alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
             }
 
@@ -451,11 +451,11 @@ namespace YouNameSpaceHere.Tests
             return _typeFuzzer.GenerateEnum<T>();
         }
 
-        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, int maxFailingAttempts,
-            Func<T> generationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceFunction = null)
+        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, int maxFailingAttemptsBeforeLastChanceFunctionIsCalled,
+            Func<T> standardGenerationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceFunction = null)
         {
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
-            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, generationFunction, maxFailingAttempts);
+            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, standardGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
 
             if (!maybe.HasItem && lastChanceFunction != null)
             {
@@ -465,7 +465,7 @@ namespace YouNameSpaceHere.Tests
             
             if (!maybe.HasItem)
             {
-                throw new DuplicationException(typeof(T), maxFailingAttempts, alreadyProvidedValues);
+                throw new DuplicationException(typeof(T), maxFailingAttemptsBeforeLastChanceFunctionIsCalled, alreadyProvidedValues);
             }
 
             alreadyProvidedValues.Add(maybe.Item);
