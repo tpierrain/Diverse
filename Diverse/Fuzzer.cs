@@ -267,8 +267,9 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<long>(GetCurrentMethod(), HashArguments(maxValue), () => _numberFuzzer.GenerateLong(minValue, maxValue),
-                    alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet));
+                return GenerateWithoutDuplication<long>(GetCurrentMethod(), HashArguments(maxValue), 
+                    generationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue),
+                    lastChanceFunction: alreadyProvidedSortedSet => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet));
             }
 
             return _numberFuzzer.GenerateLong(minValue, maxValue);
@@ -447,15 +448,15 @@ namespace YouNameSpaceHere.Tests
             return _typeFuzzer.GenerateEnum<T>();
         }
 
-        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, Func<T> generationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceFunc = null)
+        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, Func<T> generationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceFunction = null)
         {
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
             var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, generationFunction);
 
-            if (!maybe.HasItem && lastChanceFunc != null)
+            if (!maybe.HasItem && lastChanceFunction != null)
             {
                 // last attempt, we randomly pick the missing bits from the memoizer
-                maybe = lastChanceFunc(_memoizer.GetAlreadyProvidedValues(memoizerKey));
+                maybe = lastChanceFunction(_memoizer.GetAlreadyProvidedValues(memoizerKey));
             }
             
             if (!maybe.HasItem)
