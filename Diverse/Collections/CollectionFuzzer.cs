@@ -22,7 +22,7 @@ namespace Diverse.Collections
         }
 
         /// <summary>
-        /// Randomly pick one element from the given collection.
+        /// Randomly pick one element from a given collection.
         /// </summary>
         /// <param name="candidates"></param>
         /// <returns>One of the elements from the candidates collection.</returns>
