@@ -43,9 +43,7 @@ namespace Diverse
                 firstNameCandidates = gender == Gender.Female ? Female.FirstNames : Male.FirstNames;
             }
 
-            var randomLocaleIndex = _fuzzer.Random.Next(0, firstNameCandidates.Length);
-
-            return firstNameCandidates[randomLocaleIndex];
+            return _fuzzer.PickOneFrom(firstNameCandidates);
         }
 
         /// <summary>
@@ -55,13 +53,10 @@ namespace Diverse
         /// <returns>A 'Diverse' last name.</returns>
         public string GenerateLastName(string firstName)
         {
-            Continent continent = FindContinent(firstName);
-
+            var continent = FindContinent(firstName);
             var lastNames = LastNames.PerContinent[continent];
 
-            var randomLocaleIndex = _fuzzer.Random.Next(0, lastNames.Length);
-
-            return lastNames[randomLocaleIndex];
+            return _fuzzer.PickOneFrom(lastNames);
         }
 
         /// <summary>
@@ -117,10 +112,8 @@ namespace Diverse
                 "kolab.com", "protonmail.com", "gmail.com", "yahoo.fr", "42skillz.com", "gmail.com", "ibm.com",
                 "gmail.com", "yopmail.com", "microsoft.com", "gmail.com", "aol.com"
             };
-            var index = _fuzzer.Random.Next(0, domainNames.Length);
 
-            var domainName = domainNames[index];
-
+            var domainName = _fuzzer.PickOneFrom(domainNames);
 
             if (_fuzzer.HeadsOrTails())
             {

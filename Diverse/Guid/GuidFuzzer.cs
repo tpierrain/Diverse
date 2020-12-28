@@ -17,7 +17,11 @@ namespace Diverse
         {
             _fuzzer = fuzzer;
         }
-        
+
+        /// <summary>
+        /// Generates a random <see cref="Guid"/>
+        /// </summary>
+        /// <returns>A random <see cref="Guid"/>.</returns>
         public Guid GenerateGuid()
         {
             var guid = new byte[16];

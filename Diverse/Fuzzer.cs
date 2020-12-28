@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Diverse.Collections;
 using Diverse.DateTimes;
 using Diverse.Numbers;
 using Diverse.Strings;
@@ -23,7 +24,9 @@ namespace Diverse
         private readonly IFuzzPersons _personFuzzer;
         private readonly IFuzzDatesAndTime _dateTimeFuzzer;
         private readonly IFuzzTypes _typeFuzzer;
-        private readonly GuidFuzzer _guidFuzzer;
+        private readonly IFuzzGuid _guidFuzzer;
+        private readonly IFuzzFromCollections _collectionFuzzer;
+
         
         private const int MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue = 100;
         private readonly Memoizer _memoizer = new Memoizer();
@@ -95,6 +98,7 @@ namespace Diverse
             _dateTimeFuzzer = new DateTimeFuzzer(this);
             _typeFuzzer = new TypeFuzzer(this);
             _guidFuzzer = new GuidFuzzer(this);
+            _collectionFuzzer = new CollectionFuzzer(this);
         }
 
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
@@ -358,6 +362,20 @@ namespace YouNameSpaceHere.Tests
         public string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null)
         {
             return _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
+        }
+
+        #endregion
+
+        #region CollectionFuzzer
+
+        /// <summary>
+        /// Randomly pick one element from the given collection.
+        /// </summary>
+        /// <param name="candidates"></param>
+        /// <returns>One of the elements from the candidates collection.</returns>
+        public T PickOneFrom<T>(IList<T> candidates)
+        {
+            return _collectionFuzzer.PickOneFrom(candidates);
         }
 
         #endregion

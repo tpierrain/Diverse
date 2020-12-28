@@ -134,12 +134,5 @@ namespace Diverse.Tests
                 TestContext.WriteLine(fuzzedDecimal);
             }
         }
-
-        [Test]
-        public void GenerateLong()
-        {
-            
-        }
-
     }
 }
