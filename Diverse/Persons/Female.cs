@@ -15,7 +15,7 @@ namespace Diverse
         private static string[] _firstNames = null;
 
         /// <summary>
-        /// Gets all the female first names possibly used by the lib.
+        /// Gets all the male first names possibly used by the lib.
         /// </summary>
         public static string[] FirstNames
         {
@@ -24,9 +24,10 @@ namespace Diverse
                 if (_firstNames == null)
                 {
                     _firstNames = Female.ContextualizedFirstNames
-                                            .Where(x => !string.IsNullOrWhiteSpace(x.FirstName))
-                                            .Select(m => m.FirstName)
-                                            .ToArray();
+                        .Where(x => !string.IsNullOrWhiteSpace(x.FirstName))
+                        .Select(m => m.FirstName)
+                        .Distinct()
+                        .ToArray();
                 }
 
                 return _firstNames;

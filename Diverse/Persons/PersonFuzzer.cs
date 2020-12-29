@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 
 namespace Diverse
@@ -53,8 +52,11 @@ namespace Diverse
         /// <returns>A 'Diverse' last name.</returns>
         public string GenerateLastName(string firstName)
         {
-            var continent = FindContinent(firstName);
+            var continent = Locations.FindContinent(firstName);
             var lastNames = LastNames.PerContinent[continent];
+
+            var index = _fuzzer.Random.Next(0, lastNames.Length);
+            return lastNames[index];
 
             return _fuzzer.PickOneFrom(lastNames);
         }
@@ -66,19 +68,7 @@ namespace Diverse
         /// <returns>A 'Diverse' <see cref="Person"/> instance.</returns>
         public Person GeneratePerson(Gender? gender = null)
         {
-            if (gender == null)
-            {
-                var isFemale = _fuzzer.HeadsOrTails();
-                if (isFemale)
-                {
-                    gender = Gender.Female;
-                }
-                else
-                {
-                    var isNonBinary = _fuzzer.HeadsOrTails();
-                    gender = isNonBinary ? Gender.NonBinary : Gender.Male;
-                }
-            }
+            gender = gender ?? PickAGenderRandomly();
 
             var firstName = GenerateFirstName(gender);
             var lastName = GenerateLastName(firstName);
@@ -87,6 +77,23 @@ namespace Diverse
             var age = _fuzzer.GenerateInteger(18, 97);
 
             return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
+        }
+
+        private Gender? PickAGenderRandomly()
+        {
+            Gender? gender;
+            var isFemale = _fuzzer.HeadsOrTails();
+            if (isFemale)
+            {
+                gender = Gender.Female;
+            }
+            else
+            {
+                var isNonBinary = _fuzzer.HeadsOrTails();
+                gender = isNonBinary ? Gender.NonBinary : Gender.Male;
+            }
+
+            return gender;
         }
 
         /// <summary>
@@ -107,13 +114,7 @@ namespace Diverse
                 lastName = GenerateLastName(firstName);
             }
 
-            var domainNames = new string[]
-            {
-                "kolab.com", "protonmail.com", "gmail.com", "yahoo.fr", "42skillz.com", "gmail.com", "ibm.com",
-                "gmail.com", "yopmail.com", "microsoft.com", "gmail.com", "aol.com"
-            };
-
-            var domainName = _fuzzer.PickOneFrom(domainNames);
+            var domainName = _fuzzer.PickOneFrom(Tech.EmailDomainNames);
 
             if (_fuzzer.HeadsOrTails())
             {
@@ -175,30 +176,6 @@ namespace Diverse
             }
 
             return pwd.ToString();
-        }
-
-        private static Continent FindContinent(string firstName)
-        {
-            Continent continent;
-            var contextualizedFirstName = Male.ContextualizedFirstNames.FirstOrDefault(c => c.FirstName == firstName);
-            if (contextualizedFirstName != null)
-            {
-                continent = contextualizedFirstName.Origin;
-            }
-            else
-            {
-                contextualizedFirstName = Female.ContextualizedFirstNames.FirstOrDefault(c => c.FirstName == firstName);
-                if (contextualizedFirstName != null)
-                {
-                    continent = contextualizedFirstName.Origin;
-                }
-                else
-                {
-                    continent = Continent.Africa;
-                }
-            }
-
-            return continent;
         }
 
         private static void CheckGuardMinAndMaximumSizes(int? minSize, int? maxSize, int minimumSize, int maximumSize, int defaultMinSize, int defaultMaxSize)

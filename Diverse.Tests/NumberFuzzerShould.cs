@@ -130,7 +130,7 @@ namespace Diverse.Tests
 
             for (var i = 0; i < 50; i++)
             {
-                var fuzzedDecimal = fuzzer.GenerateDecimal();
+                var fuzzedDecimal = fuzzer.GenerateAdjective();
                 TestContext.WriteLine(fuzzedDecimal);
             }
         }

@@ -214,7 +214,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<int>(CaptureCurrentMethod(), HashArguments(minValue, maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GenerateInteger(minValue, maxValue));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GenerateInteger(minValue, maxValue));
             }
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
@@ -229,7 +229,7 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<int>(CaptureCurrentMethod(), HashArguments(maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GeneratePositiveInteger(maxValue));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GeneratePositiveInteger(maxValue));
             }
 
             return _numberFuzzer.GeneratePositiveInteger(maxValue);
@@ -270,16 +270,16 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<long>(CaptureCurrentMethod(), HashArguments(maxValue), 
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(maxValue), 
                     maxFailingAttemptsBeforeLastChanceFunctionIsCalled: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
                     regularGenerationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
-                    lastChanceGenerationFunction: (alreadyProvidedSortedSet) => FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
+                    lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
             }
 
             return _numberFuzzer.GenerateLong(minValue, maxValue);
         }
 
-        private static Maybe<long> FindRemainingOptionsFromWhatHasAlredyBeenProvided(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
+        private static Maybe<long> LastChanceToFindNotAlreadyProvidedLong(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
         {
             minValue = minValue ?? long.MinValue;
             maxValue = maxValue ?? long.MaxValue;
@@ -321,6 +321,11 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A 'Diverse' first name.</returns>
         public string GenerateFirstName(Gender? gender = null)
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(gender), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _personFuzzer.GenerateFirstName(gender));
+            }
+
             return _personFuzzer.GenerateFirstName(gender);
         }
 
@@ -331,7 +336,30 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A 'Diverse' last name.</returns>
         public string GenerateLastName(string firstName)
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName), MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    () => _personFuzzer.GenerateLastName(firstName),
+                    (alreadyProvidedSortedSet) => LastChanceToFindLastName(firstName, alreadyProvidedSortedSet));
+            }
+
             return _personFuzzer.GenerateLastName(firstName);
+        }
+
+        private Maybe<string> LastChanceToFindLastName(string firstName, SortedSet<object> alreadyProvidedLastNames)
+        {
+            var continent = Locations.FindContinent(firstName);
+            var allPossibleOptions = LastNames.PerContinent[continent];
+
+            var remainingLastNames = allPossibleOptions.Where(n => !alreadyProvidedLastNames.Contains(n)).ToArray();
+
+            if (remainingLastNames.Any())
+            {
+                var lastName = ((IFuzz) this).PickOneFrom(remainingLastNames);
+                return new Maybe<string>(lastName);
+            }
+
+            return new Maybe<string>();
         }
 
         /// <summary>
@@ -352,6 +380,11 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A random Email.</returns>
         public string GenerateEMail(string firstName = null, string lastName = null)
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName, lastName), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _personFuzzer.GenerateEMail(firstName, lastName));
+            }
+
             return _personFuzzer.GenerateEMail(firstName, lastName);
         }
 
@@ -361,6 +394,11 @@ namespace YouNameSpaceHere.Tests
         /// <returns>The generated password</returns>
         public string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null)
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minSize, maxSize, includeSpecialCharacters), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters));
+            }
+
             return _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
         }
 
@@ -375,6 +413,11 @@ namespace YouNameSpaceHere.Tests
         /// <returns>One of the elements from the candidates collection.</returns>
         public T PickOneFrom<T>(IList<T> candidates)
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(candidates), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _collectionFuzzer.PickOneFrom(candidates));
+            }
+
             return _collectionFuzzer.PickOneFrom(candidates);
         }
 
@@ -424,7 +467,27 @@ namespace YouNameSpaceHere.Tests
         /// <returns>An adjective based on a particular feeling or random one if not provided</returns>
         public string GenerateAdjective(Feeling? feeling = null)
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(feeling), MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    () => _stringFuzzer.GenerateAdjective(feeling),
+                    alreadyProvidedSortedSet => LastChanceToFindAdjective(feeling, alreadyProvidedSortedSet));
+            }
+
             return _stringFuzzer.GenerateAdjective(feeling);
+        }
+
+        private Maybe<string> LastChanceToFindAdjective(Feeling? feeling, SortedSet<object> alreadyProvidedLastNames)
+        {
+            var remainingAdjectives = Adjectives.PerFeeling[feeling.Value].Where(n => !alreadyProvidedLastNames.Contains(n)).ToArray();
+
+            if (remainingAdjectives.Any())
+            {
+                var adjective = ((IFuzz)this).PickOneFrom(remainingAdjectives);
+                return new Maybe<string>(adjective);
+            }
+
+            return new Maybe<string>();
         }
 
         #endregion

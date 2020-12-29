@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Diverse
 {
@@ -10,7 +11,21 @@ namespace Diverse
         /// <summary>
         /// Gets a dictionary of all the last name per <see cref="Continent"/>.
         /// </summary>
-        public static IDictionary<Continent, string[]> PerContinent { get; } = new Dictionary<Continent, string[]>
+        public static IDictionary<Continent, string[]> PerContinent => RemoveDuplicates(_perContinent);
+
+        private static IDictionary<Continent, string[]> RemoveDuplicates(Dictionary<Continent, string[]> perContinent)
+        {
+            var result = new Dictionary<Continent, string[]>();
+
+            foreach (var continent in perContinent.Keys)
+            {
+                result[continent] = perContinent[continent].Distinct().ToArray();
+            }
+
+            return result;
+        }
+
+        private static readonly Dictionary<Continent, string[]> _perContinent = new Dictionary<Continent, string[]>
         {
             {
                 Continent.Africa,
@@ -91,5 +106,7 @@ namespace Diverse
                 }
             }
         };
+
+        
     }
 }

@@ -23,7 +23,11 @@ namespace Diverse
             {
                 if (_firstNames == null)
                 {
-                    _firstNames =  Male.ContextualizedFirstNames.Select(m => m.FirstName).ToArray();
+                    _firstNames =  Male.ContextualizedFirstNames
+                                            .Where(x => !string.IsNullOrWhiteSpace(x.FirstName))
+                                            .Select(m => m.FirstName)
+                                            .Distinct()
+                                            .ToArray();
                 }
 
                 return _firstNames;

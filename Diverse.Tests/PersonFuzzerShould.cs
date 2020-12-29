@@ -22,7 +22,7 @@ namespace Diverse.Tests
                 firstNames.Add( fuzzer.GenerateFirstName(Gender.Male));
             }
 
-            Check.That(firstNames).ContainsExactly("Einar", "Rajiv", "Abraham", "Olle", "George", "Elias", "Anton", "Djibril", "Gjurd", "Jin");
+            Check.That(firstNames).ContainsExactly("Einar", "Rajiv", "Hwang", "Gunne", "James", "Elias", "Sacha", "Djibril", "Gjurd", "Jin");
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName(Gender.Female));
             }
 
-            Check.That(firstNames).ContainsExactly("Malika", "Akshara", "My Lê", "Eve", "Nzinga", "Ella", "Zoe", "Nichelle", "Mây", "Noûr");
+            Check.That(firstNames).ContainsExactly("Malika", "Kamini", "My Lê", "Karine", "Nzinga", "Hailey", "Zoe", "Nichelle", "Mây", "Noûr");
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName());
             }
 
-            Check.That(firstNames).ContainsExactly("Kyeol", "Koffi", "Ba-Thong", "Mikhail", "Johanna", "Diego", "Zhen", "Aata", "Ximena", "Jemila");
+            Check.That(firstNames).ContainsExactly("Kyeol", "Koffi", "Ba-Thong", "Maxime", "Johanna", "Diego", "Tian", "Aata", "Ximena", "Jemila");
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Diverse.Tests
                 lastNames.Add($"{firstName} {fuzzer.GenerateLastName(firstName)}");
             }
 
-            Check.That(lastNames).ContainsExactly("Beatriz González", "Drell Chen", "Mei Laghari", "Mamadou Diop", "David Sanchez", "Xuân Madan", "Tanja Brandolini", "Bao Laghari", "Demba Ibrahim", "Jemila Nwadike");
+            Check.That(lastNames).ContainsExactly("Beatriz González", "Drell Walker", "Mei Laghari", "Mamadou Diop", "Barack Sanchez", "Xuân Madan", "Marija Boucard", "Hoàng Laghari", "Demba Ibrahim", "Jemila Nwadike");
         }
 
         [Test]
@@ -82,15 +82,15 @@ namespace Diverse.Tests
             Check.That(persons.Select(x => x.ToString()))
                 .ContainsExactly(
                     "Ms. Valeria DENILSON (Female) vdenilson@microsoft.com (age: 62 years)", 
-                    "Ms. Kirsten BREKKE (Female) kbrekke@gmail.com (age: 76 years)", 
-                    "Mr. John BRAND (Male) john.brand@gmail.com (married - age: 86 years)", 
-                    "Mx. Ashok KHATRI (NonBinary) ashok.khatri@yahoo.fr (married - age: 32 years)", 
+                    "Ms. Freja ABRAHAMSEN (Female) fabrahamsen@ibm.com (age: 76 years)", 
+                    "Mr. Kevin BRAND (Male) kevin.brand@42skillz.com (married - age: 86 years)", 
+                    "Mx. Jaycarran KHATRI (NonBinary) jaycarran.khatri@gmail.com (married - age: 32 years)", 
                     "Ms. Fatima SELASSIE (Female) fatima.selassie@aol.com (age: 68 years)", 
-                    "Mx. Demba ADOMAKO (NonBinary) demba.adomako@gmail.com (age: 34 years)", 
-                    "Mrs. Erika MADSEN (Female) emadsen@gmail.com (married - age: 24 years)", 
-                    "Ms. Antje JOHNSON (Female) antje.johnson@protonmail.com (age: 37 years)", 
-                    "Ms. Isabella AMBRÍZ (Female) isabella.ambriz@microsoft.com (age: 60 years)", 
-                    "Mr. Arjun YOON (Male) ayoon@42skillz.com (age: 53 years)");
+                    "Mx. Demba ADOMAKO (NonBinary) demba.adomako@protonmail.com (age: 34 years)", 
+                    "Mrs. Erika TVEIT (Female) etveit@yahoo.fr (married - age: 24 years)", 
+                    "Ms. Anneke JOHNSON (Female) anneke.johnson@kolab.com (age: 37 years)", 
+                    "Ms. Renata AMBRÍZ (Female) renata.ambriz@microsoft.com (age: 60 years)", 
+                    "Mr. Kumar YOON (Male) kyoon@yahoo.fr (age: 53 years)");
         }
 
         [Test]
@@ -103,8 +103,8 @@ namespace Diverse.Tests
             var email3 = fuzzer.GenerateEMail();
 
             Check.That(email).IsEqualTo("atef.ben-achour@yopmail.com");
-            Check.That(email2).IsEqualTo("abak@protonmail.com");
-            Check.That(email3).IsEqualTo("wolfgang.hendricks@gmail.com");
+            Check.That(email2).IsEqualTo("jbak@kolab.com");
+            Check.That(email3).IsEqualTo("markus.hendricks@42skillz.com");
         }
 
         [Test]

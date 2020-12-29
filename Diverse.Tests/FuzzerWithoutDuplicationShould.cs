@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Diverse.Strings;
 using NFluent;
 using NFluent.ApiChecks;
 using NUnit.Framework;
@@ -15,6 +17,8 @@ namespace Diverse.Tests
     [SuppressMessage("ReSharper", "ConvertToLambdaExpression")]
     public class FuzzerWithoutDuplicationShould
     {
+        #region enums
+
         [Test]
         [Repeat(200)]
         public void Be_able_to_provide_always_different_values_of_MagnificentSeven_Enum()
@@ -41,6 +45,10 @@ namespace Diverse.Tests
             });
         }
 
+        #endregion
+
+        #region Guids
+
         [Test]
         //[Repeat(200)]
         public void Be_able_to_provide_always_different_values_of_Guids()
@@ -53,6 +61,10 @@ namespace Diverse.Tests
                 return fuzzer.GenerateGuid();
             });
         }
+
+        #endregion
+
+        #region Numbers
 
         [Test]
         [Repeat(200)]
@@ -116,7 +128,7 @@ namespace Diverse.Tests
         [TestCase(-10000, 10000)]
         public void Be_able_to_provide_always_different_values_of_long_within_a_wide_range(int minValue, int maxValue)
         {
-            var fuzzer = new Fuzzer(/*624013454,*/ avoidDuplication: true);
+            var fuzzer = new Fuzzer(avoidDuplication: true);
 
             var maxNumberOfElements = (int)(maxValue - minValue + 1); // +1 since it is upper bound inclusive
             CheckThatNoDuplicationIsMadeWhileGenerating<long>(fuzzer, maxNumberOfElements, () =>
@@ -124,11 +136,152 @@ namespace Diverse.Tests
                 return fuzzer.GenerateLong(minValue, maxValue);
             });
         }
+        
 
+        #endregion
+
+        #region Collection
+
+        [Test]
+        public void Be_able_to_pick_always_different_values_from_a_list_of_string()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var candidates = new List<string>(){ "un", "dos", "tres", "quatro", "cinquo","seis"};
+
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, candidates.Count, () =>
+            {
+                return fuzzer.PickOneFrom(candidates);
+            });
+        }
+
+        [Test]
+        public void Be_able_to_pick_always_different_values_from_a_list_of_int()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var candidates = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, candidates.Count, () =>
+            {
+                return fuzzer.PickOneFrom(candidates);
+            });
+        }
+
+        [Test]
+        public void Be_able_to_pick_always_different_values_from_a_list_of_enum()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var candidates = new List<TheGoodTheBadAndTheUgly>() {TheGoodTheBadAndTheUgly.TheGood, TheGoodTheBadAndTheUgly.TheBad, TheGoodTheBadAndTheUgly.TheUgly };
+
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, candidates.Count, () =>
+            {
+                return fuzzer.PickOneFrom(candidates);
+            });
+        }
+
+        #endregion
+
+        #region Persons
+
+        [Test]
+        public void Be_able_to_provide_always_different_values_of_FirstName()
+            {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, 80, () =>
+            {
+                return fuzzer.GenerateFirstName();
+            });
+        }
+
+        [Test]
+        public void Be_able_to_provide_always_different_values_of_LastName()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var firstName = fuzzer.GenerateFirstName();
+            var continent = Locations.FindContinent(firstName);
+
+            var maxNumberOfLastNamesForThisContinent = LastNames.PerContinent[continent].Length;
+
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfLastNamesForThisContinent, () =>
+            {
+                return fuzzer.GenerateLastName(firstName);
+            });
+        }
+
+        [Test]
+        [Repeat(100)]
+        public void Be_able_to_provide_always_different_values_of_Emails()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var firstName = fuzzer.GenerateFirstName();
+            var lastName = fuzzer.GenerateLastName(firstName);
+
+            var maxNumberOfElements = 16;
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
+            {
+                return fuzzer.GenerateEMail(firstName, lastName);
+            });
+        }
+
+        [Test]
+        public void Be_able_to_provide_always_different_values_of_Passwords()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var maxNumberOfElements = 100000;
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
+            {
+                return fuzzer.GeneratePassword();
+            });
+        }
+
+        #endregion
+
+        #region Strings
+
+        [Test]
+        [TestCase(Feeling.Negative)]
+        [TestCase(Feeling.Positive)]
+        public void Be_able_to_provide_always_different_values_of_Adjective(Feeling feeling)
+        {
+            var fuzzer = new Fuzzer(2023547856, avoidDuplication: true);
+
+            var maxNumberOfAdjectives = Adjectives.PerFeeling[feeling].Distinct().Count();
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfAdjectives, () =>
+            {
+                var adjective = fuzzer.GenerateAdjective(feeling);
+                TestContext.WriteLine(adjective);
+                return adjective;
+            });
+        }
+
+        #endregion
+
+        #region DateTimes
+
+        [Test]
+        public void Be_able_to_provide_always_different_values_of_DateTime()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var maxNumberOfElements = 10000;
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
+            {
+                return fuzzer.GenerateDateTime();
+            });
+        }
+       
+        #endregion
         [Test]
         public void Throw_DuplicationException_with_fix_explanation_when_number_of_attempts_is_too_low()
         {
             var fuzzer = new Fuzzer(707888174, avoidDuplication: true);
+
+            // Make it fail on purpose
             fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue = 1;
 
             Check.ThatCode(() =>

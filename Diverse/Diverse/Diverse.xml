@@ -4,6 +4,24 @@
         <name>Diverse</name>
     </assembly>
     <members>
+        <member name="T:Diverse.Collections.CollectionFuzzer">
+            <summary>
+            Fuzz from collections.
+            </summary>
+        </member>
+        <member name="M:Diverse.Collections.CollectionFuzzer.#ctor(Diverse.IFuzz)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.Collections.CollectionFuzzer"/>.
+            </summary>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
+        </member>
+        <member name="M:Diverse.Collections.CollectionFuzzer.PickOneFrom``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            Randomly pick one element from a given collection.
+            </summary>
+            <param name="candidates"></param>
+            <returns>One of the elements from the candidates collection.</returns>
+        </member>
         <member name="T:Diverse.DateTimes.DateTimeFuzzer">
             <summary>
             Fuzz <see cref="T:System.DateTime"/>.
@@ -176,6 +194,13 @@
             </summary>
             <returns>The generated password</returns>
         </member>
+        <member name="M:Diverse.Fuzzer.PickOneFrom``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            Randomly pick one element from a given collection.
+            </summary>
+            <param name="candidates"></param>
+            <returns>One of the elements from the candidates collection.</returns>
+        </member>
         <member name="M:Diverse.Fuzzer.GenerateDateTime">
             <summary>
             Generates a random <see cref="T:System.DateTime"/>.
@@ -245,6 +270,12 @@
             Instantiate a <see cref="T:Diverse.GuidFuzzer"/>.
             </summary>
             <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
+        </member>
+        <member name="M:Diverse.GuidFuzzer.GenerateGuid">
+            <summary>
+            Generates a random <see cref="T:System.Guid"/>
+            </summary>
+            <returns>A random <see cref="T:System.Guid"/>.</returns>
         </member>
         <member name="T:Diverse.Maybe`1">
             <summary>
@@ -332,6 +363,18 @@
             <param name="minDate">The minimum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <param name="maxDate">The maximum inclusive boundary of the Time Range for this <see cref="T:System.DateTime"/> generation, specified as a yyyy/MM/dd string.</param>
             <returns>A <see cref="T:System.DateTime"/> instance between the min and the max inclusive boundaries.</returns>
+        </member>
+        <member name="T:Diverse.IFuzzFromCollections">
+            <summary>
+            Fuzz from collections.
+            </summary>
+        </member>
+        <member name="M:Diverse.IFuzzFromCollections.PickOneFrom``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            Randomly pick one element from a given collection.
+            </summary>
+            <param name="candidates"></param>
+            <returns>One of the elements from the candidates collection.</returns>
         </member>
         <member name="T:Diverse.IFuzzGuid">
             <summary>
@@ -641,6 +684,11 @@
         <member name="P:Diverse.LastNames.PerContinent">
             <summary>
             Gets a dictionary of all the last name per <see cref="T:Diverse.Continent"/>.
+            </summary>
+        </member>
+        <member name="T:Diverse.Locations">
+            <summary>
+            Default locations of people in Diverse lib.
             </summary>
         </member>
         <member name="T:Diverse.Male">
