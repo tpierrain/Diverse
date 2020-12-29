@@ -35,10 +35,11 @@ jobs:
         arrTag=(${GITHUB_REF//\// })
         VERSION="${arrTag[2]}"
         VERSION="${VERSION//v}"
+        export OurVersion="${VERSION//v}"
         dotnet pack --configuration Release
     - name: Upload Artifact
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v2
       with:
-        name: nupkg-${VERSION}
+        name: nupkg-${OurVersion}
         path: /home/runner/work/Diverse/Diverse/Diverse/bin/Release/*.nupkg
