@@ -40,5 +40,5 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v2
       with:
-        name: nupkg
+        name: nupkg-${VERSION}
         path: /home/runner/work/Diverse/Diverse/Diverse/bin/Release/*.nupkg
