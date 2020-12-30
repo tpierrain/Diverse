@@ -78,8 +78,14 @@ But it will soon probably do the second part too.
 
 ```csharp
 
+// First, you can instantiate Fuzzers that will never return the same entries twice (if you want)
+var fuzzer = new Fuzzer(avoidDuplication: true);
+
 // avoid using always the same hard-coded values in your tests code => use Fuzzers instead
 var age = fuzzer.GenerateInteger(minValue: 17, maxValue: 54);
+
+// random but deterministic ;-) Guids
+var guid  = fuzzer.GenerateGuid();
 
 // speed up the creation of something relatively 'complicated' and stay *intent driven*
 // with random but coherent values (here, the Diverse Person)
@@ -90,6 +96,10 @@ var password = fuzzer.GeneratePassword();
 
 // any enum value
 var ingredient = fuzzer.GenerateEnum<Ingredient>();
+
+// any entry picked from a list
+var candidates = new[] {"one", "two", "three", "four", "five"};
+var chosenOne = fuzzer.PickOneFrom(candidates);
 
 // or dates
 var dateTime = fuzzer.GenerateDateTime();

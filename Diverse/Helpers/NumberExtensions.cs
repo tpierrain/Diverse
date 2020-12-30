@@ -42,6 +42,21 @@ namespace Diverse
             return scale;
         }
 
+        public static ulong GetRange(long? minValue, long? maxValue)
+        {
+            minValue = minValue ?? long.MinValue;
+            maxValue = maxValue ?? long.MaxValue;
+
+            var inclusiveMaxBound = maxValue.Value + 1;
+            if (maxValue.Value == long.MaxValue)
+            {
+                inclusiveMaxBound = long.MaxValue;
+            }
+
+            var uRange = (ulong)(inclusiveMaxBound - minValue.Value);
+            return uRange;
+        }
+
         private static void ThrowIfMinIsGreaterThanMax(byte minValue, byte maxValue)
         {
             if (minValue > maxValue)

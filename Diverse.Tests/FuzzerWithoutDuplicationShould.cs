@@ -136,7 +136,22 @@ namespace Diverse.Tests
                 return fuzzer.GenerateLong(minValue, maxValue);
             });
         }
-        
+
+        [Test]
+        public void Be_able_to_provide_always_different_values_of_long_within_a_huge_range()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var minValue = long.MinValue;
+            var maxValue = long.MaxValue;
+            
+            var maxNumberOfElements = 100000; // we won't test all possible long here! ;-)
+            CheckThatNoDuplicationIsMadeWhileGenerating<long>(fuzzer, maxNumberOfElements, () =>
+            {
+                return fuzzer.GenerateLong(minValue, maxValue);
+            });
+        }
+
 
         #endregion
 
@@ -147,7 +162,7 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer(avoidDuplication: true);
 
-            var candidates = new List<string>(){ "un", "dos", "tres", "quatro", "cinquo","seis"};
+            var candidates = new List<string>() { "un", "dos", "tres", "quatro", "cinquo", "seis" };
 
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, candidates.Count, () =>
             {
@@ -173,7 +188,7 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer(avoidDuplication: true);
 
-            var candidates = new List<TheGoodTheBadAndTheUgly>() {TheGoodTheBadAndTheUgly.TheGood, TheGoodTheBadAndTheUgly.TheBad, TheGoodTheBadAndTheUgly.TheUgly };
+            var candidates = new List<TheGoodTheBadAndTheUgly>() { TheGoodTheBadAndTheUgly.TheGood, TheGoodTheBadAndTheUgly.TheBad, TheGoodTheBadAndTheUgly.TheUgly };
 
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, candidates.Count, () =>
             {
@@ -187,7 +202,7 @@ namespace Diverse.Tests
 
         [Test]
         public void Be_able_to_provide_always_different_values_of_FirstName()
-            {
+        {
             var fuzzer = new Fuzzer(avoidDuplication: true);
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, 80, () =>
             {
@@ -274,7 +289,7 @@ namespace Diverse.Tests
                 return fuzzer.GenerateDateTime();
             });
         }
-       
+
         #endregion
         [Test]
         public void Throw_DuplicationException_with_fix_explanation_when_number_of_attempts_is_too_low()
@@ -297,7 +312,7 @@ namespace Diverse.Tests
                 And.EndsWith($". In your case, try to increase the value of the {nameof(Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue)} property for your Fuzzer.");
         }
 
-        private static void CheckThatNoDuplicationIsMadeWhileGenerating<T>(Fuzzer fuzzer, int maxNumberOfElements, Func<T> fuzzingFunction)
+        private static void CheckThatNoDuplicationIsMadeWhileGenerating<T>(Fuzzer fuzzer, long maxNumberOfElements, Func<T> fuzzingFunction)
         {
             var returnedElements = new HashSet<T>(); //T
             for (var i = 0; i < maxNumberOfElements; i++)

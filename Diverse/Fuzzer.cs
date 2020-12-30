@@ -29,14 +29,22 @@ namespace Diverse
 
         
         private const int MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue = 100;
+        private const int MaxRangeSizeAllowedForMemoizationDefaultValue = 1000000;
         private readonly Memoizer _memoizer = new Memoizer();
 
         /// <summary>
         /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
-        /// a not already provided value when <see cref="AvoidDuplication"/> mode is enabled (via constructor).
+        /// a not already provided value when <see cref="AvoidDuplication"/> mode
+        /// is enabled (via constructor).
         /// </summary>
         public int MaxFailingAttemptsToFindNotAlreadyProvidedValue { get; set; } = MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue;
-    
+
+        /// <summary>
+        /// Gets or sets the maximum number of entries to be memoized if
+        /// <see cref="AvoidDuplication"/> mode is enabled (via constructor).
+        /// </summary>
+        public ulong MaxRangeSizeAllowedForMemoization { get; set; } = MaxRangeSizeAllowedForMemoizationDefaultValue;
+
         /// <summary>
         /// Generates a DefaultSeed. Important to keep a trace of the used seed so that we can reproduce a failing situation with <see cref="Fuzzer"/> involved.
         /// </summary>
@@ -270,10 +278,16 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(maxValue), 
-                    maxFailingAttemptsBeforeLastChanceFunctionIsCalled: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    regularGenerationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue), 
-                    lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
+                // We will only memoize if the range is not too wide
+                var uRange = NumberExtensions.GetRange(minValue, maxValue);
+
+                if (uRange <= MaxRangeSizeAllowedForMemoization)
+                {
+                    return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
+                        maxFailingAttemptsBeforeLastChanceFunctionIsCalled: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                        regularGenerationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue),
+                        lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
+                }
             }
 
             return _numberFuzzer.GenerateLong(minValue, maxValue);
