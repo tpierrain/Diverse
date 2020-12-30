@@ -279,7 +279,7 @@ namespace YouNameSpaceHere.Tests
             if (AvoidDuplication)
             {
                 // We will only memoize if the range is not too wide
-                var uRange = NumberExtensions.GetRange(minValue, maxValue);
+                var uRange = NumberExtensions.ComputeRange(minValue, maxValue);
 
                 if (uRange <= MaxRangeSizeAllowedForMemoization)
                 {

@@ -54,10 +54,7 @@ namespace Diverse
         {
             var continent = Locations.FindContinent(firstName);
             var lastNames = LastNames.PerContinent[continent];
-
-            var index = _fuzzer.Random.Next(0, lastNames.Length);
-            return lastNames[index];
-
+            
             return _fuzzer.PickOneFrom(lastNames);
         }
 

@@ -42,7 +42,13 @@ namespace Diverse
             return scale;
         }
 
-        public static ulong GetRange(long? minValue, long? maxValue)
+        /// <summary>
+        /// Computes the number of long included in the considered range.
+        /// </summary>
+        /// <param name="minValue">(optional) the minimum value.</param>
+        /// <param name="maxValue">(optional) the maximum value.</param>
+        /// <returns>The number of elements in the considered range.</returns>
+        public static ulong ComputeRange(long? minValue, long? maxValue)
         {
             minValue = minValue ?? long.MinValue;
             maxValue = maxValue ?? long.MaxValue;

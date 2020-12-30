@@ -57,10 +57,18 @@
         </member>
         <member name="T:Diverse.DuplicationException">
             <summary>
-            Represents errors that occur when <see cref="!:AvoidDuplicates"/> is set to <b>true</b>
+            Represents errors that occur when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> is set to <b>true</b>
             and we couldn't find a non-already provided value after the max number
             of attempts configured within Diverse. 
             </summary>
+        </member>
+        <member name="M:Diverse.DuplicationException.#ctor(System.Type,System.Int32,System.Collections.Generic.SortedSet{System.Object})">
+            <summary>
+            Instantiates a <see cref="T:Diverse.DuplicationException"/>.
+            </summary>
+            <param name="typeRequested">Type to be generated.</param>
+            <param name="maxAttemptsToFindNotAlreadyProvidedValue">Maximum number of attempts achieved before throwing this exception.</param>
+            <param name="alreadyProvidedValues">Set of already provided values.</param>
         </member>
         <member name="T:Diverse.Fuzzer">
             <summary>
@@ -71,7 +79,14 @@
         <member name="P:Diverse.Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue">
             <summary>
             Gets or sets the max number of attempts the Fuzzer should make in order to generate
-            a not already provided value when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode is enabled (via constructor).
+            a not already provided value when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode
+            is enabled (via constructor).
+            </summary>
+        </member>
+        <member name="P:Diverse.Fuzzer.MaxRangeSizeAllowedForMemoization">
+            <summary>
+            Gets or sets the maximum number of entries to be memoized if
+            <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode is enabled (via constructor).
             </summary>
         </member>
         <member name="P:Diverse.Fuzzer.Seed">
@@ -279,13 +294,53 @@
         </member>
         <member name="T:Diverse.Maybe`1">
             <summary>
-            Maybe type.
+            Maybe monad. A <see cref="T:Diverse.Maybe`1"/> is a discriminated union type with two possible value constructors.
             </summary>
-            <typeparam name="T"></typeparam>
+            <typeparam name="T">The type of the value</typeparam>
+        </member>
+        <member name="M:Diverse.Maybe`1.#ctor">
+            <summary>
+            Instantiates a <see cref="T:Diverse.Maybe`1"/> that has no Item.
+            </summary>
+        </member>
+        <member name="M:Diverse.Maybe`1.#ctor(`0)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.Maybe`1"/> that has an item.
+            </summary>
+            <param name="item">The item of the <see cref="T:Diverse.Maybe`1"/> instance.</param>
+        </member>
+        <member name="M:Diverse.Maybe`1.Select``1(System.Func{`0,``0})">
+            <summary>
+            Select
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="selector"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Diverse.Maybe`1.GetValueOrFallback(`0)">
+            <summary>
+            Gets the value or fallback with provided value otherwise.
+            </summary>
+            <param name="fallbackValue">The fallback value to return if no item is set.</param>
+            <returns>The Value</returns>
+        </member>
+        <member name="M:Diverse.Maybe`1.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:Diverse.Maybe`1"/> objects are considered equal.
+            </summary>
+            <param name="obj">The second <see cref="T:Diverse.Maybe`1"/> object to compare.</param>
+            <returns><b>true</b> if the two <see cref="T:Diverse.Maybe`1"/> are equal, <b>false</b> otherwise.</returns>
+        </member>
+        <member name="M:Diverse.Maybe`1.GetHashCode">
+            <summary>
+            Hash function.
+            </summary>
+            <returns>A hash code for the current <see cref="T:Diverse.Maybe`1"/>.</returns>
         </member>
         <member name="T:Diverse.MemoizerKey">
             <summary>
-            Key used by the internal Memoizer (enabled if AvoidDuplication is set to <see cref="!:true"/>.
+            Key used by the internal Memoizer
+            (enabled if AvoidDuplication is set to <b>true</b>).
             </summary>
         </member>
         <member name="T:Diverse.NumberExtensions">
@@ -308,6 +363,14 @@
             <param name="maxValue">The upper bound for this scale to be fuzzed.</param>
             <param name="random">The <see cref="T:System.Random"/> instance to be used to fuzz.</param>
             <returns>A scale for a <see cref="T:System.Decimal"/> number that is included between the min and max provided (inclusive).</returns>
+        </member>
+        <member name="M:Diverse.NumberExtensions.ComputeRange(System.Nullable{System.Int64},System.Nullable{System.Int64})">
+            <summary>
+            Computes the number of long included in the considered range.
+            </summary>
+            <param name="minValue">(optional) the minimum value.</param>
+            <param name="maxValue">(optional) the maximum value.</param>
+            <returns>The number of elements in the considered range.</returns>
         </member>
         <member name="T:Diverse.StringExtensions">
             <summary>
@@ -628,7 +691,7 @@
         </member>
         <member name="P:Diverse.Female.FirstNames">
             <summary>
-            Gets all the female first names possibly used by the lib.
+            Gets all the male first names possibly used by the lib.
             </summary>
         </member>
         <member name="T:Diverse.Gender">
@@ -798,6 +861,16 @@
             Generates a password following some common rules asked on the internet.
             </summary>
             <returns>The generated password</returns>
+        </member>
+        <member name="T:Diverse.Tech">
+            <summary>
+            Information related to tech things.
+            </summary>
+        </member>
+        <member name="P:Diverse.Tech.EmailDomainNames">
+            <summary>
+            Gets a list of domain names for emails (e.g.: protonmail.com, yahoo.fr, etc).
+            </summary>
         </member>
         <member name="T:Diverse.Strings.Adjectives">
             <summary>

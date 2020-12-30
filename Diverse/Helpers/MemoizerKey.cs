@@ -3,9 +3,10 @@
 namespace Diverse
 {
     /// <summary>
-    /// Key used by the internal Memoizer (enabled if AvoidDuplication is set to <see cref="true"/>.
+    /// Key used by the internal Memoizer
+    /// (enabled if AvoidDuplication is set to <b>true</b>).
     /// </summary>
-    internal struct MemoizerKey
+    internal readonly struct MemoizerKey
     {
         public MethodBase FuzzerMethod { get; }
 

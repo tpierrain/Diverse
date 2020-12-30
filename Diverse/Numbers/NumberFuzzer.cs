@@ -189,7 +189,7 @@ namespace Diverse.Numbers
             }
 
             //Working with ulong so that modulo works correctly with values > long.MaxValue
-            var uRange = NumberExtensions.GetRange(minValue, maxValue);
+            var uRange = NumberExtensions.ComputeRange(minValue, maxValue);
 
             //Prevent a modolo bias; see https://stackoverflow.com/a/10984975/238419
             //for more information.
