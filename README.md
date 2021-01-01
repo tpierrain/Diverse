@@ -101,6 +101,9 @@ var ingredient = fuzzer.GenerateEnum<Ingredient>();
 var candidates = new[] {"one", "two", "three", "four", "five"};
 var chosenOne = fuzzer.PickOneFrom(candidates);
 
+// any text, paragraphs, sentences, words in Latin
+var text = fuzzer.GenerateText(nbOfParagraphs: 3); // Lorem ipsum...
+
 // or dates
 var dateTime = fuzzer.GenerateDateTime();
 var dateTimeInRange = fuzzer.GenerateDateTimeBetween("1974/06/08", "2020/11/01");
