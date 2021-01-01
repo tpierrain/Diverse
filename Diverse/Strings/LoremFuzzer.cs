@@ -86,6 +86,11 @@ namespace Diverse.Strings
         {
             nbOfWords = nbOfWords ?? 6;
 
+            if(nbOfWords <= 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(nbOfWords), "A sentence must have more than 1 word.");
+            }
+
             var words = GenerateWords(nbOfWords.Value).ToArray();
 
             var firstWordCapitalized = words.First().FirstCharToUpper();

@@ -1,3 +1,4 @@
+using System;
 using NFluent;
 using NUnit.Framework;
 
@@ -34,6 +35,18 @@ namespace Diverse.Tests
             var sentence = fuzzer.GenerateSentence(nbOfWords: 4);
 
             Check.That(sentence).IsEqualTo("Quo cumque odit rerum.");
+        }
+
+        [Test]
+        public void Throw_when_generating_a_sentence_with_1_word()
+        {
+            var fuzzer = new Fuzzer();
+
+            Check.ThatCode(() =>
+            {
+                var sentence = fuzzer.GenerateSentence(nbOfWords: 1);
+            }).Throws<ArgumentOutOfRangeException>()
+                .WithMessage("A sentence must have more than 1 word. (Parameter 'nbOfWords')");
         }
 
         [Test]
