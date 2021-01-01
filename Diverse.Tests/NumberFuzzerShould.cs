@@ -130,7 +130,7 @@ namespace Diverse.Tests
 
             for (var i = 0; i < 50; i++)
             {
-                var person = fuzzer.GeneratePerson();
+                var person = fuzzer.GenerateSentence();
                 TestContext.WriteLine(person);
             }
         }

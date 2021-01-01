@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Diverse.Strings
 {
     /// <summary>

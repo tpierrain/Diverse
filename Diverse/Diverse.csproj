@@ -23,6 +23,8 @@
 
 - Provide fuzzing of decimal
 
+- Provide fuzzing of words, sentences, paragraphs and texts in latin (Lorem ipsum...)
+
 - Add optional min and max bounds for every number generation
 
 - Add RemoveDiacritics() extension method on string</PackageReleaseNotes>

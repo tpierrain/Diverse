@@ -20,6 +20,7 @@ namespace Diverse
         private readonly Random _internalRandom;
 
         private readonly IFuzzStrings _stringFuzzer;
+        private readonly IFuzzLorem _loremFuzzer;
         private readonly IFuzzNumbers _numberFuzzer;
         private readonly IFuzzPersons _personFuzzer;
         private readonly IFuzzDatesAndTime _dateTimeFuzzer;
@@ -100,6 +101,7 @@ namespace Diverse
             LogSeedAndTestInformations(seed.Value, seedWasProvided, name);
 
             // Instantiates implementation types for the various Fuzzer
+            _loremFuzzer = new LoremFuzzer(this);
             _stringFuzzer = new StringFuzzer(this);
             _numberFuzzer = new NumberFuzzer(this);
             _personFuzzer = new PersonFuzzer(this);
@@ -604,6 +606,60 @@ namespace YouNameSpaceHere.Tests
             }
 
             return maybe;
+        }
+
+        #endregion
+
+        #region LoremFuzzer
+
+        /// <summary>
+        /// Generates random latin words.
+        /// </summary>
+        /// <param name="number">(optional) Number of words to generate.</param>
+        /// <returns>The generated latin words.</returns>
+        public IEnumerable<string> GenerateWords(int? number = null)
+        {
+            return _loremFuzzer.GenerateWords(number);
+        }
+
+        /// <summary>
+        /// Generate a sentence in latin.
+        /// </summary>
+        /// <param name="nbOfWords">(optional) Number of words for this sentence.</param>
+        /// <returns>The generated sentence in latin.</returns>
+        public string GenerateSentence(int? nbOfWords = null)
+        {
+            return _loremFuzzer.GenerateSentence(nbOfWords);
+        }
+
+        /// <summary>
+        /// Generates a paragraph in latin.
+        /// </summary>
+        /// <param name="nbOfSentences">(optional) Number of sentences for this paragraph.</param>
+        /// <returns>The generated paragraph in latin.</returns>
+        public string GenerateParagraph(int? nbOfSentences = null)
+        {
+            return _loremFuzzer.GenerateParagraph(nbOfSentences);
+        }
+
+        /// <summary>
+        /// Generates a collection of paragraphs. 
+        /// </summary>
+        /// <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
+        /// <returns>The collection of paragraphs.</returns>
+        public IEnumerable<string> GenerateParagraphs(int? nbOfParagraphs = null)
+        {
+            return _loremFuzzer.GenerateParagraphs(nbOfParagraphs);
+        }
+
+        /// <summary>
+        /// Generates a text in latin with a specified number of paragraphs.
+        /// </summary>
+        /// <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
+        /// <returns>The generated text in latin.</returns>
+        public string GenerateText(int? nbOfParagraphs = null)
+        {
+            return _loremFuzzer.GenerateText(nbOfParagraphs);
         }
 
         #endregion

@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace Diverse
@@ -29,6 +31,24 @@ namespace Diverse
             }
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        /// <summary>
+        /// Upper the first char of a word.
+        /// </summary>
+        /// <param name="word">The word to upper.</param>
+        /// <returns>The word with the first letter capitalized.</returns>
+        public static string FirstCharToUpper(this string word)
+        {
+            switch (word)
+            {
+                case null:
+                    throw new ArgumentNullException(nameof(word));
+                case "":
+                    throw new ArgumentException($"{nameof(word)} cannot be empty", nameof(word));
+                default:
+                    return word.First().ToString().ToUpper() + word.Substring(1);
+            }
         }
     }
 }
