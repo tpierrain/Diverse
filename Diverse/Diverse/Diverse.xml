@@ -264,6 +264,41 @@
             <typeparam name="T">Type of the <see cref="T:System.Enum"/></typeparam>
             <returns>An random value of the specified <see cref="T:System.Enum"/> type.</returns>
         </member>
+        <member name="M:Diverse.Fuzzer.GenerateWords(System.Nullable{System.Int32})">
+            <summary>
+            Generates random latin words.
+            </summary>
+            <param name="number">(optional) Number of words to generate.</param>
+            <returns>The generated latin words.</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateSentence(System.Nullable{System.Int32})">
+            <summary>
+            Generate a sentence in latin.
+            </summary>
+            <param name="nbOfWords">(optional) Number of words for this sentence.</param>
+            <returns>The generated sentence in latin.</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateParagraph(System.Nullable{System.Int32})">
+            <summary>
+            Generates a paragraph in latin.
+            </summary>
+            <param name="nbOfSentences">(optional) Number of sentences for this paragraph.</param>
+            <returns>The generated paragraph in latin.</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateParagraphs(System.Nullable{System.Int32})">
+            <summary>
+            Generates a collection of paragraphs. 
+            </summary>
+            <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
+            <returns>The collection of paragraphs.</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateText(System.Nullable{System.Int32})">
+            <summary>
+            Generates a text in latin with a specified number of paragraphs.
+            </summary>
+            <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
+            <returns>The generated text in latin.</returns>
+        </member>
         <member name="T:Diverse.FuzzerException">
             <summary>
             An exception related to Fuzzing.
@@ -384,6 +419,13 @@
             <param name="text">The <see cref="T:System.String"/> you want to remove diacritics from.</param>
             <returns>The string without accents/diacritic.</returns>
         </member>
+        <member name="M:Diverse.StringExtensions.FirstCharToUpper(System.String)">
+            <summary>
+            Upper the first char of a word.
+            </summary>
+            <param name="word">The word to upper.</param>
+            <returns>The word with the first letter capitalized.</returns>
+        </member>
         <member name="T:Diverse.IFuzz">
             <summary>
             Interface to build your own <see cref="T:Diverse.Fuzzer"/> through extension methods.
@@ -449,6 +491,46 @@
             Generates a random <see cref="T:System.Guid"/>
             </summary>
             <returns>A random <see cref="T:System.Guid"/>.</returns>
+        </member>
+        <member name="T:Diverse.IFuzzLorem">
+            <summary>
+            Fuzz texts in Latin (see. Lorem Ipsum... https://www.lipsum.com/).
+            </summary>
+        </member>
+        <member name="M:Diverse.IFuzzLorem.GenerateWords(System.Nullable{System.Int32})">
+            <summary>
+            Generates random latin words.
+            </summary>
+            <param name="number">(optional) Number of words to generate.</param>
+            <returns>The generated latin words.</returns>
+        </member>
+        <member name="M:Diverse.IFuzzLorem.GenerateSentence(System.Nullable{System.Int32})">
+            <summary>
+            Generate a sentence in latin.
+            </summary>
+            <param name="nbOfWords">(optional) Number of words for this sentence.</param>
+            <returns>The generated sentence in latin.</returns>
+        </member>
+        <member name="M:Diverse.IFuzzLorem.GenerateParagraph(System.Nullable{System.Int32})">
+            <summary>
+            Generates a paragraph in latin.
+            </summary>
+            <param name="nbOfSentences">(optional) Number of sentences for this paragraph.</param>
+            <returns>The generated paragraph in latin.</returns>
+        </member>
+        <member name="M:Diverse.IFuzzLorem.GenerateParagraphs(System.Nullable{System.Int32})">
+            <summary>
+            Generates a collection of paragraphs. 
+            </summary>
+            <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
+            <returns>The collection of paragraphs.</returns>
+        </member>
+        <member name="M:Diverse.IFuzzLorem.GenerateText(System.Nullable{System.Int32})">
+            <summary>
+            Generates a text in latin with a specified number of paragraphs.
+            </summary>
+            <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
+            <returns>The generated text in latin.</returns>
         </member>
         <member name="T:Diverse.IFuzzNumbers">
             <summary>
@@ -896,6 +978,57 @@
             <summary>
             Negative <see cref="T:Diverse.Strings.Feeling"/>.
             </summary>
+        </member>
+        <member name="T:Diverse.Strings.Latin">
+            <summary>
+            Latin words.
+            </summary>
+        </member>
+        <member name="T:Diverse.Strings.LoremFuzzer">
+            <summary>
+            Fuzz texts in Latin (see. Lorem Ipsum... https://www.lipsum.com/).
+            </summary>
+        </member>
+        <member name="M:Diverse.Strings.LoremFuzzer.#ctor(Diverse.IFuzz)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.Strings.LoremFuzzer"/>.
+            </summary>
+            <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
+        </member>
+        <member name="M:Diverse.Strings.LoremFuzzer.GenerateWords(System.Nullable{System.Int32})">
+            <summary>
+            Generates random latin words.
+            </summary>
+            <param name="number">(optional) Number of words to generate.</param>
+            <returns>The generated latin words.</returns>
+        </member>
+        <member name="M:Diverse.Strings.LoremFuzzer.GenerateSentence(System.Nullable{System.Int32})">
+            <summary>
+            Generate a sentence in latin.
+            </summary>
+            <param name="nbOfWords">(optional) Number of words for this sentence.</param>
+            <returns>The generated sentence in latin.</returns>
+        </member>
+        <member name="M:Diverse.Strings.LoremFuzzer.GenerateParagraph(System.Nullable{System.Int32})">
+            <summary>
+            Generate a paragraph in latin.
+            </summary>
+            <param name="nbOfSentences">(optional) Number of sentences for this paragraph.</param>
+            <returns>The generated paragraph in latin.</returns>
+        </member>
+        <member name="M:Diverse.Strings.LoremFuzzer.GenerateParagraphs(System.Nullable{System.Int32})">
+            <summary>
+            Generates a collection of paragraphs. 
+            </summary>
+            <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
+            <returns>The collection of paragraphs.</returns>
+        </member>
+        <member name="M:Diverse.Strings.LoremFuzzer.GenerateText(System.Nullable{System.Int32})">
+            <summary>
+            Generates a text in latin with a specified number of paragraphs.
+            </summary>
+            <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
+            <returns>The generated text in latin.</returns>
         </member>
         <member name="T:Diverse.Strings.StringFuzzer">
             <summary>
