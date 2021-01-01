@@ -1,3 +1,4 @@
+using System;
 using NFluent;
 using NUnit.Framework;
 
@@ -37,13 +38,25 @@ namespace Diverse.Tests
         }
 
         [Test]
+        public void Throw_when_generating_a_sentence_with_1_word()
+        {
+            var fuzzer = new Fuzzer();
+
+            Check.ThatCode(() =>
+            {
+                var sentence = fuzzer.GenerateSentence(nbOfWords: 1);
+            }).Throws<ArgumentOutOfRangeException>()
+                .WithMessage("A sentence must have more than 1 word. (Parameter 'nbOfWords')");
+        }
+
+        [Test]
         public void Generate_a_paragraph()
         {
             var fuzzer = new Fuzzer(1811180938);
 
             var sentence = fuzzer.GenerateParagraph(nbOfSentences: 5);
 
-            Check.That(sentence).IsEqualTo("Pariatur aut repellendus pariatur. Quisquam quo deleniti consectetur earum mollitia ut quae. Dolor qui qui esse. Et nulla quia iusto omnis. Molestias quia qui consequatur sunt est doloremque iure.");
+            Check.That(sentence).IsEqualTo("Pariatur aut repellendus pariatur. Quisquam quo deleniti consectetur earum mollitia ut quae ipsam. Qui qui esse nihil et nulla quia iusto omnis. Molestias quia qui consequatur sunt est doloremque iure. Consequatur consequatur est odio ducimus voluptatem quas.");
         }
 
         [Test]
@@ -61,13 +74,13 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer(1811180938);
 
-            var sentence = fuzzer.GenerateText(nbOfParagraphs: 3);
+            var text = fuzzer.GenerateText(nbOfParagraphs: 3);
 
-            Check.That(sentence).IsEqualTo(@"Pariatur aut repellendus pariatur. Quisquam quo deleniti consectetur earum mollitia ut quae. Dolor qui qui esse. Et nulla quia iusto omnis. Molestias quia qui consequatur sunt est doloremque iure.
+            Check.That(text).IsEqualTo(@"Pariatur aut repellendus pariatur. Quisquam quo deleniti consectetur earum mollitia ut quae ipsam. Qui qui esse nihil et nulla quia iusto omnis. Molestias quia qui consequatur sunt est doloremque iure. Consequatur consequatur est odio ducimus voluptatem quas.
 
-Consequatur consequatur est odio ducimus voluptatem quas. Ut ea culpa sint culpa. Nobis. Eaque delectus vitae explicabo totam cum in. Quia.
+Ut ea culpa sint culpa. Nobis cum. Delectus vitae. Totam cum. Accusantium quia ad in voluptatibus rem et.
 
-In voluptatibus rem. Suscipit similique pariatur iusto rerum velit aspernatur. Delectus odit ea. Voluptates beatae sit consequatur molestiae. Quae sit sed.");
+Similique pariatur iusto rerum velit. Quis delectus. Ea quam. Beatae sit consequatur molestiae dolore quae sit sed rerum rerum. Qui eligendi autem cumque.");
         }
     }
 }

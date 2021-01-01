@@ -49,6 +49,8 @@ namespace Diverse.Strings
         "sapiente", "delectus", "ut", "aut", "reiciendis", "voluptatibus",
         "maiores", "doloribus", "asperiores", "repellat"};
 
+        private static int MinNumberOfWordsInASentence = 2;
+
         /// <summary>
         /// Instantiates a <see cref="LoremFuzzer"/>.
         /// </summary>
@@ -86,6 +88,11 @@ namespace Diverse.Strings
         {
             nbOfWords = nbOfWords ?? 6;
 
+            if(nbOfWords < MinNumberOfWordsInASentence)
+            {
+                throw new ArgumentOutOfRangeException(nameof(nbOfWords), "A sentence must have more than 1 word.");
+            }
+
             var words = GenerateWords(nbOfWords.Value).ToArray();
 
             var firstWordCapitalized = words.First().FirstCharToUpper();
@@ -109,7 +116,7 @@ namespace Diverse.Strings
 
             for (var i = 0; i < nbOfSentences.Value; i++)
             {
-                var nbWords = _fuzzer.GenerateInteger(1, 10);
+                var nbWords = _fuzzer.GenerateInteger(MinNumberOfWordsInASentence, 10);
                 var sentence = GenerateSentence(nbWords);
                 sentences.Add(sentence);
             }
