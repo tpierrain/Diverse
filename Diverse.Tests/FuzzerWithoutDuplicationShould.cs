@@ -254,6 +254,18 @@ namespace Diverse.Tests
             });
         }
 
+        [Test]
+        public void Be_able_to_provide_always_different_values_of_Age()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var maxNumberOfElements = 97-18;
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
+            {
+                return fuzzer.GenerateAge();
+            });
+        }
+
         #endregion
 
         #region Strings

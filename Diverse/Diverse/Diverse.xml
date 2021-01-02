@@ -188,6 +188,12 @@
             <param name="firstName">The first name of this person.</param>
             <returns>A 'Diverse' last name.</returns>
         </member>
+        <member name="M:Diverse.Fuzzer.GenerateAge">
+            <summary>
+            Generates the number of year to be associated with a person.
+            </summary>
+            <returns>The number of year to be associated with a person.</returns>
+        </member>
         <member name="M:Diverse.Fuzzer.GeneratePerson(System.Nullable{Diverse.Gender})">
             <summary>
             Generates a 'Diverse' <see cref="T:Diverse.Person"/> (i.e. from all around the world and different cultures). 
@@ -298,6 +304,12 @@
             </summary>
             <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
             <returns>The generated text in latin.</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateLetter">
+            <summary>
+            Generates a random letter.
+            </summary>
+            <returns>The generated letter.</returns>
         </member>
         <member name="T:Diverse.FuzzerException">
             <summary>
@@ -442,6 +454,11 @@
             </summary>
             <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
+        <member name="P:Diverse.IFuzz.AvoidDuplication">
+            <summary>
+            Gets of sets a value indicating whether the <see cref="T:Diverse.Fuzzer"/> should avoid providing twice the same value or not.
+            </summary>
+        </member>
         <member name="T:Diverse.IFuzzDatesAndTime">
             <summary>
             Fuzz Dates and Time.
@@ -496,6 +513,12 @@
             <summary>
             Fuzz texts in Latin (see. Lorem Ipsum... https://www.lipsum.com/).
             </summary>
+        </member>
+        <member name="M:Diverse.IFuzzLorem.GenerateLetter">
+            <summary>
+            Generates a random letter.
+            </summary>
+            <returns>The generated letter.</returns>
         </member>
         <member name="M:Diverse.IFuzzLorem.GenerateWords(System.Nullable{System.Int32})">
             <summary>
@@ -617,6 +640,12 @@
             Generates a password following some common rules asked on the internet.
             </summary>
             <returns>The generated password</returns>
+        </member>
+        <member name="M:Diverse.IFuzzPersons.GenerateAge">
+            <summary>
+            Generates the number of year to be associated with a person.
+            </summary>
+            <returns>The number of year to be associated with a person.</returns>
         </member>
         <member name="T:Diverse.IFuzzStrings">
             <summary>
@@ -773,7 +802,7 @@
         </member>
         <member name="P:Diverse.Female.FirstNames">
             <summary>
-            Gets all the male first names possibly used by the lib.
+            Gets all the female first names possibly used by the lib.
             </summary>
         </member>
         <member name="T:Diverse.Gender">
@@ -930,6 +959,12 @@
             <param name="gender">The (optional) <see cref="T:Diverse.Gender"/> of this <see cref="T:Diverse.Person"/></param>
             <returns>A 'Diverse' <see cref="T:Diverse.Person"/> instance.</returns>
         </member>
+        <member name="M:Diverse.PersonFuzzer.GenerateAge">
+            <summary>
+            Generates the number of year to be associated with a person.
+            </summary>
+            <returns>The number of year to be associated with a person.</returns>
+        </member>
         <member name="M:Diverse.PersonFuzzer.GenerateEMail(System.String,System.String)">
             <summary>
             Generates a random Email.
@@ -1029,6 +1064,12 @@
             </summary>
             <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
             <returns>The generated text in latin.</returns>
+        </member>
+        <member name="M:Diverse.Strings.LoremFuzzer.GenerateLetter">
+            <summary>
+            Generates a random letter.
+            </summary>
+            <returns>The generated letter.</returns>
         </member>
         <member name="T:Diverse.Strings.StringFuzzer">
             <summary>

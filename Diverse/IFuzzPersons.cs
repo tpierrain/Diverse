@@ -39,5 +39,11 @@
         /// </summary>
         /// <returns>The generated password</returns>
         string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null);
+
+        /// <summary>
+        /// Generates the number of year to be associated with a person.
+        /// </summary>
+        /// <returns>The number of year to be associated with a person.</returns>
+        int GenerateAge();
     }
 }

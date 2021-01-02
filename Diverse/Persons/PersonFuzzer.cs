@@ -77,11 +77,18 @@ namespace Diverse
             return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
         }
 
-        private int GenerateAge()
+        /// <summary>
+        /// Generates the number of year to be associated with a person.
+        /// </summary>
+        /// <returns>The number of year to be associated with a person.</returns>
+        public int GenerateAge()
         {
+            var minValue = 18;
+            var maxValue = 97;
+
             if (_fuzzer.HeadsOrTails())
             {
-                return _fuzzer.GenerateInteger(18, 28);
+                return _fuzzer.GenerateInteger(minValue, 28);
             }
 
             if (_fuzzer.HeadsOrTails())
@@ -91,10 +98,10 @@ namespace Diverse
 
             if (_fuzzer.HeadsOrTails())
             {
-                return _fuzzer.GenerateInteger(18, 42);
+                return _fuzzer.GenerateInteger(minValue, 42);
             }
 
-            return _fuzzer.GenerateInteger(42, 97);
+            return _fuzzer.GenerateInteger(42, maxValue);
         }
 
         private Gender? PickAGenderRandomly()

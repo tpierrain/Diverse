@@ -116,5 +116,18 @@ namespace Diverse.Tests
 
             Check.That(email).IsEqualTo("said-ef.ben-achour@microsoft.com");
         }
+
+        [Test]
+        [Repeat(10000)]
+        public void Generate_Age_between_18_and_97_years()
+        {
+            var fuzzer = new Fuzzer();
+
+            var age = fuzzer.GenerateAge();
+
+            Check.That(age)
+                .IsAfter(17)
+                .And.IsBefore(98);
+        }
     }
 }

@@ -28,17 +28,26 @@ namespace Diverse
         private readonly IFuzzGuid _guidFuzzer;
         private readonly IFuzzFromCollections _collectionFuzzer;
 
-        
+
         private const int MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue = 100;
         private const int MaxRangeSizeAllowedForMemoizationDefaultValue = 1000000;
         private readonly Memoizer _memoizer = new Memoizer();
+
+        private IFuzz _sideEffectFreeFuzzer;
+
+        /// <summary>
+        /// Fuzzer to be used by the various lambdas when the
+        /// AvoidDuplication option is set to <b>true</b>.
+        /// </summary>
+        private IFuzz SideEffectFreeSafeFuzzer => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, avoidDuplication: false));
 
         /// <summary>
         /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
         /// a not already provided value when <see cref="AvoidDuplication"/> mode
         /// is enabled (via constructor).
         /// </summary>
-        public int MaxFailingAttemptsToFindNotAlreadyProvidedValue { get; set; } = MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue;
+        public int MaxFailingAttemptsToFindNotAlreadyProvidedValue { get; set; } =
+            MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue;
 
         /// <summary>
         /// Gets or sets the maximum number of entries to be memoized if
@@ -70,7 +79,7 @@ namespace Diverse
         /// <summary>
         /// Gives easy access to the <see cref="IFuzz.Random"/> explicit implementation.
         /// </summary>
-        private Random InternalRandom => ((IFuzz)this).Random;
+        private Random InternalRandom => ((IFuzz) this).Random;
 
         /// <summary>
         /// Sets the way you want to log or receive what the <see cref="Fuzzer"/> has to say about every generated seeds used for every fuzzer instance and test.
@@ -87,7 +96,8 @@ namespace Diverse
         {
             var seedWasProvided = seed.HasValue;
 
-            seed = seed ?? new Random().Next(); // the seed is not specified? pick a random one for this Fuzzer instance.
+            seed = seed ??
+                   new Random().Next(); // the seed is not specified? pick a random one for this Fuzzer instance.
             Seed = seed.Value;
 
             _internalRandom = new Random(seed.Value);
@@ -120,7 +130,8 @@ namespace Diverse
                 throw new FuzzerException(BuildErrorMessageForMissingLogRegistration());
             }
 
-            Log($"----------------------------------------------------------------------------------------------------------------------");
+            Log(
+                $"----------------------------------------------------------------------------------------------------------------------");
             if (seedWasProvided)
             {
                 Log($"--- Fuzzer (\"{fuzzerName}\") instantiated from a provided seed ({seed})");
@@ -130,16 +141,20 @@ namespace Diverse
             {
                 Log($"--- Fuzzer (\"{fuzzerName}\") instantiated with the seed ({seed})");
                 Log($"--- from the test: {testName}()");
-                Log($"--- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions");
+                Log(
+                    $"--- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions");
             }
 
-            Log($"----------------------------------------------------------------------------------------------------------------------");
+            Log(
+                $"----------------------------------------------------------------------------------------------------------------------");
         }
 
         private static string BuildErrorMessageForMissingLogRegistration()
         {
-            var message = @"You must register (at least once) a log handler in your Test project for the Diverse library to be able to publish all the seeds used for every test (which is a prerequisite for deterministic test runs afterward).
-The only thing you have to do is to set a value for the static " + $"{nameof(Log)} property of the {nameof(Fuzzer)} type." + @"
+            var message =
+                @"You must register (at least once) a log handler in your Test project for the Diverse library to be able to publish all the seeds used for every test (which is a prerequisite for deterministic test runs afterward).
+The only thing you have to do is to set a value for the static " +
+                $"{nameof(Log)} property of the {nameof(Fuzzer)} type." + @"
 
 The best location for this call is within a unique AllFixturesSetup class.
 e.g.: with NUnit:
@@ -170,22 +185,23 @@ namespace YouNameSpaceHere.Tests
             {
                 var stackTrace = new StackTrace();
 
-                var testMethod = stackTrace.GetFrames()
-                    .Select(sf => sf.GetMethod())
-                    .First(IsATestMethod);
+                var testMethod = stackTrace.GetFrames().Select(sf => sf.GetMethod()).First(IsATestMethod);
 
                 testName = $"{testMethod.DeclaringType.Name}.{testMethod.Name}";
             }
             catch
-            { }
+            {
+            }
 
             return testName;
         }
+
         private static bool IsATestMethod(MethodBase mb)
         {
             var attributeTypes = mb.CustomAttributes.Select(c => c.AttributeType);
 
-            var hasACustomAttributeOfTypeTest = attributeTypes.Any(y => (y.Name == "TestAttribute" || y.Name == "TestCaseAttribute" || y.Name == "Fact"));
+            var hasACustomAttributeOfTypeTest = attributeTypes.Any(y =>
+                (y.Name == "TestAttribute" || y.Name == "TestCaseAttribute" || y.Name == "Fact"));
 
             if (hasACustomAttributeOfTypeTest)
             {
@@ -224,7 +240,11 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GenerateInteger(minValue, maxValue));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    (safeFuzzer) => safeFuzzer.GenerateInteger(minValue, maxValue),
+                    alreadyProvidedValues => LastChanceToFindNotAlreadyProvidedInteger(alreadyProvidedValues,
+                        minValue.Value, maxValue.Value, _collectionFuzzer));
             }
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
@@ -239,7 +259,9 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(maxValue), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _numberFuzzer.GeneratePositiveInteger(maxValue));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(maxValue),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    (safeFuzzer) => safeFuzzer.GeneratePositiveInteger(maxValue));
             }
 
             return _numberFuzzer.GeneratePositiveInteger(maxValue);
@@ -286,16 +308,39 @@ namespace YouNameSpaceHere.Tests
                 if (uRange <= MaxRangeSizeAllowedForMemoization)
                 {
                     return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
-                        maxFailingAttemptsBeforeLastChanceFunctionIsCalled: MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                        regularGenerationFunction: () => _numberFuzzer.GenerateLong(minValue, maxValue),
-                        lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
+                        maxFailingAttemptsBeforeLastChanceFunctionIsCalled:
+                        MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                        regularGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLong(minValue, maxValue),
+                        lastChanceGenerationFunction: (alreadyProvidedSortedSet) =>
+                            LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet,
+                                this));
                 }
             }
 
             return _numberFuzzer.GenerateLong(minValue, maxValue);
         }
 
-        private static Maybe<long> LastChanceToFindNotAlreadyProvidedLong(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
+        private static Maybe<int> LastChanceToFindNotAlreadyProvidedInteger(SortedSet<object> alreadyProvidedValues,
+            int? minValue, int? maxValue, IFuzzFromCollections fuzzer)
+        {
+            minValue = minValue ?? int.MinValue;
+            maxValue = maxValue ?? int.MaxValue;
+
+            var allPossibleValues = Enumerable.Range(minValue.Value, maxValue.Value).ToArray();
+            var remainingCandidates =
+                allPossibleValues.Where(number => !alreadyProvidedValues.Contains(number)).ToList();
+
+            if (remainingCandidates.Any())
+            {
+                var pickOneFrom = fuzzer.PickOneFrom<int>(remainingCandidates);
+                return new Maybe<int>(pickOneFrom);
+            }
+
+            return new Maybe<int>();
+        }
+
+        private static Maybe<long> LastChanceToFindNotAlreadyProvidedLong(ref long? minValue, ref long? maxValue,
+            SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
         {
             minValue = minValue ?? long.MinValue;
             maxValue = maxValue ?? long.MaxValue;
@@ -339,7 +384,9 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(gender), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _personFuzzer.GenerateFirstName(gender));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(gender),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    (safeFuzzer) => safeFuzzer.GenerateFirstName(gender));
             }
 
             return _personFuzzer.GenerateFirstName(gender);
@@ -354,15 +401,52 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName), MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    () => _personFuzzer.GenerateLastName(firstName),
-                    (alreadyProvidedSortedSet) => LastChanceToFindLastName(firstName, alreadyProvidedSortedSet));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, (safeFuzzer) =>
+                    {
+                        return safeFuzzer.GenerateLastName(firstName);
+                    },
+                    (alreadyProvidedSortedSet) => LastChanceToFindLastName(firstName, alreadyProvidedSortedSet, this));
             }
 
             return _personFuzzer.GenerateLastName(firstName);
         }
 
-        private Maybe<string> LastChanceToFindLastName(string firstName, SortedSet<object> alreadyProvidedLastNames)
+        /// <summary>
+        /// Generates the number of year to be associated with a person.
+        /// </summary>
+        /// <returns>The number of year to be associated with a person.</returns>
+        public int GenerateAge()
+        {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    regularGenerationFunction: (fuzzerWithDuplicationAllowed) => fuzzerWithDuplicationAllowed.GenerateAge(),
+                    lastChanceGenerationFunction: (alreadyProvidedValues) =>
+                        LastChanceToFindAge(alreadyProvidedValues, 18, 97, _collectionFuzzer));
+            }
+
+            return _personFuzzer.GenerateAge();
+        }
+
+        private static Maybe<int> LastChanceToFindAge(SortedSet<object> alreadyProvidedValues, int minAge, int maxAge,
+            IFuzzFromCollections fuzzer)
+        {
+            var allPossibleValues = Enumerable.Range(minAge, maxAge - minAge).ToArray();
+            var remainingCandidates = allPossibleValues.Where(age => !alreadyProvidedValues.Contains(age)).ToList();
+
+            if (remainingCandidates.Any())
+            {
+                var pickOneFrom = fuzzer.PickOneFrom<int>(remainingCandidates);
+                return new Maybe<int>(pickOneFrom);
+            }
+
+            return new Maybe<int>();
+        }
+
+        private static Maybe<string> LastChanceToFindLastName(string firstName,
+            SortedSet<object> alreadyProvidedLastNames, IFuzz fuzzer)
         {
             var continent = Locations.FindContinent(firstName);
             var allPossibleOptions = LastNames.PerContinent[continent];
@@ -371,7 +455,7 @@ namespace YouNameSpaceHere.Tests
 
             if (remainingLastNames.Any())
             {
-                var lastName = ((IFuzz) this).PickOneFrom(remainingLastNames);
+                var lastName = fuzzer.PickOneFrom(remainingLastNames);
                 return new Maybe<string>(lastName);
             }
 
@@ -398,7 +482,9 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName, lastName), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _personFuzzer.GenerateEMail(firstName, lastName));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName, lastName),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    (safeFuzzer) => safeFuzzer.GenerateEMail(firstName, lastName));
             }
 
             return _personFuzzer.GenerateEMail(firstName, lastName);
@@ -412,7 +498,13 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minSize, maxSize, includeSpecialCharacters), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(),
+                    HashArguments(minSize, maxSize, includeSpecialCharacters),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    (safeFuzzer) =>
+                    {
+                        return safeFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
+                    });
             }
 
             return _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
@@ -431,7 +523,12 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(candidates), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _collectionFuzzer.PickOneFrom(candidates));
+                return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(candidates),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    (safeFuzzer) =>
+                    {
+                        return safeFuzzer.PickOneFrom(candidates);
+                    });
             }
 
             return _collectionFuzzer.PickOneFrom(candidates);
@@ -485,21 +582,24 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(feeling), MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
-                    () => _stringFuzzer.GenerateAdjective(feeling),
-                    alreadyProvidedSortedSet => LastChanceToFindAdjective(feeling, alreadyProvidedSortedSet));
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(feeling),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    (safeFuzzer) => safeFuzzer.GenerateAdjective(feeling),
+                    alreadyProvidedSortedSet => LastChanceToFindAdjective(feeling, alreadyProvidedSortedSet, this));
             }
 
             return _stringFuzzer.GenerateAdjective(feeling);
         }
 
-        private Maybe<string> LastChanceToFindAdjective(Feeling? feeling, SortedSet<object> alreadyProvidedLastNames)
+        private static Maybe<string> LastChanceToFindAdjective(Feeling? feeling,
+            SortedSet<object> alreadyProvidedLastNames, IFuzz fuzzer)
         {
-            var remainingAdjectives = Adjectives.PerFeeling[feeling.Value].Where(n => !alreadyProvidedLastNames.Contains(n)).ToArray();
+            var remainingAdjectives = Adjectives.PerFeeling[feeling.Value]
+                .Where(n => !alreadyProvidedLastNames.Contains(n)).ToArray();
 
             if (remainingAdjectives.Any())
             {
-                var adjective = ((IFuzz)this).PickOneFrom(remainingAdjectives);
+                var adjective = fuzzer.PickOneFrom(remainingAdjectives);
                 return new Maybe<string>(adjective);
             }
 
@@ -542,39 +642,52 @@ namespace YouNameSpaceHere.Tests
         {
             if (AvoidDuplication)
             {
-                return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(), MaxFailingAttemptsToFindNotAlreadyProvidedValue, () => _typeFuzzer.GenerateEnum<T>());
+                return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    (safeFuzzer) => safeFuzzer.GenerateEnum<T>());
             }
 
             return _typeFuzzer.GenerateEnum<T>();
         }
 
-        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode, int maxFailingAttemptsBeforeLastChanceFunctionIsCalled,
-            Func<T> regularGenerationFunction, Func<SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
+        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode,
+            int maxFailingAttemptsBeforeLastChanceFunctionIsCalled, Func<IFuzz, T> regularGenerationFunction,
+            Func<SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
         {
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
-            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues, regularGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
+            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues,
+                regularGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
 
-            if (!maybe.HasItem && lastChanceGenerationFunction != null)
+            if (!maybe.HasItem /* && lastChanceGenerationFunction != null*/)
             {
-                // last attempt, we randomly pick the missing bits from the memoizer
-                maybe = lastChanceGenerationFunction(_memoizer.GetAlreadyProvidedValues(memoizerKey));
+                if (lastChanceGenerationFunction != null)
+                {
+                    // last attempt, we randomly pick the missing bits from the memoizer
+                    maybe = lastChanceGenerationFunction(_memoizer.GetAlreadyProvidedValues(memoizerKey));
+                }
+                else
+                {
+                    throw new AmbiguousMatchException("chelou");
+                }
             }
-            
+
             if (!maybe.HasItem)
             {
-                throw new DuplicationException(typeof(T), maxFailingAttemptsBeforeLastChanceFunctionIsCalled, alreadyProvidedValues);
+                throw new DuplicationException(typeof(T), maxFailingAttemptsBeforeLastChanceFunctionIsCalled,
+                    alreadyProvidedValues);
             }
 
             alreadyProvidedValues.Add(maybe.Item);
             return maybe.Item;
         }
 
-        private Maybe<T> TryGetNonAlreadyProvidedValues<T>(MemoizerKey memoizerKey, out SortedSet<object> alreadyProvidedValues, Func<T> generationFunction, int maxFailingAttempts)
+        private Maybe<T> TryGetNonAlreadyProvidedValues<T>(MemoizerKey memoizerKey,
+            out SortedSet<object> alreadyProvidedValues, Func<IFuzz, T> generationFunction, int maxFailingAttempts)
         {
             alreadyProvidedValues = _memoizer.GetAlreadyProvidedValues(memoizerKey);
 
-            var maybe = GenerateNotAlreadyProvidedValue<T>(alreadyProvidedValues, maxFailingAttempts,
-                generationFunction);
+            var maybe = GenerateNotAlreadyProvidedValue<T>(alreadyProvidedValues, maxFailingAttempts, generationFunction);
+
             return maybe;
         }
 
@@ -590,22 +703,20 @@ namespace YouNameSpaceHere.Tests
             return hash;
         }
 
-        private Maybe<T> GenerateNotAlreadyProvidedValue<T>(ISet<object> alreadyProvidedValues, int maxAttempts, Func<T> generationFunction)
+        private Maybe<T> GenerateNotAlreadyProvidedValue<T>(ISet<object> alreadyProvidedValues, int maxAttempts, Func<IFuzz, T> generationFunction)
         {
-            var maybe = new Maybe<T>();
             T result = default(T);
             for (var i = 0; i < maxAttempts; i++)
             {
-                result = generationFunction();
+                result = generationFunction(SideEffectFreeSafeFuzzer);
 
                 if (!alreadyProvidedValues.Contains(result))
                 {
-                    maybe = new Maybe<T>(result);
-                    break;
+                    return new Maybe<T>(result);
                 }
             }
 
-            return maybe;
+            return new Maybe<T>();
         }
 
         #endregion
@@ -677,7 +788,7 @@ namespace YouNameSpaceHere.Tests
         private MethodBase CaptureCurrentMethod()
         {
             var st = new StackTrace();
-            var sf = st.GetFrame(1); 
+            var sf = st.GetFrame(1);
 
 
             return sf.GetMethod();

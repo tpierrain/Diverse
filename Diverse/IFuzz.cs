@@ -17,5 +17,10 @@ namespace Diverse
         /// </summary>
         /// <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         bool HeadsOrTails();
+
+        /// <summary>
+        /// Gets of sets a value indicating whether the <see cref="Fuzzer"/> should avoid providing twice the same value or not.
+        /// </summary>
+        bool AvoidDuplication { get; set; }
     }
 }
