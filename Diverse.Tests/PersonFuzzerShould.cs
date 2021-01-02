@@ -36,7 +36,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName(Gender.Female));
             }
 
-            Check.That(firstNames).ContainsExactly("Nzinga", "Shyla", "Jiao", "Gioconda", "Zuri", "Andrijana", "Dhalia", "Kione", "Wen", "Mériem");
+            Check.That(firstNames).ContainsExactly("Nzinga", "Guri", "Lan", "Giovanna", "Kwame", "Valeria", "Dhalia", "Kione", "Xian", "Zayneb");
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName());
             }
 
-            Check.That(firstNames).ContainsExactly("Goo", "Uélé", "Katsuki", "Enrico", "Ji-yeon", "Atahualpa", "Soske", "Manua", "Maffalda", "Aminata");
+            Check.That(firstNames).ContainsExactly("Goo", "Uélé", "Katsuki", "Enrico", "Jung-sook", "Atahualpa", "Soske", "Manua", "Maffalda", "Aminata");
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Diverse.Tests
                 lastNames.Add($"{firstName} {fuzzer.GenerateLastName(firstName)}");
             }
 
-            Check.That(lastNames).ContainsExactly("Itxaro González", "Josh Walker", "Xing Xing Laghari", "Olamide Diop", "Kevin Sanchez", "Qi Madan", "Nichelle Baker", "Xing Xing Laghari", "Simba Ibrahim", "Abeba Nwadike");
+            Check.That(lastNames).ContainsExactly("Itxaro González", "Josh Walker", "Yue Laghari", "Olamide Diop", "Kevin Sanchez", "Bao Madan", "Nichelle Baker", "Xing Xing Laghari", "Simba Ibrahim", "Abeba Nwadike");
         }
 
         [Test]
@@ -82,14 +82,14 @@ namespace Diverse.Tests
             Check.That(persons.Select(x => x.ToString()))
                 .ContainsExactly(
                     "Mrs. Zahara NGOMA (Female) zngoma@yopmail.com (married - age: 20 years)", 
-                    "Ms. Signilde HAUGLAND (Female) shaugland@protonmail.com (age: 33 years)", 
+                    "Ms. Brendette HAUGLAND (Female) bhaugland@protonmail.com (age: 33 years)", 
                     "Ms. Imogen WILLIAMS (Female) imogen.williams@protonmail.com (age: 41 years)", 
-                    "Mrs. Zayneb DROGBA (Female) zayneb.drogba@protonmail.com (married - age: 31 years)", 
+                    "Mrs. Khadija DROGBA (Female) khadija.drogba@protonmail.com (married - age: 31 years)", 
                     "Mr. Samuel MÜLLER (Male) smuller@kolab.com (age: 27 years)", 
                     "Mx. Gojko BERNARD (NonBinary) gojko.bernard@ibm.com (age: 34 years)", 
-                    "Ms. Thuong KIM (Female) tkim@kolab.com (age: 75 years)", 
+                    "Ms. Zhang KIM (Female) zkim@kolab.com (age: 75 years)", 
                     "Mr. Samuel CONTI (Male) samuel.conti@42skillz.com (married - age: 25 years)", 
-                    "Mrs. Dae BAK (Female) dae.bak@ibm.com (married - age: 32 years)", 
+                    "Mrs. Eun-Kyung BAK (Female) eun-kyung.bak@ibm.com (married - age: 32 years)", 
                     "Mx. Okal MENSAH (NonBinary) omensah@yopmail.com (married - age: 28 years)");
         }
 

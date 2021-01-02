@@ -21,9 +21,9 @@ namespace Diverse.Tests
         }
 
         [Test]
-        public void Have_353_female_names()
+        public void Have_355_female_names()
         {
-            Check.That(Female.FirstNames).HasSize(353);
+            Check.That(Female.FirstNames).HasSize(355);
         }
 
         [Test]

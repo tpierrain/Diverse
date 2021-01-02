@@ -259,6 +259,8 @@ namespace Diverse
             new ContextualizedFirstName("Réjane", Continent.Europe),
             new ContextualizedFirstName("Clémence", Continent.Europe),
 
+            new ContextualizedFirstName("Marta", Continent.Europe),
+            new ContextualizedFirstName("Tsvetomira", Continent.Europe),
             new ContextualizedFirstName("Valombrosa", Continent.Europe),
             new ContextualizedFirstName("Beonca", Continent.Europe),
             new ContextualizedFirstName("Enrica", Continent.Europe),
