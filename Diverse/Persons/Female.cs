@@ -15,7 +15,7 @@ namespace Diverse
         private static string[] _firstNames = null;
 
         /// <summary>
-        /// Gets all the male first names possibly used by the lib.
+        /// Gets all the female first names possibly used by the lib.
         /// </summary>
         public static string[] FirstNames
         {
