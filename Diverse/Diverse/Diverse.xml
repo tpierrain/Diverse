@@ -76,6 +76,30 @@
             Note: you can instantiate another Deterministic Fuzzer by providing it the Seed you want to reuse.
             </summary>
         </member>
+        <member name="P:Diverse.Fuzzer.SideEffectFreeSafeFuzzer">
+             <summary>
+             internal Fuzzer instance to be used by the various lambdas
+             related to the AvoidDuplication mode (i.e. when the option is
+             set to <b>true</b>).
+            
+             Ironically, the AvoidDuplication mode of this Fuzzer needs
+             to use another fuzzer instance for the Lastchance mode (i.e. when the
+             MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue has been
+             reached).
+            
+             E.g.: if you call the <see cref="M:Diverse.Fuzzer.GenerateAge"/> method on a Fuzzer with
+             AvoidDuplication set to <b>true</b> in a situation where the
+             <see cref="F:Diverse.Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue"/>
+             was not enough to find another original value, the lastChance lambda
+             of the <see cref="M:Diverse.Fuzzer.GenerateWithoutDuplication``1(System.Reflection.MethodBase,System.Int32,System.Int32,System.Func{Diverse.IFuzz,``0},System.Func{System.Collections.Generic.SortedSet{System.Object},Diverse.Maybe{``0}})"/> method will be called.
+            
+             In that case, since the last chance lambda of the <see cref="M:Diverse.Fuzzer.GenerateAge"/>
+             method is using the <see cref="M:Diverse.IFuzzNumbers.GenerateInteger(System.Nullable{System.Int32},System.Nullable{System.Int32})"/> method,
+             we need to avoid <see cref="T:System.StackOverflowException"/> by using
+             a <see cref="P:Diverse.Fuzzer.SideEffectFreeSafeFuzzer"/> instance in that specific case
+             (in all lastChance lambdas actually).
+             </summary>
+        </member>
         <member name="P:Diverse.Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue">
             <summary>
             Gets or sets the max number of attempts the Fuzzer should make in order to generate
@@ -133,6 +157,46 @@
             Flips a coin.
             </summary>
             <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateWithoutDuplication``1(System.Reflection.MethodBase,System.Int32,System.Int32,System.Func{Diverse.IFuzz,``0},System.Func{System.Collections.Generic.SortedSet{System.Object},Diverse.Maybe{``0}})">
+            <summary>
+            Methods to be used when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> is set to <b>true</b>
+            for any fuzzing method of this <see cref="T:Diverse.Fuzzer"/> instance.
+            It encapsulates the logic of various attempts and retries before
+            falling back to a very specific <see cref="!:lastChanceGenerationFunction"/>
+            lambda associated to the considered fuzzing method.
+            </summary>
+            <typeparam name="T">Type to be fuzzed/generated</typeparam>
+            <param name="currentMethod">
+                The current Method calling us (e.g.: <see cref="M:Diverse.Fuzzer.GenerateAge"/>).
+                Used for memoization purpose.
+            </param>
+            <param name="argumentsHashCode">
+                A hash for the current method call arguments. Used for memoization purpose.
+            </param>
+            <param name="maxFailingAttemptsBeforeLastChanceFunctionIsCalled">
+                The maximum number of calls to the <see cref="!:regularGenerationFunction"/>
+                we should try before we fall-back and call the
+                <see cref="!:lastChanceGenerationFunction"/> lambda.
+            </param>
+            <param name="regularGenerationFunction">
+                The function to use in order to generate the thing(s) we want.
+                It should be the same function that the one we call for the cases
+                where <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> is set to <b>false</b>.
+            </param>
+            <param name="lastChanceGenerationFunction">
+                The function to use in order to generate the thing(s) we want when
+                all the <see cref="!:regularGenerationFunction"/> attempts have failed.
+                To do our job, we receive:
+                    - A <see cref="T:System.Collections.Generic.SortedSet`1"/> instance with all the previously
+                      generated values
+            
+                    - A side-effect free <see cref="T:Diverse.IFuzz"/> instance to use if needed.
+                      (one should not use the current instance of <see cref="T:Diverse.Fuzzer"/>
+                      to do the job since it may have side-effects
+                      and lead to <see cref="T:System.StackOverflowException"/>)).
+            </param>
+            <returns>The thing(s) we want to generate.</returns>
         </member>
         <member name="M:Diverse.Fuzzer.GenerateInteger(System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
@@ -274,6 +338,7 @@
             <summary>
             Generates random latin words.
             </summary>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
             <param name="number">(optional) Number of words to generate.</param>
             <returns>The generated latin words.</returns>
         </member>
@@ -281,6 +346,7 @@
             <summary>
             Generate a sentence in latin.
             </summary>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
             <param name="nbOfWords">(optional) Number of words for this sentence.</param>
             <returns>The generated sentence in latin.</returns>
         </member>
@@ -288,6 +354,7 @@
             <summary>
             Generates a paragraph in latin.
             </summary>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
             <param name="nbOfSentences">(optional) Number of sentences for this paragraph.</param>
             <returns>The generated paragraph in latin.</returns>
         </member>
@@ -295,6 +362,7 @@
             <summary>
             Generates a collection of paragraphs. 
             </summary>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
             <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
             <returns>The collection of paragraphs.</returns>
         </member>
@@ -302,6 +370,7 @@
             <summary>
             Generates a text in latin with a specified number of paragraphs.
             </summary>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
             <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
             <returns>The generated text in latin.</returns>
         </member>
@@ -1029,6 +1098,11 @@
             Instantiates a <see cref="T:Diverse.Strings.LoremFuzzer"/>.
             </summary>
             <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
+        </member>
+        <member name="P:Diverse.Strings.LoremFuzzer.Alphabet">
+            <summary>
+            Gets the letters used by the <see cref="M:Diverse.Strings.LoremFuzzer.GenerateLetter"/> method.
+            </summary>
         </member>
         <member name="M:Diverse.Strings.LoremFuzzer.GenerateWords(System.Nullable{System.Int32})">
             <summary>

@@ -251,7 +251,7 @@ namespace YouNameSpaceHere.Tests
         /// Methods to be used when <see cref="AvoidDuplication"/> is set to <b>true</b>
         /// for any fuzzing method of this <see cref="Fuzzer"/> instance.
         /// It encapsulates the logic of various attempts and retries before
-        /// falling back to a very specific <see cref="lastChanceGenerationFunction"/>
+        /// falling back to a very specific <paramref name="lastChanceGenerationFunction"/>
         /// lambda associated to the considered fuzzing method.
         /// </summary>
         /// <typeparam name="T">Type to be fuzzed/generated</typeparam>
@@ -263,9 +263,9 @@ namespace YouNameSpaceHere.Tests
         ///     A hash for the current method call arguments. Used for memoization purpose.
         /// </param>
         /// <param name="maxFailingAttemptsBeforeLastChanceFunctionIsCalled">
-        ///     The maximum number of calls to the <see cref="regularGenerationFunction"/>
+        ///     The maximum number of calls to the <paramref name="regularGenerationFunction"/>
         ///     we should try before we fall-back and call the
-        ///     <see cref="lastChanceGenerationFunction"/> lambda.
+        ///     <paramref name="lastChanceGenerationFunction"/> lambda.
         /// </param>
         /// <param name="regularGenerationFunction">
         ///     The function to use in order to generate the thing(s) we want.
@@ -274,7 +274,7 @@ namespace YouNameSpaceHere.Tests
         /// </param>
         /// <param name="lastChanceGenerationFunction">
         ///     The function to use in order to generate the thing(s) we want when
-        ///     all the <see cref="regularGenerationFunction"/> attempts have failed.
+        ///     all the <paramref name="regularGenerationFunction"/> attempts have failed.
         ///     To do our job, we receive:
         ///         - A <see cref="SortedSet{T}"/> instance with all the previously
         ///           generated values
