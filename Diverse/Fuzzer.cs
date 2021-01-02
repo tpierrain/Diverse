@@ -48,7 +48,7 @@ namespace Diverse
         /// AvoidDuplication set to <b>true</b> in a situation where the
         /// <see cref="MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue"/>
         /// was not enough to find another original value, the lastChance lambda
-        /// of the <see cref="GenerateWithoutDuplication"/> method will be called.
+        /// of the <see cref="GenerateWithoutDuplication{T}"/> method will be called.
         ///
         /// In that case, since the last chance lambda of the <see cref="GenerateAge"/>
         /// method is using the <see cref="IFuzzNumbers.GenerateInteger"/> method,
@@ -263,18 +263,18 @@ namespace YouNameSpaceHere.Tests
         ///     A hash for the current method call arguments. Used for memoization purpose.
         /// </param>
         /// <param name="maxFailingAttemptsBeforeLastChanceFunctionIsCalled">
-        ///     The maximum number of calls to the <paramref name="regularGenerationFunction"/>
+        ///     The maximum number of calls to the <paramref name="standardGenerationFunction"/>
         ///     we should try before we fall-back and call the
         ///     <paramref name="lastChanceGenerationFunction"/> lambda.
         /// </param>
-        /// <param name="regularGenerationFunction">
+        /// <param name="standardGenerationFunction">
         ///     The function to use in order to generate the thing(s) we want.
         ///     It should be the same function that the one we call for the cases
         ///     where <see cref="AvoidDuplication"/> is set to <b>false</b>.
         /// </param>
         /// <param name="lastChanceGenerationFunction">
         ///     The function to use in order to generate the thing(s) we want when
-        ///     all the <paramref name="regularGenerationFunction"/> attempts have failed.
+        ///     all the <paramref name="standardGenerationFunction"/> attempts have failed.
         ///     To do our job, we receive:
         ///         - A <see cref="SortedSet{T}"/> instance with all the previously
         ///           generated values
@@ -287,13 +287,13 @@ namespace YouNameSpaceHere.Tests
         /// <returns>The thing(s) we want to generate.</returns>
         private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode,
                             int maxFailingAttemptsBeforeLastChanceFunctionIsCalled, 
-                            Func<IFuzz, T> regularGenerationFunction,
+                            Func<IFuzz, T> standardGenerationFunction,
                             Func<SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
         {
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
 
             var maybe = TryGetNonAlreadyProvidedValuesWithRegularGenerationFunction<T>(memoizerKey, out var alreadyProvidedValues,
-                regularGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
+                standardGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
 
             if (!maybe.HasItem)
             {
@@ -369,9 +369,8 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    (safeFuzzer) => safeFuzzer.GenerateInteger(minValue, maxValue),
-                    alreadyProvidedValues => LastChanceToFindNotAlreadyProvidedInteger(alreadyProvidedValues,
-                        minValue.Value, maxValue.Value, _collectionFuzzer));
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateInteger(minValue, maxValue),
+                    lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindNotAlreadyProvidedInteger(alreadyProvidedValues, minValue.Value, maxValue.Value, _collectionFuzzer));
             }
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
@@ -408,7 +407,7 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(maxValue),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    (safeFuzzer) => safeFuzzer.GeneratePositiveInteger(maxValue));
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.GeneratePositiveInteger(maxValue));
             }
 
             return _numberFuzzer.GeneratePositiveInteger(maxValue);
@@ -457,10 +456,8 @@ namespace YouNameSpaceHere.Tests
                     return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
                         maxFailingAttemptsBeforeLastChanceFunctionIsCalled:
                         MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                        regularGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLong(minValue, maxValue),
-                        lastChanceGenerationFunction: (alreadyProvidedSortedSet) =>
-                            LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet,
-                                this));
+                        standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLong(minValue, maxValue),
+                        lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
                 }
             }
 
@@ -513,7 +510,7 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(gender),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
-                    (safeFuzzer) => safeFuzzer.GenerateFirstName(gender));
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateFirstName(gender));
             }
 
             return _personFuzzer.GenerateFirstName(gender);
@@ -529,11 +526,9 @@ namespace YouNameSpaceHere.Tests
             if (AvoidDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, (safeFuzzer) =>
-                    {
-                        return safeFuzzer.GenerateLastName(firstName);
-                    },
-                    (alreadyProvidedSortedSet) => LastChanceToFindLastName(firstName, alreadyProvidedSortedSet, this));
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLastName(firstName),
+                    lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindLastName(firstName, alreadyProvidedSortedSet, this));
             }
 
             return _personFuzzer.GenerateLastName(firstName);
@@ -565,9 +560,8 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    regularGenerationFunction: (fuzzerWithDuplicationAllowed) => fuzzerWithDuplicationAllowed.GenerateAge(),
-                    lastChanceGenerationFunction: (alreadyProvidedValues) =>
-                        LastChanceToFindAge(alreadyProvidedValues, 18, 97, _collectionFuzzer));
+                    standardGenerationFunction: (fuzzerWithDuplicationAllowed) => fuzzerWithDuplicationAllowed.GenerateAge(),
+                    lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindAge(alreadyProvidedValues, 18, 97, _collectionFuzzer));
             }
 
             return _personFuzzer.GenerateAge();
@@ -610,7 +604,7 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName, lastName),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    (safeFuzzer) => safeFuzzer.GenerateEMail(firstName, lastName));
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateEMail(firstName, lastName));
             }
 
             return _personFuzzer.GenerateEMail(firstName, lastName);
@@ -627,10 +621,7 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication(CaptureCurrentMethod(),
                     HashArguments(minSize, maxSize, includeSpecialCharacters),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    (safeFuzzer) =>
-                    {
-                        return safeFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
-                    });
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters));
             }
 
             return _personFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters);
@@ -651,10 +642,7 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(candidates),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
-                    (safeFuzzer) =>
-                    {
-                        return safeFuzzer.PickOneFrom(candidates);
-                    });
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.PickOneFrom(candidates));
             }
 
             return _collectionFuzzer.PickOneFrom(candidates);
@@ -710,8 +698,8 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(feeling),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
-                    (safeFuzzer) => safeFuzzer.GenerateAdjective(feeling),
-                    alreadyProvidedSortedSet => LastChanceToFindAdjective(feeling, alreadyProvidedSortedSet, this));
+                    standardGenerationFunction: safeFuzzer => safeFuzzer.GenerateAdjective(feeling),
+                    lastChanceGenerationFunction: alreadyProvidedSortedSet => LastChanceToFindAdjective(feeling, alreadyProvidedSortedSet, this));
             }
 
             return _stringFuzzer.GenerateAdjective(feeling);
@@ -845,8 +833,8 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
                     MaxFailingAttemptsToFindNotAlreadyProvidedValue,
-                    (safeFuzzer) => safeFuzzer.GenerateLetter(),
-                    alreadyProvidedSortedSet => LastChanceToFindLetter(alreadyProvidedSortedSet, this));
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLetter(),
+                    lastChanceGenerationFunction: alreadyProvidedSortedSet => LastChanceToFindLetter(alreadyProvidedSortedSet, this));
             }
 
             return _loremFuzzer.GenerateLetter();
