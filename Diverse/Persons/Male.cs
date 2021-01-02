@@ -70,7 +70,7 @@ namespace Diverse
             new ContextualizedFirstName("Adama", Continent.Africa),
             new ContextualizedFirstName("Malik", Continent.Africa),
             new ContextualizedFirstName("Lamine", Continent.Africa),
-            
+
             new ContextualizedFirstName("Yazid", Continent.Africa),
             new ContextualizedFirstName("Ali", Continent.Africa),
             new ContextualizedFirstName("Karim", Continent.Africa),
@@ -124,7 +124,7 @@ namespace Diverse
             new ContextualizedFirstName("Hagan", Continent.Antarctica),
             new ContextualizedFirstName("Eskel", Continent.Antarctica),
             new ContextualizedFirstName("Tuve", Continent.Antarctica),
-            
+
             new ContextualizedFirstName("Yi", Continent.Asia),
             new ContextualizedFirstName("Jian", Continent.Asia),
             new ContextualizedFirstName("Jin", Continent.Asia),
@@ -157,7 +157,7 @@ namespace Diverse
             new ContextualizedFirstName("Kim", Continent.Asia),
             new ContextualizedFirstName("Kwon", Continent.Asia),
             new ContextualizedFirstName("Hwang", Continent.Asia),
-            
+
             new ContextualizedFirstName("Daichi", Continent.Asia),
             new ContextualizedFirstName("Akira", Continent.Asia),
             new ContextualizedFirstName("Daisuke", Continent.Asia),
@@ -224,17 +224,25 @@ namespace Diverse
             new ContextualizedFirstName("Wolfgang", Continent.Europe),
             new ContextualizedFirstName("Lukas", Continent.Europe),
             new ContextualizedFirstName("Karl", Continent.Europe),
-            new ContextualizedFirstName("Edouard", Continent.Europe),
+            new ContextualizedFirstName("Édouard", Continent.Europe),
             new ContextualizedFirstName("Jean-Pierre", Continent.Europe),
             new ContextualizedFirstName("Dimitri", Continent.Europe),
-            new ContextualizedFirstName("Jeremie", Continent.Europe),
+            new ContextualizedFirstName("Jérémie", Continent.Europe),
             new ContextualizedFirstName("Louis", Continent.Europe),
             new ContextualizedFirstName("Thomas", Continent.Europe),
             new ContextualizedFirstName("Dimitri", Continent.Europe),
             new ContextualizedFirstName("Silvin", Continent.Europe),
             new ContextualizedFirstName("Jérôme", Continent.Europe),
             new ContextualizedFirstName("Guillaume", Continent.Europe),
-            
+            new ContextualizedFirstName("Laurent", Continent.Europe),
+            new ContextualizedFirstName("Jean-Michel", Continent.Europe),
+            new ContextualizedFirstName("Philippe", Continent.Europe),
+            new ContextualizedFirstName("Nicolas", Continent.Europe),
+            new ContextualizedFirstName("Maxime", Continent.Europe),
+            new ContextualizedFirstName("Cédric", Continent.Europe),
+            new ContextualizedFirstName("Romain", Continent.Europe),
+            new ContextualizedFirstName("Théo", Continent.Europe),
+
             new ContextualizedFirstName("Julien", Continent.Europe),
             new ContextualizedFirstName("Bruno", Continent.Europe),
             new ContextualizedFirstName("Sacha", Continent.Europe),
@@ -245,7 +253,7 @@ namespace Diverse
             new ContextualizedFirstName("Alexei", Continent.Europe),
             new ContextualizedFirstName("Samuel", Continent.Europe),
             new ContextualizedFirstName("Didier", Continent.Europe),
-            
+
             new ContextualizedFirstName("Igor", Continent.Europe),
             new ContextualizedFirstName("Ruslan", Continent.Europe),
             new ContextualizedFirstName("Evgeniy", Continent.Europe),
@@ -256,7 +264,7 @@ namespace Diverse
             new ContextualizedFirstName("Dmitriy", Continent.Europe),
             new ContextualizedFirstName("Yevgeniy", Continent.Europe),
             new ContextualizedFirstName("Liev", Continent.Europe),
-            
+
             new ContextualizedFirstName("Gianny", Continent.Europe),
             new ContextualizedFirstName("Lucca", Continent.Europe),
             new ContextualizedFirstName("Marco", Continent.Europe),
@@ -269,7 +277,7 @@ namespace Diverse
             new ContextualizedFirstName("Gianni", Continent.Europe),
             new ContextualizedFirstName("Matteo", Continent.Europe),
             new ContextualizedFirstName("Alessandro", Continent.Europe),
-            
+
             new ContextualizedFirstName("Milen", Continent.Europe),
             new ContextualizedFirstName("Yavor", Continent.Europe),
             new ContextualizedFirstName("Stoyan", Continent.Europe),
@@ -277,7 +285,7 @@ namespace Diverse
             new ContextualizedFirstName("Bojan", Continent.Europe),
             new ContextualizedFirstName("Gojko", Continent.Europe),
             new ContextualizedFirstName("Stefan", Continent.Europe),
-            
+
             new ContextualizedFirstName("Enrico", Continent.Europe),
             new ContextualizedFirstName("Frederico", Continent.Europe),
             new ContextualizedFirstName("Arsene", Continent.Europe),
@@ -285,7 +293,7 @@ namespace Diverse
             new ContextualizedFirstName("Ramone", Continent.Europe),
             new ContextualizedFirstName("Pietro", Continent.Europe),
             new ContextualizedFirstName("Javi", Continent.Europe),
-            
+
             new ContextualizedFirstName("Sonny", Continent.NorthAmerica),
             new ContextualizedFirstName("Barack", Continent.NorthAmerica),
             new ContextualizedFirstName("David", Continent.NorthAmerica),
