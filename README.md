@@ -139,17 +139,16 @@ Just pick the primitives you want and check by yourself ;-)
 
 // Examples of Persons created with Diverse:
 
-Ms. Valeria DENILSON (Female) vdenilson@microsoft.com (age: 62 years)
-Ms. Kirsten BREKKE (Female) kbrekke@gmail.com (age: 76 years)
-Mr. John BRAND (Male) john.brand@gmail.com (married - age: 86 years)
-Mx. Ashok KHATRI (NonBinary) ashok.khatri@yahoo.fr (married - age: 32 years)
-Ms. Fatima SELASSIE (Female) fatima.selassie@aol.com (age: 68 years)
-Mx. Demba ADOMAKO (NonBinary) demba.adomako@gmail.com (age: 34 years)
-Mrs. Erika MADSEN (Female) emadsen@gmail.com (married - age: 24 years)
-Ms. Antje JOHNSON (Female) antje.johnson@protonmail.com (age: 37 years)
-Ms. Isabella AMBRÍZ (Female) isabella.ambriz@microsoft.com (age: 60 years)
-Mr. Arjun YOON (Male) ayoon@42skillz.com (age: 53 years)
-
+Mrs. Zahara NGOMA (Female) zngoma@yopmail.com (married - age: 20 years) 
+Ms. Signilde HAUGLAND (Female) shaugland@protonmail.com (age: 33 years) 
+Ms. Imogen WILLIAMS (Female) imogen.williams@protonmail.com (age: 41 years) 
+Mrs. Zayneb DROGBA (Female) zayneb.drogba@protonmail.com (married - age: 31 years) 
+Mr. Samuel MÜLLER (Male) smuller@kolab.com (age: 27 years) 
+Mx. Gojko BERNARD (NonBinary) gojko.bernard@ibm.com (age: 34 years) 
+Ms. Thuong KIM (Female) tkim@kolab.com (age: 75 years) 
+Mr. Samuel CONTI (Male) samuel.conti@42skillz.com (married - age: 25 years) 
+Mrs. Dae BAK (Female) dae.bak@ibm.com (married - age: 32 years) 
+Mx. Okal MENSAH (NonBinary) omensah@yopmail.com (married - age: 28 years)
 
 ```
 

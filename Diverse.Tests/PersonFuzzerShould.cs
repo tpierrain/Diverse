@@ -71,7 +71,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_Fuzz_Diverse_Persons()
         {
-            var fuzzer = new Fuzzer(541936699);
+            var fuzzer = new Fuzzer(722752479);
 
             var persons = new List<Person>();
             for (var i = 0; i < 10; i++)
@@ -81,16 +81,16 @@ namespace Diverse.Tests
 
             Check.That(persons.Select(x => x.ToString()))
                 .ContainsExactly(
-                    "Ms. Lluisa DENILSON (Female) ldenilson@microsoft.com (age: 25 years)", 
-                    "Mx. Gianni MURAZ (NonBinary) gmuraz@protonmail.com (age: 38 years)", 
-                    "Mr. Alohnzo PETIT (Male) apetit@yahoo.fr (married - age: 87 years)", 
-                    "Mx. Hakim SELASSIE (NonBinary) hakim.selassie@aol.com (age: 19 years)", 
-                    "Ms. Aida ADOMAKO (Female) aida.adomako@protonmail.com (age: 31 years)", 
-                    "Mrs. Akshara SUZUKI (Female) akshara.suzuki@microsoft.com (married - age: 27 years)", 
-                    "Mr. Qiao MADAN (Male) qmadan@ibm.com (married - age: 18 years)", 
-                    "Mx. Sareek CHANDRA (NonBinary) schandra@42skillz.com (age: 19 years)", 
-                    "Mr. Édouard TUNE (Male) edouard.tune@protonmail.com (married - age: 23 years)", 
-                    "Mrs. Alexandra BOONE (Female) alexandra.boone@yopmail.com (married - age: 26 years)");
+                    "Mrs. Zahara NGOMA (Female) zngoma@yopmail.com (married - age: 20 years)", 
+                    "Ms. Signilde HAUGLAND (Female) shaugland@protonmail.com (age: 33 years)", 
+                    "Ms. Imogen WILLIAMS (Female) imogen.williams@protonmail.com (age: 41 years)", 
+                    "Mrs. Zayneb DROGBA (Female) zayneb.drogba@protonmail.com (married - age: 31 years)", 
+                    "Mr. Samuel MÜLLER (Male) smuller@kolab.com (age: 27 years)", 
+                    "Mx. Gojko BERNARD (NonBinary) gojko.bernard@ibm.com (age: 34 years)", 
+                    "Ms. Thuong KIM (Female) tkim@kolab.com (age: 75 years)", 
+                    "Mr. Samuel CONTI (Male) samuel.conti@42skillz.com (married - age: 25 years)", 
+                    "Mrs. Dae BAK (Female) dae.bak@ibm.com (married - age: 32 years)", 
+                    "Mx. Okal MENSAH (NonBinary) omensah@yopmail.com (married - age: 28 years)");
         }
 
         [Test]
