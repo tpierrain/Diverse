@@ -662,6 +662,15 @@ namespace YouNameSpaceHere.Tests
             return _loremFuzzer.GenerateText(nbOfParagraphs);
         }
 
+        /// <summary>
+        /// Generates a random letter.
+        /// </summary>
+        /// <returns>The generated letter.</returns>
+        public char GenerateLetter()
+        {
+            return _loremFuzzer.GenerateLetter();
+        }
+
         #endregion
 
         [MethodImpl(MethodImplOptions.NoInlining)]

@@ -12,6 +12,7 @@ namespace Diverse.Strings
         private readonly IFuzz _fuzzer;
 
         private static int MinNumberOfWordsInASentence = 2;
+        private static readonly char[] Alphabet = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
 
         /// <summary>
         /// Instantiates a <see cref="LoremFuzzer"/>.
@@ -118,6 +119,19 @@ namespace Diverse.Strings
             var text = string.Join(Environment.NewLine + Environment.NewLine, paragraphs);
 
             return text;
+        }
+
+        /// <summary>
+        /// Generates a random letter.
+        /// </summary>
+        /// <returns>The generated letter.</returns>
+        public char GenerateLetter()
+        {
+            var alphabet = Alphabet;
+
+            var character = _fuzzer.PickOneFrom<char>(alphabet);
+
+            return character;
         }
     }
 }

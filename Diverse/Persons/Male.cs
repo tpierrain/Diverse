@@ -68,7 +68,7 @@ namespace Diverse
             new ContextualizedFirstName("Babacar", Continent.Africa),
             new ContextualizedFirstName("Aliou", Continent.Africa),
             new ContextualizedFirstName("Adama", Continent.Africa),
-            new ContextualizedFirstName("Malick", Continent.Africa),
+            new ContextualizedFirstName("Malik", Continent.Africa),
             new ContextualizedFirstName("Lamine", Continent.Africa),
             
             new ContextualizedFirstName("Yazid", Continent.Africa),

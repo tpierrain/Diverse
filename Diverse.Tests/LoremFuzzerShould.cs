@@ -82,5 +82,17 @@ Ut ea culpa sint culpa. Nobis cum. Delectus vitae. Totam cum. Accusantium quia a
 
 Similique pariatur iusto rerum velit. Quis delectus. Ea quam. Beatae sit consequatur molestiae dolore quae sit sed rerum rerum. Qui eligendi autem cumque.");
         }
+
+        [Test]
+        public void Generate_letter()
+        {
+            var fuzzer = new Fuzzer(1117624570);
+
+            var letter = fuzzer.GenerateLetter();
+            Check.That(letter).IsEqualTo('w');
+
+            letter = fuzzer.GenerateLetter();
+            Check.That(letter).IsEqualTo('d');
+        }
     }
 }

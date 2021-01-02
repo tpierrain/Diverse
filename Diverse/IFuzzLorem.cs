@@ -9,6 +9,12 @@ namespace Diverse
     public interface IFuzzLorem
     {
         /// <summary>
+        /// Generates a random letter.
+        /// </summary>
+        /// <returns>The generated letter.</returns>
+        char GenerateLetter();
+
+        /// <summary>
         /// Generates random latin words.
         /// </summary>
         /// <param name="number">(optional) Number of words to generate.</param>
