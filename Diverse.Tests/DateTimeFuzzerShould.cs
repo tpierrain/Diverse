@@ -28,16 +28,19 @@ namespace Diverse.Tests
         }
 
         [Test]
+        [Repeat(10000)]
         public void GenerateDifferentDatesBetween()
         {
+            var fuzzer = new Fuzzer();
+
             var minDate = new DateTime(2020, 3, 28);
             var maxDate = new DateTime(2020, 11, 1);
 
-            var fuzzer = new Fuzzer();
-
             var generated = fuzzer.GenerateDateTimeBetween(minDate, maxDate);
 
-            Check.That(generated).IsAfterOrEqualTo(minDate).And.IsBeforeOrEqualTo(maxDate);
+            Check.That(generated)
+                .IsAfterOrEqualTo(minDate)
+                .And.IsBeforeOrEqualTo(maxDate);
         }
 
         [TestCase("", "2020/11/01")]

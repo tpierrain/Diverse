@@ -22,7 +22,7 @@ namespace Diverse.Tests
                 firstNames.Add( fuzzer.GenerateFirstName(Gender.Male));
             }
 
-            Check.That(firstNames).ContainsExactly("Olle", "Wolfgang", "Yannick", "Yi", "Dwade", "Arjun", "Stoyan", "Sékou", "Eyulf", "Loc");
+            Check.That(firstNames).ContainsExactly("Olle", "Wolfgang", "Yannick", "Jian", "Dwade", "Aadesh", "Boyko", "Sékou", "Hagan", "Kim");
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName());
             }
 
-            Check.That(firstNames).ContainsExactly("Dae", "Uélé", "Soske", "Arsene", "Ja-kyung", "João", "Daisuke", "Manua", "Javiera", "Aminata");
+            Check.That(firstNames).ContainsExactly("Dae", "Uélé", "Soske", "Arsene", "Ja-kyung", "João", "Fumihiro", "Manua", "Javiera", "Aminata");
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Diverse.Tests
                 lastNames.Add($"{firstName} {fuzzer.GenerateLastName(firstName)}");
             }
 
-            Check.That(lastNames).ContainsExactly("Racquel González", "Josh Walker", "Chen Laghari", "Olamide Diop", "Jacob Sanchez", "Li Mei Madan", "Julie Baker", "Tao Laghari", "Simba Ibrahim", "Abeba Nwadike");
+            Check.That(lastNames).ContainsExactly("Racquel González", "Josh Walker", "Chen Laghari", "Olamide Diop", "Jacob Sanchez", "Li Mei Madan", "Julie Baker", "Shing Laghari", "Kimoni Ibrahim", "Abeba Nwadike");
         }
 
         [Test]

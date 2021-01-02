@@ -125,7 +125,6 @@ namespace Diverse
             new ContextualizedFirstName("Eskel", Continent.Antarctica),
             new ContextualizedFirstName("Tuve", Continent.Antarctica),
             
-            
             new ContextualizedFirstName("Yi", Continent.Asia),
             new ContextualizedFirstName("Jian", Continent.Asia),
             new ContextualizedFirstName("Jin", Continent.Asia),
@@ -169,8 +168,6 @@ namespace Diverse
             new ContextualizedFirstName("Kōhei", Continent.Asia),
             new ContextualizedFirstName("Izuku", Continent.Asia),
             new ContextualizedFirstName("Katsuki", Continent.Asia),
-
-
 
             new ContextualizedFirstName("Mentari", Continent.Asia),
             new ContextualizedFirstName("Timur", Continent.Asia),
@@ -221,7 +218,6 @@ namespace Diverse
             new ContextualizedFirstName("Ranjit", Continent.Asia),
             new ContextualizedFirstName("Sanjay", Continent.Asia),
             new ContextualizedFirstName("Govind", Continent.Asia),
-
 
             new ContextualizedFirstName("Achille", Continent.Europe),
             new ContextualizedFirstName("Markus", Continent.Europe),
@@ -290,8 +286,6 @@ namespace Diverse
             new ContextualizedFirstName("Pietro", Continent.Europe),
             new ContextualizedFirstName("Javi", Continent.Europe),
             
-            
-            
             new ContextualizedFirstName("Sonny", Continent.NorthAmerica),
             new ContextualizedFirstName("Barack", Continent.NorthAmerica),
             new ContextualizedFirstName("David", Continent.NorthAmerica),
@@ -359,7 +353,6 @@ namespace Diverse
             new ContextualizedFirstName("Caio", Continent.SouthAmerica),
             new ContextualizedFirstName("César", Continent.SouthAmerica),
 
-
             new ContextualizedFirstName("Jomdah", Continent.Australia),
             new ContextualizedFirstName("Mallinbilly", Continent.Australia),
             new ContextualizedFirstName("Bilaranora", Continent.Australia),
@@ -397,8 +390,6 @@ namespace Diverse
             new ContextualizedFirstName("Rahiti", Continent.Australia),
             new ContextualizedFirstName("Aata", Continent.Australia),
             new ContextualizedFirstName("Heimanu", Continent.Australia),
-            
-
         };
     }
 }

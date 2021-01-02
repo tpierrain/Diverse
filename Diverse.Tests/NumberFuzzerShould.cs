@@ -128,10 +128,14 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer();
 
+            var minDate = new DateTime(2020, 3, 28);
+            var maxDate = new DateTime(2020, 11, 1);
+
             for (var i = 0; i < 50; i++)
             {
-                var person = fuzzer.GenerateSentence();
-                TestContext.WriteLine(person);
+                var generated = fuzzer.GenerateDateTimeBetween(minDate, maxDate);
+
+                TestContext.WriteLine(generated);
             }
         }
     }

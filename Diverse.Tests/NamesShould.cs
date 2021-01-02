@@ -29,7 +29,7 @@ namespace Diverse.Tests
         [Test]
         public void Have_330_male_names()
         {
-            Check.That(Male.FirstNames).HasSize(330);
+            Check.That(Male.FirstNames).HasSize(329);
         }
 
         [Test]
