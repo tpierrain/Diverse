@@ -97,7 +97,7 @@ namespace Diverse
             new ContextualizedFirstName("Samia", Continent.Africa),
             new ContextualizedFirstName("Asma", Continent.Africa),
             new ContextualizedFirstName("Leila", Continent.Africa),
-            
+
             new ContextualizedFirstName("Solveig", Continent.Antarctica),
             new ContextualizedFirstName("Freja", Continent.Antarctica),
             new ContextualizedFirstName("Kirsten", Continent.Antarctica),
@@ -146,7 +146,7 @@ namespace Diverse
             new ContextualizedFirstName("Goo", Continent.Asia),
             new ContextualizedFirstName("Hei-Ran", Continent.Asia),
             new ContextualizedFirstName("Hyo", Continent.Asia),
-            
+
             new ContextualizedFirstName("Diễm Hạnh", Continent.Asia),
             new ContextualizedFirstName("Duong Liễu", Continent.Asia),
             new ContextualizedFirstName("Mai Lan", Continent.Asia),
@@ -199,7 +199,7 @@ namespace Diverse
             new ContextualizedFirstName("Nataniya", Continent.Asia),
             new ContextualizedFirstName("Samarah", Continent.Asia),
             new ContextualizedFirstName("Dinah", Continent.Asia),
-            
+
             new ContextualizedFirstName("Kamini", Continent.Asia),
             new ContextualizedFirstName("Akshara", Continent.Asia),
             new ContextualizedFirstName("Amruta", Continent.Asia),
@@ -236,7 +236,7 @@ namespace Diverse
             new ContextualizedFirstName("Nathalie", Continent.Europe),
             new ContextualizedFirstName("Sophie", Continent.Europe),
             new ContextualizedFirstName("Karine", Continent.Europe),
-            new ContextualizedFirstName("Eve", Continent.Europe),
+            new ContextualizedFirstName("Ève", Continent.Europe),
             new ContextualizedFirstName("Noëlla", Continent.Europe),
             new ContextualizedFirstName("Sandrine", Continent.Europe),
             new ContextualizedFirstName("Marie-Hélène", Continent.Europe),
@@ -251,7 +251,14 @@ namespace Diverse
             new ContextualizedFirstName("Catherine", Continent.Europe),
             new ContextualizedFirstName("Clarence", Continent.Europe),
             new ContextualizedFirstName("Hélène", Continent.Europe),
-            
+            new ContextualizedFirstName("Laura", Continent.Europe),
+            new ContextualizedFirstName("Lydia", Continent.Europe),
+            new ContextualizedFirstName("Emma", Continent.Europe),
+            new ContextualizedFirstName("Thaïs", Continent.Europe),
+            new ContextualizedFirstName("Mathilde", Continent.Europe),
+            new ContextualizedFirstName("Réjane", Continent.Europe),
+            new ContextualizedFirstName("Clémence", Continent.Europe),
+
             new ContextualizedFirstName("Valombrosa", Continent.Europe),
             new ContextualizedFirstName("Beonca", Continent.Europe),
             new ContextualizedFirstName("Enrica", Continent.Europe),
@@ -314,7 +321,7 @@ namespace Diverse
             new ContextualizedFirstName("Deloise", Continent.NorthAmerica),
             new ContextualizedFirstName("Errin", Continent.NorthAmerica),
             new ContextualizedFirstName("Jariah", Continent.NorthAmerica),
-            
+
             new ContextualizedFirstName("Penelope", Continent.SouthAmerica),
             new ContextualizedFirstName("Sierra", Continent.SouthAmerica),
             new ContextualizedFirstName("Dhalia", Continent.SouthAmerica),
@@ -364,7 +371,7 @@ namespace Diverse
             new ContextualizedFirstName("Itxaro", Continent.SouthAmerica),
             new ContextualizedFirstName("Racquel", Continent.SouthAmerica),
             new ContextualizedFirstName("Mendi", Continent.SouthAmerica),
-            
+
             new ContextualizedFirstName("Abigail", Continent.Australia),
             new ContextualizedFirstName("Addison", Continent.Australia),
             new ContextualizedFirstName("Alinta", Continent.Australia),
@@ -387,7 +394,7 @@ namespace Diverse
             new ContextualizedFirstName("Georgia", Continent.Australia),
             new ContextualizedFirstName("Imogen", Continent.Australia),
             new ContextualizedFirstName("Jessica", Continent.Australia),
-           
+
             new ContextualizedFirstName("Taworri", Continent.Australia),
             new ContextualizedFirstName("Tyipa", Continent.Australia),
             new ContextualizedFirstName("Yamparti", Continent.Australia),
@@ -396,7 +403,7 @@ namespace Diverse
             new ContextualizedFirstName("Isley", Continent.Australia),
             new ContextualizedFirstName("Elandra", Continent.Australia),
             new ContextualizedFirstName("Akuna", Continent.Australia),
-            
+
             new ContextualizedFirstName("Vaiana", Continent.Australia),
             new ContextualizedFirstName("Tahia", Continent.Australia),
             new ContextualizedFirstName("Manutea", Continent.Australia),
