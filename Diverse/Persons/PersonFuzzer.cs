@@ -71,9 +71,30 @@ namespace Diverse
             var lastName = GenerateLastName(firstName);
             var eMail = GenerateEMail(firstName, lastName);
             var isMarried = _fuzzer.HeadsOrTails();
-            var age = _fuzzer.GenerateInteger(18, 97);
+
+            var age = GenerateAge();
 
             return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
+        }
+
+        private int GenerateAge()
+        {
+            if (_fuzzer.HeadsOrTails())
+            {
+                return _fuzzer.GenerateInteger(18, 28);
+            }
+
+            if (_fuzzer.HeadsOrTails())
+            {
+                return _fuzzer.GenerateInteger(28, 42);
+            }
+
+            if (_fuzzer.HeadsOrTails())
+            {
+                return _fuzzer.GenerateInteger(18, 42);
+            }
+
+            return _fuzzer.GenerateInteger(42, 97);
         }
 
         private Gender? PickAGenderRandomly()

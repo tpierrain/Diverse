@@ -81,16 +81,16 @@ namespace Diverse.Tests
 
             Check.That(persons.Select(x => x.ToString()))
                 .ContainsExactly(
-                    "Ms. Yanamarie DENILSON (Female) ydenilson@microsoft.com (age: 62 years)", 
-                    "Ms. Kristina ABRAHAMSEN (Female) kabrahamsen@ibm.com (age: 76 years)", 
-                    "Mr. George BRAND (Male) george.brand@42skillz.com (married - age: 86 years)", 
-                    "Mx. Dimitri ZIMMERMAN (NonBinary) dimitri.zimmerman@gmail.com (married - age: 32 years)", 
-                    "Ms. Kenza SELASSIE (Female) kenza.selassie@aol.com (age: 68 years)", 
-                    "Mx. Simba ADOMAKO (NonBinary) simba.adomako@protonmail.com (age: 34 years)", 
-                    "Mrs. Brendette TVEIT (Female) btveit@yahoo.fr (married - age: 24 years)", 
-                    "Ms. Shayna WOSKOWSKI (Female) shayna.woskowski@kolab.com (age: 37 years)", 
-                    "Ms. Chiquin AMBRÍZ (Female) chiquin.ambriz@microsoft.com (age: 60 years)", 
-                    "Mr. Kamal YOON (Male) kyoon@yahoo.fr (age: 53 years)");
+                    "Ms. Yanamarie DENILSON (Female) ydenilson@microsoft.com (age: 25 years)",
+                    "Mx. Milen MURAZ (NonBinary) mmuraz@protonmail.com (age: 38 years)", 
+                    "Mr. Pietro PETIT (Male) ppetit@yahoo.fr (married - age: 87 years)", 
+                    "Mx. Jalil SELASSIE (NonBinary) jalil.selassie@aol.com (age: 19 years)", 
+                    "Ms. Aida ADOMAKO (Female) aida.adomako@protonmail.com (age: 31 years)", 
+                    "Mrs. Samarah SUZUKI (Female) samarah.suzuki@microsoft.com (married - age: 27 years)", 
+                    "Mr. Yu Jie MADAN (Male) ymadan@ibm.com (married - age: 18 years)", 
+                    "Mx. Mahavira CHANDRA (NonBinary) mchandra@42skillz.com (age: 19 years)", 
+                    "Mr. Markus TUNE (Male) markus.tune@protonmail.com (married - age: 23 years)", 
+                    "Mrs. Alexis BOONE (Female) alexis.boone@yopmail.com (married - age: 26 years)");
         }
 
         [Test]
