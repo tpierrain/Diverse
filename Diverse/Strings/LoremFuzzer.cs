@@ -12,7 +12,7 @@ namespace Diverse.Strings
         private readonly IFuzz _fuzzer;
 
         private static int MinNumberOfWordsInASentence = 2;
-        private static readonly char[] Alphabet = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+        private static readonly char[] _alphabet = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
 
         /// <summary>
         /// Instantiates a <see cref="LoremFuzzer"/>.
@@ -22,6 +22,11 @@ namespace Diverse.Strings
         {
             _fuzzer = fuzzer;
         }
+
+        /// <summary>
+        /// Gets the letters used by the <see cref="GenerateLetter"/> method.
+        /// </summary>
+        public static char[] Alphabet => _alphabet;
 
         /// <summary>
         /// Generates random latin words.

@@ -28,16 +28,33 @@ namespace Diverse
         private readonly IFuzzGuid _guidFuzzer;
         private readonly IFuzzFromCollections _collectionFuzzer;
 
-
+        // For AvoidDuplication mode
         private const int MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue = 100;
         private const int MaxRangeSizeAllowedForMemoizationDefaultValue = 1000000;
         private readonly Memoizer _memoizer = new Memoizer();
-
         private IFuzz _sideEffectFreeFuzzer;
 
         /// <summary>
-        /// Fuzzer to be used by the various lambdas when the
-        /// AvoidDuplication option is set to <b>true</b>.
+        /// internal Fuzzer instance to be used by the various lambdas
+        /// related to the AvoidDuplication mode (i.e. when the option is
+        /// set to <b>true</b>).
+        ///
+        /// Ironically, the AvoidDuplication mode of this Fuzzer needs
+        /// to use another fuzzer instance for the Lastchance mode (i.e. when the
+        /// MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue has been
+        /// reached).
+        ///
+        /// E.g.: if you call the <see cref="GenerateAge"/> method on a Fuzzer with
+        /// AvoidDuplication set to <b>true</b> in a situation where the
+        /// <see cref="MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue"/>
+        /// was not enough to find another original value, the lastChance lambda
+        /// of the <see cref="GenerateWithoutDuplication"/> method will be called.
+        ///
+        /// In that case, since the last chance lambda of the <see cref="GenerateAge"/>
+        /// method is using the <see cref="IFuzzNumbers.GenerateInteger"/> method,
+        /// we need to avoid <see cref="StackOverflowException"/> by using
+        /// a <see cref="SideEffectFreeSafeFuzzer"/> instance in that specific case
+        /// (in all lastChance lambdas actually).
         /// </summary>
         private IFuzz SideEffectFreeSafeFuzzer => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, avoidDuplication: false));
 
@@ -120,6 +137,8 @@ namespace Diverse
             _guidFuzzer = new GuidFuzzer(this);
             _collectionFuzzer = new CollectionFuzzer(this);
         }
+
+        #region Core
 
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
         {
@@ -228,6 +247,114 @@ namespace YouNameSpaceHere.Tests
             return InternalRandom.Next(0, 2) == 1;
         }
 
+        /// <summary>
+        /// Methods to be used when <see cref="AvoidDuplication"/> is set to <b>true</b>
+        /// for any fuzzing method of this <see cref="Fuzzer"/> instance.
+        /// It encapsulates the logic of various attempts and retries before
+        /// falling back to a very specific <see cref="lastChanceGenerationFunction"/>
+        /// lambda associated to the considered fuzzing method.
+        /// </summary>
+        /// <typeparam name="T">Type to be fuzzed/generated</typeparam>
+        /// <param name="currentMethod">
+        ///     The current Method calling us (e.g.: <see cref="GenerateAge"/>).
+        ///     Used for memoization purpose.
+        /// </param>
+        /// <param name="argumentsHashCode">
+        ///     A hash for the current method call arguments. Used for memoization purpose.
+        /// </param>
+        /// <param name="maxFailingAttemptsBeforeLastChanceFunctionIsCalled">
+        ///     The maximum number of calls to the <see cref="regularGenerationFunction"/>
+        ///     we should try before we fall-back and call the
+        ///     <see cref="lastChanceGenerationFunction"/> lambda.
+        /// </param>
+        /// <param name="regularGenerationFunction">
+        ///     The function to use in order to generate the thing(s) we want.
+        ///     It should be the same function that the one we call for the cases
+        ///     where <see cref="AvoidDuplication"/> is set to <b>false</b>.
+        /// </param>
+        /// <param name="lastChanceGenerationFunction">
+        ///     The function to use in order to generate the thing(s) we want when
+        ///     all the <see cref="regularGenerationFunction"/> attempts have failed.
+        ///     To do our job, we receive:
+        ///         - A <see cref="SortedSet{T}"/> instance with all the previously
+        ///           generated values
+        /// 
+        ///         - A side-effect free <see cref="IFuzz"/> instance to use if needed.
+        ///           (one should not use the current instance of <see cref="Fuzzer"/>
+        ///           to do the job since it may have side-effects
+        ///           and lead to <see cref="StackOverflowException"/>)).
+        /// </param>
+        /// <returns>The thing(s) we want to generate.</returns>
+        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode,
+                            int maxFailingAttemptsBeforeLastChanceFunctionIsCalled, 
+                            Func<IFuzz, T> regularGenerationFunction,
+                            Func<SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
+        {
+            var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
+
+            var maybe = TryGetNonAlreadyProvidedValuesWithRegularGenerationFunction<T>(memoizerKey, out var alreadyProvidedValues,
+                regularGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
+
+            if (!maybe.HasItem)
+            {
+                if (lastChanceGenerationFunction != null)
+                {
+                    // last attempt, we randomly pick the missing bits from the memoizer
+                    maybe = lastChanceGenerationFunction(_memoizer.GetAlreadyProvidedValues(memoizerKey));
+                }
+
+                if (!maybe.HasItem)
+                {
+                    throw new DuplicationException(typeof(T), maxFailingAttemptsBeforeLastChanceFunctionIsCalled, alreadyProvidedValues);
+                }
+            }
+
+            alreadyProvidedValues.Add(maybe.Item);
+            return maybe.Item;
+        }
+
+        private Maybe<T> TryGetNonAlreadyProvidedValuesWithRegularGenerationFunction<T>(MemoizerKey memoizerKey, 
+                                    out SortedSet<object> alreadyProvidedValues, 
+                                    Func<IFuzz, T> generationFunction, 
+                                    int maxFailingAttempts)
+        {
+            alreadyProvidedValues = _memoizer.GetAlreadyProvidedValues(memoizerKey);
+
+            var maybe = GenerateNotAlreadyProvidedValue<T>(alreadyProvidedValues, maxFailingAttempts, generationFunction);
+
+            return maybe;
+        }
+
+        private int HashArguments(params object[] parameters)
+        {
+            var hash = 17;
+            foreach (var parameter in parameters)
+            {
+                var parameterHashCode = parameter?.GetHashCode() ?? 17;
+                hash = hash * 23 + parameterHashCode;
+            }
+
+            return hash;
+        }
+
+        private Maybe<T> GenerateNotAlreadyProvidedValue<T>(ISet<object> alreadyProvidedValues, int maxAttempts, Func<IFuzz, T> generationFunction)
+        {
+            T result = default(T);
+            for (var i = 0; i < maxAttempts; i++)
+            {
+                result = generationFunction(SideEffectFreeSafeFuzzer);
+
+                if (!alreadyProvidedValues.Contains(result))
+                {
+                    return new Maybe<T>(result);
+                }
+            }
+
+            return new Maybe<T>();
+        }
+
+        #endregion
+
         #region NumberFuzzer
 
         /// <summary>
@@ -249,6 +376,26 @@ namespace YouNameSpaceHere.Tests
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
         }
+ 
+        private static Maybe<int> LastChanceToFindNotAlreadyProvidedInteger(SortedSet<object> alreadyProvidedValues,
+            int? minValue, int? maxValue, IFuzzFromCollections fuzzer)
+        {
+            minValue = minValue ?? int.MinValue;
+            maxValue = maxValue ?? int.MaxValue;
+
+            var allPossibleValues = Enumerable.Range(minValue.Value, maxValue.Value).ToArray();
+            var remainingCandidates =
+                allPossibleValues.Where(number => !alreadyProvidedValues.Contains(number)).ToList();
+
+            if (remainingCandidates.Any())
+            {
+                var pickOneFrom = fuzzer.PickOneFrom<int>(remainingCandidates);
+                return new Maybe<int>(pickOneFrom);
+            }
+
+            return new Maybe<int>();
+        }
+
 
         /// <summary>
         /// Generates a random positive integer value.
@@ -320,27 +467,7 @@ namespace YouNameSpaceHere.Tests
             return _numberFuzzer.GenerateLong(minValue, maxValue);
         }
 
-        private static Maybe<int> LastChanceToFindNotAlreadyProvidedInteger(SortedSet<object> alreadyProvidedValues,
-            int? minValue, int? maxValue, IFuzzFromCollections fuzzer)
-        {
-            minValue = minValue ?? int.MinValue;
-            maxValue = maxValue ?? int.MaxValue;
-
-            var allPossibleValues = Enumerable.Range(minValue.Value, maxValue.Value).ToArray();
-            var remainingCandidates =
-                allPossibleValues.Where(number => !alreadyProvidedValues.Contains(number)).ToList();
-
-            if (remainingCandidates.Any())
-            {
-                var pickOneFrom = fuzzer.PickOneFrom<int>(remainingCandidates);
-                return new Maybe<int>(pickOneFrom);
-            }
-
-            return new Maybe<int>();
-        }
-
-        private static Maybe<long> LastChanceToFindNotAlreadyProvidedLong(ref long? minValue, ref long? maxValue,
-            SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
+        private static Maybe<long> LastChanceToFindNotAlreadyProvidedLong(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
         {
             minValue = minValue ?? long.MinValue;
             maxValue = maxValue ?? long.MaxValue;
@@ -412,6 +539,22 @@ namespace YouNameSpaceHere.Tests
             return _personFuzzer.GenerateLastName(firstName);
         }
 
+        private static Maybe<string> LastChanceToFindLastName(string firstName, SortedSet<object> alreadyProvidedLastNames, IFuzz fuzzer)
+        {
+            var continent = Locations.FindContinent(firstName);
+            var allPossibleOptions = LastNames.PerContinent[continent];
+
+            var remainingLastNames = allPossibleOptions.Where(n => !alreadyProvidedLastNames.Contains(n)).ToArray();
+
+            if (remainingLastNames.Any())
+            {
+                var lastName = fuzzer.PickOneFrom(remainingLastNames);
+                return new Maybe<string>(lastName);
+            }
+
+            return new Maybe<string>();
+        }
+
         /// <summary>
         /// Generates the number of year to be associated with a person.
         /// </summary>
@@ -443,23 +586,6 @@ namespace YouNameSpaceHere.Tests
             }
 
             return new Maybe<int>();
-        }
-
-        private static Maybe<string> LastChanceToFindLastName(string firstName,
-            SortedSet<object> alreadyProvidedLastNames, IFuzz fuzzer)
-        {
-            var continent = Locations.FindContinent(firstName);
-            var allPossibleOptions = LastNames.PerContinent[continent];
-
-            var remainingLastNames = allPossibleOptions.Where(n => !alreadyProvidedLastNames.Contains(n)).ToArray();
-
-            if (remainingLastNames.Any())
-            {
-                var lastName = fuzzer.PickOneFrom(remainingLastNames);
-                return new Maybe<string>(lastName);
-            }
-
-            return new Maybe<string>();
         }
 
         /// <summary>
@@ -650,75 +776,6 @@ namespace YouNameSpaceHere.Tests
             return _typeFuzzer.GenerateEnum<T>();
         }
 
-        private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode,
-            int maxFailingAttemptsBeforeLastChanceFunctionIsCalled, Func<IFuzz, T> regularGenerationFunction,
-            Func<SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
-        {
-            var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
-            var maybe = TryGetNonAlreadyProvidedValues<T>(memoizerKey, out var alreadyProvidedValues,
-                regularGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
-
-            if (!maybe.HasItem /* && lastChanceGenerationFunction != null*/)
-            {
-                if (lastChanceGenerationFunction != null)
-                {
-                    // last attempt, we randomly pick the missing bits from the memoizer
-                    maybe = lastChanceGenerationFunction(_memoizer.GetAlreadyProvidedValues(memoizerKey));
-                }
-                else
-                {
-                    throw new AmbiguousMatchException("chelou");
-                }
-            }
-
-            if (!maybe.HasItem)
-            {
-                throw new DuplicationException(typeof(T), maxFailingAttemptsBeforeLastChanceFunctionIsCalled,
-                    alreadyProvidedValues);
-            }
-
-            alreadyProvidedValues.Add(maybe.Item);
-            return maybe.Item;
-        }
-
-        private Maybe<T> TryGetNonAlreadyProvidedValues<T>(MemoizerKey memoizerKey,
-            out SortedSet<object> alreadyProvidedValues, Func<IFuzz, T> generationFunction, int maxFailingAttempts)
-        {
-            alreadyProvidedValues = _memoizer.GetAlreadyProvidedValues(memoizerKey);
-
-            var maybe = GenerateNotAlreadyProvidedValue<T>(alreadyProvidedValues, maxFailingAttempts, generationFunction);
-
-            return maybe;
-        }
-
-        private int HashArguments(params object[] parameters)
-        {
-            var hash = 17;
-            foreach (var parameter in parameters)
-            {
-                var parameterHashCode = parameter?.GetHashCode() ?? 17;
-                hash = hash * 23 + parameterHashCode;
-            }
-
-            return hash;
-        }
-
-        private Maybe<T> GenerateNotAlreadyProvidedValue<T>(ISet<object> alreadyProvidedValues, int maxAttempts, Func<IFuzz, T> generationFunction)
-        {
-            T result = default(T);
-            for (var i = 0; i < maxAttempts; i++)
-            {
-                result = generationFunction(SideEffectFreeSafeFuzzer);
-
-                if (!alreadyProvidedValues.Contains(result))
-                {
-                    return new Maybe<T>(result);
-                }
-            }
-
-            return new Maybe<T>();
-        }
-
         #endregion
 
         #region LoremFuzzer
@@ -726,6 +783,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generates random latin words.
         /// </summary>
+        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
         /// <param name="number">(optional) Number of words to generate.</param>
         /// <returns>The generated latin words.</returns>
         public IEnumerable<string> GenerateWords(int? number = null)
@@ -736,6 +794,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generate a sentence in latin.
         /// </summary>
+        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
         /// <param name="nbOfWords">(optional) Number of words for this sentence.</param>
         /// <returns>The generated sentence in latin.</returns>
         public string GenerateSentence(int? nbOfWords = null)
@@ -746,6 +805,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generates a paragraph in latin.
         /// </summary>
+        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
         /// <param name="nbOfSentences">(optional) Number of sentences for this paragraph.</param>
         /// <returns>The generated paragraph in latin.</returns>
         public string GenerateParagraph(int? nbOfSentences = null)
@@ -756,6 +816,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generates a collection of paragraphs. 
         /// </summary>
+        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
         /// <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
         /// <returns>The collection of paragraphs.</returns>
         public IEnumerable<string> GenerateParagraphs(int? nbOfParagraphs = null)
@@ -766,6 +827,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generates a text in latin with a specified number of paragraphs.
         /// </summary>
+        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
         /// <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
         /// <returns>The generated text in latin.</returns>
         public string GenerateText(int? nbOfParagraphs = null)
@@ -779,7 +841,31 @@ namespace YouNameSpaceHere.Tests
         /// <returns>The generated letter.</returns>
         public char GenerateLetter()
         {
+            if (AvoidDuplication)
+            {
+                return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
+                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    (safeFuzzer) => safeFuzzer.GenerateLetter(),
+                    alreadyProvidedSortedSet => LastChanceToFindLetter(alreadyProvidedSortedSet, this));
+            }
+
             return _loremFuzzer.GenerateLetter();
+        }
+
+        private Maybe<char> LastChanceToFindLetter(SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
+        {
+            var allPossibleValues = LoremFuzzer.Alphabet;
+            var alreadyProvidedLetters = alreadyProvidedSortedSet.Cast<char>();
+
+            var remainingOptions = allPossibleValues.Except(alreadyProvidedLetters).ToList();
+
+            if (remainingOptions.Any())
+            {
+                var letter = fuzzer.PickOneFrom<char>(remainingOptions);
+                return new Maybe<char>(letter);
+            }
+
+            return new Maybe<char>();
         }
 
         #endregion

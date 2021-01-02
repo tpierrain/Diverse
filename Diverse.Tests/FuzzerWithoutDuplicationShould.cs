@@ -144,7 +144,7 @@ namespace Diverse.Tests
 
             var minValue = long.MinValue;
             var maxValue = long.MaxValue;
-            
+
             var maxNumberOfElements = 100000; // we won't test all possible long here! ;-)
             CheckThatNoDuplicationIsMadeWhileGenerating<long>(fuzzer, maxNumberOfElements, () =>
             {
@@ -259,7 +259,7 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer(avoidDuplication: true);
 
-            var maxNumberOfElements = 97-18;
+            var maxNumberOfElements = 97 - 18;
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
             {
                 return fuzzer.GenerateAge();
@@ -288,6 +288,23 @@ namespace Diverse.Tests
 
         #endregion
 
+        #region Lorem
+
+        [Test]
+        [Repeat(5000)]
+        public void Be_able_to_provide_always_different_Letters()
+        {
+            var fuzzer = new Fuzzer(avoidDuplication: true);
+
+            var maxNumberOfElements = LoremFuzzer.Alphabet.Length;
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
+            {
+                return fuzzer.GenerateLetter();
+            });
+        }
+
+        #endregion
+
         #region DateTimes
 
         [Test]
@@ -303,6 +320,7 @@ namespace Diverse.Tests
         }
 
         #endregion
+        
         [Test]
         public void Throw_DuplicationException_with_fix_explanation_when_number_of_attempts_is_too_low()
         {
@@ -313,8 +331,9 @@ namespace Diverse.Tests
 
             Check.ThatCode(() =>
                 {
-                    const int maxValue = 10;
-                    for (var i = 0; i < maxValue; i++)
+                    const int maxValue = 50;
+                    var moreAttemptsThanMaxValue = (maxValue + 2);
+                    for (var i = 0; i < moreAttemptsThanMaxValue; i++)
                     {
                         var integer = fuzzer.GenerateInteger(0, maxValue);
                     }
@@ -333,7 +352,7 @@ namespace Diverse.Tests
                 {
                     var element = fuzzingFunction();
                     returnedElements.Add(element);
-                    // TestContext.WriteLine(element.ToString());
+                    //TestContext.WriteLine(element.ToString());
                 }
                 catch (DuplicationException) { }
             }
