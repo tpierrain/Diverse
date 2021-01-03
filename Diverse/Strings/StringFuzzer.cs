@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 
 namespace Diverse.Strings
 {
@@ -36,6 +37,36 @@ namespace Diverse.Strings
             var randomLocalIndex = _fuzzer.Random.Next(0, adjectives.Length);
 
             return adjectives[randomLocalIndex];
+        }
+
+        /// <summary>
+        /// Generates a string from a given 'diverse' format.
+        /// </summary>
+        /// <param name="diverseFormat">The 'diverse' format to use.</param>
+        /// <returns>A randomly generated string followin the 'diverse' format.</returns>
+        public string GenerateFromPattern(string diverseFormat)
+        {
+            var builder = new StringBuilder(diverseFormat.Length);
+            foreach (var c in diverseFormat.ToCharArray())
+            {
+                switch (c)
+                {
+                    case '#':
+                        builder.Append(_fuzzer.GenerateInteger(0,9));
+                        break;
+
+                    case 'X': builder.Append(_fuzzer.GenerateLetter().ToString().ToUpper());
+                        break;
+
+                    case 'x': builder.Append(_fuzzer.GenerateLetter());
+                        break;
+
+                    default: builder.Append(c);
+                        break;
+                }
+            }
+
+            return builder.ToString();
         }
     }
 }

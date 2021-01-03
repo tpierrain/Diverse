@@ -45,46 +45,46 @@ namespace Diverse.Address
                 .ToArray();
         }
 
-        private static readonly ContextualizedCity[] _citiesOfTheWorld = new ContextualizedCity[]
+        private static readonly CityWithRelatedInformations[] _citiesOfTheWorld = new CityWithRelatedInformations[]
         {
-            new ContextualizedCity("Paris", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe),
-            new ContextualizedCity("Saint-Ouen", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe),
-            new ContextualizedCity("Saint-Denis", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe),
-            new ContextualizedCity("Versailles", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe),
-            new ContextualizedCity("La Courneuve", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe),
-            new ContextualizedCity("Quiberon", StateProvinceArea.Bretagne, Country.France, Continent.Europe),
-            new ContextualizedCity("Rennes", StateProvinceArea.Bretagne, Country.France, Continent.Europe),
-            new ContextualizedCity("Brest", StateProvinceArea.Bretagne, Country.France, Continent.Europe),
-            new ContextualizedCity("Nantes", StateProvinceArea.PaysDeLaLoire, Country.France, Continent.Europe),
-            new ContextualizedCity("Bordeaux", StateProvinceArea.NouvelleAquitaine, Country.France, Continent.Europe),
-            new ContextualizedCity("Marseille", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe),
-            new ContextualizedCity("Nice", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe),
-            new ContextualizedCity("Lyon", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe),
-            new ContextualizedCity("Grenoble", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe),
-            new ContextualizedCity("Montpellier", StateProvinceArea.Occitanie, Country.France, Continent.Europe),
-            new ContextualizedCity("Toulouse", StateProvinceArea.Occitanie, Country.France, Continent.Europe),
+            new CityWithRelatedInformations("Paris", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "750##"),
+            new CityWithRelatedInformations("Saint-Ouen", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe,zipCodeFormat: "93400"),
+            new CityWithRelatedInformations("Saint-Denis", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "93200"),
+            new CityWithRelatedInformations("Versailles", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat:"78000"),
+            new CityWithRelatedInformations("La Courneuve", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat:"93120"),
+            new CityWithRelatedInformations("Quiberon", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"56170"),
+            new CityWithRelatedInformations("Rennes", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"35#00"),
+            new CityWithRelatedInformations("Brest", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"29200"),
+            new CityWithRelatedInformations("Nantes", StateProvinceArea.PaysDeLaLoire, Country.France, Continent.Europe, zipCodeFormat:"44###"),
+            new CityWithRelatedInformations("Bordeaux", StateProvinceArea.NouvelleAquitaine, Country.France, Continent.Europe, zipCodeFormat:"33#00"),
+            new CityWithRelatedInformations("Marseille", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"130##"),
+            new CityWithRelatedInformations("Nice", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"06#00"),
+            new CityWithRelatedInformations("Lyon", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"6900#"),
+            new CityWithRelatedInformations("Grenoble", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"38###"),
+            new CityWithRelatedInformations("Montpellier", StateProvinceArea.Occitanie, Country.France, Continent.Europe, zipCodeFormat:"340##"),
+            new CityWithRelatedInformations("Toulouse", StateProvinceArea.Occitanie, Country.France, Continent.Europe, zipCodeFormat:"31###"),
            
-            new ContextualizedCity("London", StateProvinceArea.London, Country.England, Continent.Europe),
-            new ContextualizedCity("New York", StateProvinceArea.NewYork, Country.US, Continent.NorthAmerica),
+            new CityWithRelatedInformations("London", StateProvinceArea.London, Country.England, Continent.Europe),
+            new CityWithRelatedInformations("New York", StateProvinceArea.NewYork, Country.US, Continent.NorthAmerica),
 
-            new ContextualizedCity("Honk-Kong", StateProvinceArea.ChineseAutonomous, Country.China, Continent.Asia),
-            new ContextualizedCity("Macau", StateProvinceArea.ChineseAutonomous,Country.China, Continent.Asia),
-            new ContextualizedCity("Wuhan", StateProvinceArea.Hubei, Country.China, Continent.Asia),
-            new ContextualizedCity("Beijing", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
-            new ContextualizedCity("Shanghai", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
-            new ContextualizedCity("Tianjin", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
-            new ContextualizedCity("Chongqing",StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
-            new ContextualizedCity("Danzhou", StateProvinceArea.Hainan, Country.China, Continent.Asia),
-            new ContextualizedCity("Kunming", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
-            new ContextualizedCity("Lijiang", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
-            new ContextualizedCity("Shangri-La", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Honk-Kong", StateProvinceArea.ChineseAutonomous, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Macau", StateProvinceArea.ChineseAutonomous,Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Wuhan", StateProvinceArea.Hubei, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Beijing", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Shanghai", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Tianjin", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Chongqing",StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Danzhou", StateProvinceArea.Hainan, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Kunming", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Lijiang", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("Shangri-La", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
 
-            new ContextualizedCity("Mumbai", StateProvinceArea.Maharashtra, Country.India, Continent.Asia),
-            new ContextualizedCity("New Delhi", StateProvinceArea.Delhi ,Country.India, Continent.Asia),
-            new ContextualizedCity("Bangalore", StateProvinceArea.Karnataka, Country.India, Continent.Asia),
+            new CityWithRelatedInformations("Mumbai", StateProvinceArea.Maharashtra, Country.India, Continent.Asia),
+            new CityWithRelatedInformations("New Delhi", StateProvinceArea.Delhi ,Country.India, Continent.Asia),
+            new CityWithRelatedInformations("Bangalore", StateProvinceArea.Karnataka, Country.India, Continent.Asia),
             
-            new ContextualizedCity("Bangui", StateProvinceArea.Bangui, Country.CentralAfricanRepublic, Continent.Africa),
-            new ContextualizedCity("Dakar", StateProvinceArea.Dakar,Country.Senegal, Continent.Africa),
+            new CityWithRelatedInformations("Bangui", StateProvinceArea.Bangui, Country.CentralAfricanRepublic, Continent.Africa),
+            new CityWithRelatedInformations("Dakar", StateProvinceArea.Dakar,Country.Senegal, Continent.Africa),
         };
 
         private static readonly Dictionary<Country, string[]> _streetsOfCountries =
@@ -156,6 +156,11 @@ namespace Diverse.Address
         public static string[] GiveMeStreetsOf(Country country)
         {
             return _streetsOfCountries[country];
+        }
+
+        public static string GiveMeZipCodeFormatOf(string cityName)
+        {
+            return _citiesOfTheWorld.Single(c => c.CityName == cityName).ZipCodeFormat;
         }
     }
 }

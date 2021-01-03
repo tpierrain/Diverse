@@ -20,6 +20,8 @@
 
       - Provide random picking of any value contained in a collection
 
+      - Provide string generation from pattern (GenerateFromPattern(##AZ#)
+
       - Provide fuzzing of Guid
 
       - Provide fuzzing of decimal
@@ -31,7 +33,7 @@
       - Add RemoveDiacritics() extension method on string
 
       - Add support of Address for Persons
-    </PackageReleaseNotes>
+</PackageReleaseNotes>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <Version>1.0.0.0</Version>

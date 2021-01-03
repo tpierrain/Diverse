@@ -32,5 +32,20 @@ namespace Diverse.Tests
 
             Check.That(positiveAdjectives).ContainsExactly("gifted", "sharp", "peaceful");
         }
+
+        [Test]
+        [Repeat(1000)]
+        public void Generate_random_string_from_pattern()
+        {
+            var fuzzer = new Fuzzer();
+
+            var value = fuzzer.GenerateFromPattern("X#A02").ToCharArray();
+
+            Check.That(value[0]).IsALetter();
+            Check.That(value[1]).IsADigit();
+            Check.That(value[2]).IsEqualTo('A');
+            Check.That(value[3]).IsEqualTo('0');
+            Check.That(value[4]).IsEqualTo('2');
+        }
     }
 }

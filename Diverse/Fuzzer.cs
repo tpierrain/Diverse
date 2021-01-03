@@ -738,6 +738,16 @@ namespace YouNameSpaceHere.Tests
             return new Maybe<string>();
         }
 
+        /// <summary>
+        /// Generates a string from a given 'diverse' format.
+        /// </summary>
+        /// <param name="diverseFormat">The 'diverse' format to use.</param>
+        /// <returns>A randomly generated string following the 'diverse' format.</returns>
+        public string GenerateFromPattern(string diverseFormat)
+        {
+            return _stringFuzzer.GenerateFromPattern(diverseFormat);
+        }
+
         #endregion
 
         #region GuidFuzzer
