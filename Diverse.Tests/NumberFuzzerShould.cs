@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Diverse.Address;
 using NFluent;
 using NUnit.Framework;
 
@@ -130,7 +131,7 @@ namespace Diverse.Tests
 
             for (var i = 0; i < 50; i++)
             {
-                var generated = fuzzer.GenerateAddress();
+                var generated = fuzzer.GenerateAddress(Country.China);
 
                 TestContext.WriteLine(generated);
             }

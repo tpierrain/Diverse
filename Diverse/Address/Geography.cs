@@ -12,7 +12,7 @@ namespace Diverse.Address
     public static class Geography
     {
         private static string[] _cityNames;
-        
+
         /// <summary>
         /// Gets the names of all the cities registered in the Diverse lib.
         /// </summary>
@@ -77,26 +77,24 @@ namespace Diverse.Address
             new CityWithRelatedInformations("Grenoble", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"38###"),
             new CityWithRelatedInformations("Montpellier", StateProvinceArea.Occitanie, Country.France, Continent.Europe, zipCodeFormat:"340##"),
             new CityWithRelatedInformations("Toulouse", StateProvinceArea.Occitanie, Country.France, Continent.Europe, zipCodeFormat:"31###"),
-           
-            new CityWithRelatedInformations("London", StateProvinceArea.London, Country.England, Continent.Europe),
-            new CityWithRelatedInformations("New York", StateProvinceArea.NewYork, Country.US, Continent.NorthAmerica),
 
-            new CityWithRelatedInformations("Honk-Kong", StateProvinceArea.ChineseAutonomous, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Macau", StateProvinceArea.ChineseAutonomous,Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Wuhan", StateProvinceArea.Hubei, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Beijing", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Shanghai", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Tianjin", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Chongqing",StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Danzhou", StateProvinceArea.Hainan, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Kunming", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Lijiang", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
-            new CityWithRelatedInformations("Shangri-La", StateProvinceArea.Yunnan, Country.China, Continent.Asia),
+            new CityWithRelatedInformations("London", StateProvinceArea.London, Country.England, Continent.Europe),
+            new CityWithRelatedInformations("New York", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
+
+            new CityWithRelatedInformations("Wuhan", StateProvinceArea.Hubei, Country.China, Continent.Asia, zipCodeFormat:"4300##"),
+            new CityWithRelatedInformations("Beijing", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"1000##"),
+            new CityWithRelatedInformations("Shanghai", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"2000##"),
+            new CityWithRelatedInformations("Tianjin", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"300###"),
+            new CityWithRelatedInformations("Chongqing",StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"4000##"),
+            new CityWithRelatedInformations("Danzhou", StateProvinceArea.Hainan, Country.China, Continent.Asia, zipCodeFormat:"5717##"),
+            new CityWithRelatedInformations("Kunming", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat: "650###"),
+            new CityWithRelatedInformations("Lijiang", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat: "6741##"),
+            new CityWithRelatedInformations("Shangri-La", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat:"674400"),
 
             new CityWithRelatedInformations("Mumbai", StateProvinceArea.Maharashtra, Country.India, Continent.Asia),
             new CityWithRelatedInformations("New Delhi", StateProvinceArea.Delhi ,Country.India, Continent.Asia),
             new CityWithRelatedInformations("Bangalore", StateProvinceArea.Karnataka, Country.India, Continent.Asia),
-            
+
             new CityWithRelatedInformations("Bangui", StateProvinceArea.Bangui, Country.CentralAfricanRepublic, Continent.Africa),
             new CityWithRelatedInformations("Dakar", StateProvinceArea.Dakar,Country.Senegal, Continent.Africa),
         };
@@ -154,8 +152,88 @@ namespace Diverse.Address
                                         "rue Jean Guéhenno",
                                         "bd Maréchal de Lattre de Tassigny",
                                         "rue Albert Camus",
+                            }},
+
+             { Country.China, new string[]
+                            {
+                                        "Shuangshiduan, Xinhua Street, Dayan Street",
+                                        "Zhonghe Rd,Shuhe Ancient Town",
+                                        "Xiangjiang Road, Gucheng District",
+                                        "Guangbi Alley Guangyi Street",
+                                        "DongSanHuan Middle Road, Chao-Yang",
+                                        "Jinyu Hutong Wangfujing, Dongcheng",
+                                        "North Dongsanhua Road, Chao-Yang",
+                                        "Yong An Dong Li, Jian Guo Men Wai Avenue, Chao-Yang",
+                                        "Hong Hua Qiao, Wuhua District",
+                                        "Qianxing Road, Xishan District, Xishan District",
+                                        "Zhong Shan San Lu, Yu Zhong",
+                                        "Changjiang Binjiang Road，Yuzhong District, Yu Zhong",
+                                        "Chicika Street, Jiantang Town",
+                                        "Biesailang, the ancient city of dukezong",
+                                        "Binjiang Ave, Hanyang District",
+                                        "Zhongshan Avenue, Qiaokou District, Hankou (CapitaMall Wusheng Road), Qiaokou District",
+                                        "Guosheng Road",
+                                        "E Man Town",
+                                        "Chifeng Road, Intersection of Nanjing Road and Harbin Road, Heping District",
+                                        "Phoenix Shopping Mall, East Haihe Road, Hebei",
+                                        "Zhong Shan Dong Yi Road, Huangpu",
+                                        "Middle Yan'an Road, Jing'an",
                             }}
+
             };
+
+        /*
+         
+        6741##
+         No.38, Shuangshiduan, Xinhua Street, Dayan Street, 674100 Lijiang, Chine 
+        No. 33 Zhonghe Rd,Shuhe Ancient Town, 674100 Lijiang, Chine
+         8 Xiangjiang Road, Gucheng District, 674199 Lijiang, Chine
+        57 Guangbi Alley Guangyi Street, 674100 Lijiang, Chine 
+         
+        
+        1000##
+        Fortune Plaza No. 7 DongSanHuan Middle Road, Chao-Yang, 100020 Pékin, Chine 
+         5-15 Jinyu Hutong Wangfujing, Dongcheng, 100006 Pékin, Chine
+        29 North Dongsanhua Road, Chao-Yang, 100027 Pékin, Chine
+         8 Yong An Dong Li, Jian Guo Men Wai Avenue, Chao-Yang, 100022 Pékin, Chine
+
+        650###
+         20 Hong Hua Qiao, Wuhua District, 650031 Kunming, Chine
+         No.888 Qianxing Road, Xishan District, Xishan District, 650228 Kunming, Chine 
+
+        4000##
+        No 139 Zhong Shan San Lu, Yu Zhong, 400015 Chongqing, Chine
+        No.151 Changjiang Binjiang Road，Yuzhong District, Yu Zhong, 400011 
+
+
+         No.1, Chicika Street, Jiantang Town, Shangri-La City, Diqing Tibetan Autonomous Prefecture, 674400 
+        No. 17 Biesailang, the ancient city of dukezong, 674400 Shangri-La, Chine
+
+        4300##
+        No.190 Binjiang Ave, Hanyang District , Hanyang District, 430050 Wuhan, Chine – 
+        No.238 Zhongshan Avenue, Qiaokou District, Hankou (CapitaMall Wusheng Road), Qiaokou District, 430032 Wuhan, Chine
+
+        5717##
+        No.1 Guosheng Road, 571700 Danzhou, Chine 
+        No.19 E Man Town, 571745 Danzhou, Chine
+
+        300###
+         138 Chifeng Road, Intersection of Nanjing Road and Harbin Road, Heping District, Heping, 300041 Tianjin,
+         Phoenix Shopping Mall, East Haihe Road, Hebei, 300141 Tianjin, Chine
+
+        2000##
+        No. 2 Zhong Shan Dong Yi Road, Huangpu, 200002 Shanghai, Chine
+        No.1218 Middle Yan'an Road, Jing'an, 200040 Shanghai, Chine
+
+        The Londoner Macao, Estrada do Istmo, s/n, Cotai, Macau SAR, P.R. China, Cotai, Macao, Macao
+        956-1110 Avenida Da Amizade, Macao, Macao
+         Avenida Marginal Flor de Lotus, Cotai, Macao, Macao
+
+        72 Gloucester Road, Wan Chai, Hong Kong, Hong Kong
+         1 Harbour Road, Hong Kong, Hong Kong
+
+
+         */
 
         /// <summary>
         /// Gives the <see cref="StateProvinceArea"/> of a given city name.

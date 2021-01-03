@@ -1,4 +1,4 @@
-﻿using Diverse.Address;
+﻿using Country = Diverse.Address.Country;
 
 namespace Diverse
 {
@@ -8,9 +8,10 @@ namespace Diverse
     public interface IFuzzAddress
     {
         /// <summary>
-        /// Randomly generates an <see cref="Address"/>.
+        /// Randomly generates an <see cref="Address.Address"/>.
         /// </summary>
+        /// <param name="country">The <see cref="Country"/> of the address to generate.</param>
         /// <returns>The generated Address.</returns>
-        Address.Address GenerateAddress();
+        Address.Address GenerateAddress(Country? country = null);
     }
 }

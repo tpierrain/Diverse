@@ -8,6 +8,11 @@
         /// <summary>
         /// French address format.
         /// </summary>
-        French
+        French,
+        
+        /// <summary>
+        /// Chinese address format.
+        /// </summary>
+        China
     }
 }

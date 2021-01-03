@@ -18,7 +18,7 @@
         /// <summary>
         /// United States of America
         /// </summary>
-        US,
+        Usa,
         
         /// <summary>
         /// China

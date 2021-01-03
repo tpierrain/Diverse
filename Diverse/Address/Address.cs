@@ -1,16 +1,13 @@
-﻿namespace Diverse.Address
+﻿using System;
+
+namespace Diverse.Address
 {
     /// <summary>
     /// Address of a <see cref="Person"/>.
     /// </summary>
-    public abstract class Address
+    public class Address
     {
         private string _street;
-
-        /// <summary>
-        /// Gets the <see cref="AddressFormat"/> of the <see cref="Address"/>.
-        /// </summary>
-        public AddressFormat Format { get; }
 
         /// <summary>
         /// Gets or sets the number for this apartment/condo/house in the street.
@@ -58,16 +55,32 @@
         /// <summary>
         /// Gets or sets the Country.
         /// </summary>
-        public string Country { get; set; }
+        public string CountryLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Country.
+        /// </summary>
+        public Country Country { get; set; }
 
         /// <summary>
         /// Instantiates an <see cref="Address"/>.
         /// </summary>
         /// <param name="format">The <see cref="AddressFormat"/> for this Address.</param>
         /// <param name="countryCode">The <see cref="CountryCallingCode"/></param>
-        protected Address(AddressFormat format)
+        public Address(int streetNumber, string streetName, string city, string zipCode, StateProvinceArea stateProvinceArea, Country country)
         {
-            Format = format;
+            StreetName = streetName;
+            City = city;
+            ZipCode = zipCode;
+            StateProvinceArea = stateProvinceArea.ToString();
+            Country = country;
+            CountryLabel = country.ToString();
+            StreetNumber = streetNumber;
+        }
+
+        public override string ToString()
+        {
+            return $"{Street}{Environment.NewLine}{ZipCode} - {City}{Environment.NewLine}{Country}";
         }
     }
 }

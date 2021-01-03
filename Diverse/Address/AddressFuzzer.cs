@@ -16,19 +16,23 @@
             _fuzzer = fuzzer;
         }
 
-        public Address GenerateAddress()
+        /// <summary>
+        /// Randomly generates an <see cref="Address"/>.
+        /// </summary>
+        /// <param name="country">The <see cref="Country"/> of the address to generate.</param>
+        /// <returns>The generated Address.</returns>
+        public Address GenerateAddress(Country? country = null)
         {
-            var country = Country.France;
+            country = country ?? Country.France;
 
             var streetNumber = _fuzzer.GenerateInteger(1, 390);
-            var streetName = _fuzzer.PickOneFrom(Geography.GiveMeStreetsOf(country));
-            var city = _fuzzer.PickOneFrom(Geography.GiveMeCitiesOf(country));
+            var streetName = _fuzzer.PickOneFrom(Geography.GiveMeStreetsOf(country.Value));
+            var city = _fuzzer.PickOneFrom(Geography.GiveMeCitiesOf(country.Value));
 
             var zipCode = _fuzzer.GenerateStringFromPattern(Geography.GiveMeZipCodeFormatOf(city));
             var stateProvinceArea = Geography.GiveMeStateProvinceAreaOf(city);
-            //var country = Geography.GiveMeCountryOf(city);
-           
-            var address = new FrenchAddress(streetNumber, streetName, city, zipCode, stateProvinceArea, country);
+
+            var address = new Address(streetNumber, streetName, city, zipCode, stateProvinceArea, country.Value);
 
             return address;
         }

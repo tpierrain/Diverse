@@ -507,10 +507,11 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Randomly generates an <see cref="Address"/>.
         /// </summary>
+        /// <param name="country">The <see cref="Country"/> of the address to generate.</param>
         /// <returns>The generated Address.</returns>
-        public Address.Address GenerateAddress()
+        public Address.Address GenerateAddress(Country? country = null)
         {
-            return _addressFuzzer.GenerateAddress();
+            return _addressFuzzer.GenerateAddress(country);
         }
 
         #endregion
