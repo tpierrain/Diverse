@@ -14,15 +14,9 @@
             Gets the <see cref="T:Diverse.Address.AddressFormat"/> of the <see cref="T:Diverse.Address.Address"/>.
             </summary>
         </member>
-        <member name="P:Diverse.Address.Address.CountryCode">
-            <summary>
-            Gets the <see cref="T:Diverse.Address.CountryCallingCode"/> of the Country where
-            the <see cref="T:Diverse.Person"/> may be contacted.
-            </summary>
-        </member>
         <member name="P:Diverse.Address.Address.StreetNumber">
             <summary>
-            Gets or sets the number for this appartment/condo/house in the street.
+            Gets or sets the number for this apartment/condo/house in the street.
             </summary>
         </member>
         <member name="P:Diverse.Address.Address.StreetName">
@@ -56,7 +50,7 @@
             Gets or sets the Country.
             </summary>
         </member>
-        <member name="M:Diverse.Address.Address.#ctor(Diverse.Address.AddressFormat,Diverse.Address.CountryCallingCode)">
+        <member name="M:Diverse.Address.Address.#ctor(Diverse.Address.AddressFormat)">
             <summary>
             Instantiates an <see cref="T:Diverse.Address.Address"/>.
             </summary>
@@ -191,6 +185,11 @@
             Returns the string description of a <see cref="T:Diverse.Address.CountryCallingCode"/>.
             </summary>
             <returns>The string description of a <see cref="T:Diverse.Address.CountryCallingCode"/>.</returns>
+        </member>
+        <member name="T:Diverse.Address.FrenchAddress">
+            <summary>
+            French address (including how it is ToString() etc).
+            </summary>
         </member>
         <member name="T:Diverse.Address.Geography">
             <summary>

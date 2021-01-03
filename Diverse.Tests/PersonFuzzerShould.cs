@@ -131,7 +131,6 @@ namespace Diverse.Tests
             var person = fuzzer.GeneratePerson();
 
             Check.ThatEnum(person.Address.Format).IsEqualTo(AddressFormat.French);
-            Check.That(person.Address.CountryCode.ToString()).IsEqualTo("+33");
             Check.That(person.Address.StreetNumber).IsInstanceOf<int?>().And.IsNotEqualTo(0);
             Check.That(person.Address.StreetName).IsNotEmpty();
             Check.That(person.Address.Street).IsNotEmpty();

@@ -13,13 +13,7 @@
         public AddressFormat Format { get; }
 
         /// <summary>
-        /// Gets the <see cref="CountryCallingCode"/> of the Country where
-        /// the <see cref="Person"/> may be contacted.
-        /// </summary>
-        public CountryCallingCode CountryCode { get; }
-
-        /// <summary>
-        /// Gets or sets the number for this appartment/condo/house in the street.
+        /// Gets or sets the number for this apartment/condo/house in the street.
         /// </summary>
         public int? StreetNumber { get; set; }
 
@@ -71,10 +65,9 @@
         /// </summary>
         /// <param name="format">The <see cref="AddressFormat"/> for this Address.</param>
         /// <param name="countryCode">The <see cref="CountryCallingCode"/></param>
-        protected Address(AddressFormat format, CountryCallingCode countryCode)
+        protected Address(AddressFormat format)
         {
             Format = format;
-            CountryCode = countryCode;
         }
     }
 }

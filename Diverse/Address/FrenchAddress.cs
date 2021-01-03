@@ -2,9 +2,12 @@
 
 namespace Diverse.Address
 {
-    class FrenchAddress : Address
+    /// <summary>
+    /// French address (including how it is ToString() etc).
+    /// </summary>
+    public class FrenchAddress : Address
     {
-        public FrenchAddress(int streetNumber, string streetName, string city, string zipCode, StateProvinceArea stateProvinceArea, Country country) : base(AddressFormat.French, new CountryCallingCode(33))
+        public FrenchAddress(int streetNumber, string streetName, string city, string zipCode, StateProvinceArea stateProvinceArea, Country country) : base(AddressFormat.French)
         {
             StreetName = streetName;
             City = city;
