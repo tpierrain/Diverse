@@ -1,4 +1,4 @@
-﻿namespace Diverse
+﻿namespace Diverse.Address
 {
     /// <summary>
     /// Address of a <see cref="Person"/>.

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Diverse.Address;
 using NFluent;
 using NUnit.Framework;
 

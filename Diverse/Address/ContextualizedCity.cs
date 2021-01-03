@@ -1,5 +1,5 @@
 ﻿// ReSharper disable CommentTypo
-namespace Diverse
+namespace Diverse.Address
 {
     internal class ContextualizedCity
     {

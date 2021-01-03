@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 // ReSharper disable StringLiteralTypo
 
-namespace Diverse
+namespace Diverse.Address
 {
     /// <summary>
     /// Gathers all infos related to Geography (continent, countries, cities).

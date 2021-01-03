@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Diverse.Address;
 using Diverse.Collections;
 using Diverse.DateTimes;
 using Diverse.Numbers;
@@ -507,7 +508,7 @@ namespace YouNameSpaceHere.Tests
         /// Randomly generates an <see cref="Address"/>.
         /// </summary>
         /// <returns>The generated Address.</returns>
-        public Address GenerateAddress()
+        public Address.Address GenerateAddress()
         {
             return _addressFuzzer.GenerateAddress();
         }

@@ -47,10 +47,10 @@ namespace Diverse
         /// <summary>
         /// Gets the <see cref="Address"/> of this <see cref="Person"/> instance.
         /// </summary>
-        public Address Address { get; }
+        public Address.Address Address { get; }
        
         internal Person(string firstName, string lastName, Gender gender, string eMail, bool isMarried, int age,
-            Address address)
+            Address.Address address)
         {
             FirstName = firstName;
             LastName = lastName;

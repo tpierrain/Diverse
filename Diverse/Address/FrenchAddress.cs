@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Diverse
+namespace Diverse.Address
 {
     class FrenchAddress : Address
     {

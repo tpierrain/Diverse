@@ -1,4 +1,4 @@
-﻿namespace Diverse
+﻿namespace Diverse.Address
 {
     /// <summary>
     /// International Telecommunication Union (ITU) Calling code for a Country.
