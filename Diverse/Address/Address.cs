@@ -65,8 +65,12 @@ namespace Diverse.Address
         /// <summary>
         /// Instantiates an <see cref="Address"/>.
         /// </summary>
-        /// <param name="format">The <see cref="AddressFormat"/> for this Address.</param>
-        /// <param name="countryCode">The <see cref="CountryCallingCode"/></param>
+        /// <param name="streetNumber">The street number</param>
+        /// <param name="streetName">The street name</param>
+        /// <param name="city">The city</param>
+        /// <param name="zipCode">The zip code</param>
+        /// <param name="stateProvinceArea">The <see cref="StateProvinceArea"/></param>
+        /// <param name="country">The <see cref="Country"/></param>
         public Address(int streetNumber, string streetName, string city, string zipCode, StateProvinceArea stateProvinceArea, Country country)
         {
             StreetName = streetName;
@@ -78,6 +82,10 @@ namespace Diverse.Address
             StreetNumber = streetNumber;
         }
 
+        /// <summary>
+        /// Returns the string description of a <see cref="Address"/>.
+        /// </summary>
+        /// <returns>The string description of a <see cref="Address"/>.</returns>
         public override string ToString()
         {
             return $"{Street}{Environment.NewLine}{ZipCode} - {City}{Environment.NewLine}{Country}";
