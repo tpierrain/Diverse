@@ -134,7 +134,6 @@ namespace Diverse.Tests
             Check.That(person.Address.StreetName).IsNotEmpty();
             Check.That(person.Address.Street).IsNotEmpty();
             Check.That(person.Address.City).IsNotEmpty();
-            Check.That(person.Address.StateProvinceArea).IsNotEmpty();
             Check.That(person.Address.CountryLabel).IsNotEmpty();
         }
     }

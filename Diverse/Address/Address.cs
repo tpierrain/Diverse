@@ -50,7 +50,7 @@ namespace Diverse.Address
         /// <summary>
         /// Gets or sets the State/Province/Area.
         /// </summary>
-        public string StateProvinceArea { get; set; }
+        public StateProvinceArea StateProvinceArea { get; set; }
 
         /// <summary>
         /// Gets or sets the Country.
@@ -72,7 +72,7 @@ namespace Diverse.Address
             StreetName = streetName;
             City = city;
             ZipCode = zipCode;
-            StateProvinceArea = stateProvinceArea.ToString();
+            StateProvinceArea = stateProvinceArea;
             Country = country;
             CountryLabel = country.ToString();
             StreetNumber = streetNumber;

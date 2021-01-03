@@ -9,7 +9,7 @@ namespace Diverse.Tests
     {
         [TestCase(Country.France)]
         [TestCase(Country.China)]
-        public void Be_able_to_generate_addressForTheCountryOf(Country country)
+        public void Be_able_to_generate_proper_address_for_the_Country_of(Country country)
         {
             var fuzzer = new Fuzzer();
 
@@ -17,12 +17,14 @@ namespace Diverse.Tests
             TestContext.WriteLine(address);
 
             Check.That(address.StreetNumber).IsInstanceOf<int?>().And.IsNotEqualTo(0);
-            Check.That(address.StreetName).IsNotEmpty();
             Check.That(address.Street).IsNotEmpty();
-            Check.That(address.City).IsNotEmpty();
-            Check.That(address.StateProvinceArea).IsNotEmpty();
-            Check.That(address.CountryLabel).IsNotEmpty();
+
+            Check.That(Geography.GiveMeStreetsOf(country)).Contains(address.StreetName);
+            Check.That(Geography.GiveMeCitiesOf(country)).Contains(address.City);
+            Check.That(Geography.GiveMeStateProvinceAreaOf(country)).Contains(address.StateProvinceArea);
             Check.ThatEnum(address.Country).IsEqualTo(country);
+
+            Check.That(address.CountryLabel).IsNotEmpty();
         }
     }
 }
