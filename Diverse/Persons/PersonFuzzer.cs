@@ -74,7 +74,9 @@ namespace Diverse
 
             var age = GenerateAge();
 
-            return new Person(firstName, lastName, gender.Value, eMail, isMarried, age);
+            var address = _fuzzer.GenerateAddress();
+
+            return new Person(firstName, lastName, gender.Value, eMail, isMarried, age, address);
         }
 
         /// <summary>

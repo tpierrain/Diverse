@@ -22,17 +22,20 @@ namespace Diverse
         private readonly IFuzzStrings _stringFuzzer;
         private readonly IFuzzLorem _loremFuzzer;
         private readonly IFuzzNumbers _numberFuzzer;
+        private readonly IFuzzAddress _addressFuzzer;
         private readonly IFuzzPersons _personFuzzer;
         private readonly IFuzzDatesAndTime _dateTimeFuzzer;
         private readonly IFuzzTypes _typeFuzzer;
         private readonly IFuzzGuid _guidFuzzer;
         private readonly IFuzzFromCollections _collectionFuzzer;
+        
 
         // For AvoidDuplication mode
         private const int MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue = 100;
         private const int MaxRangeSizeAllowedForMemoizationDefaultValue = 1000000;
         private readonly Memoizer _memoizer = new Memoizer();
         private IFuzz _sideEffectFreeFuzzer;
+        
 
         /// <summary>
         /// internal Fuzzer instance to be used by the various lambdas
@@ -131,6 +134,7 @@ namespace Diverse
             _loremFuzzer = new LoremFuzzer(this);
             _stringFuzzer = new StringFuzzer(this);
             _numberFuzzer = new NumberFuzzer(this);
+            _addressFuzzer = new AddressFuzzer(this);
             _personFuzzer = new PersonFuzzer(this);
             _dateTimeFuzzer = new DateTimeFuzzer(this);
             _typeFuzzer = new TypeFuzzer(this);
@@ -493,6 +497,19 @@ namespace YouNameSpaceHere.Tests
             }
 
             return allPossibleOptions;
+        }
+
+        #endregion
+
+        #region Address
+
+        /// <summary>
+        /// Randomly generates an <see cref="Address"/>.
+        /// </summary>
+        /// <returns>The generated Address.</returns>
+        public Address GenerateAddress()
+        {
+            return _addressFuzzer.GenerateAddress();
         }
 
         #endregion

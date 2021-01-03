@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 
 namespace Diverse
 {
@@ -43,7 +44,13 @@ namespace Diverse
         /// </summary>
         public int Age { get; }
 
-        internal Person(string firstName, string lastName, Gender gender, string eMail, bool isMarried, int age)
+        /// <summary>
+        /// Gets the <see cref="Address"/> of this <see cref="Person"/> instance.
+        /// </summary>
+        public Address Address { get; }
+       
+        internal Person(string firstName, string lastName, Gender gender, string eMail, bool isMarried, int age,
+            Address address)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -51,6 +58,7 @@ namespace Diverse
             EMail = eMail;
             IsMarried = isMarried;
             Age = age;
+            Address = address;
             switch (gender)
             {
                 case Gender.Male:

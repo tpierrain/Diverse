@@ -175,18 +175,18 @@
                 A hash for the current method call arguments. Used for memoization purpose.
             </param>
             <param name="maxFailingAttemptsBeforeLastChanceFunctionIsCalled">
-                The maximum number of calls to the <paramref name="regularGenerationFunction"/>
+                The maximum number of calls to the <paramref name="standardGenerationFunction"/>
                 we should try before we fall-back and call the
                 <paramref name="lastChanceGenerationFunction"/> lambda.
             </param>
-            <param name="regularGenerationFunction">
+            <param name="standardGenerationFunction">
                 The function to use in order to generate the thing(s) we want.
                 It should be the same function that the one we call for the cases
                 where <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> is set to <b>false</b>.
             </param>
             <param name="lastChanceGenerationFunction">
                 The function to use in order to generate the thing(s) we want when
-                all the <paramref name="regularGenerationFunction"/> attempts have failed.
+                all the <paramref name="standardGenerationFunction"/> attempts have failed.
                 To do our job, we receive:
                     - A <see cref="T:System.Collections.Generic.SortedSet`1"/> instance with all the previously
                       generated values
@@ -796,6 +796,181 @@
             <param name="minValue">The inclusive lower bound of the random number returned.</param>
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A long value generated randomly.</returns>
+        </member>
+        <member name="T:Diverse.Address">
+            <summary>
+            Address of a <see cref="T:Diverse.Person"/>.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.Format">
+            <summary>
+            Gets the <see cref="T:Diverse.AddressFormat"/> of the <see cref="T:Diverse.Address"/>.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.CountryCode">
+            <summary>
+            Gets the <see cref="T:Diverse.CountryCallingCode"/> of the Country where
+            the <see cref="T:Diverse.Person"/> may be contacted.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.StreetNumber">
+            <summary>
+            Gets  or Sets the number for this appartment/condo/house in the street.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.StreetName">
+            <summary>
+            Gets or Sets the street name.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.Street">
+            <summary>
+            Gets or Sets the street part of the address. By default, this includes the <see cref="P:Diverse.Address.StreetNumber"/>
+            and the <see cref="P:Diverse.Address.StreetName"/>.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.City">
+            <summary>
+            Gets or sets the City.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.StateProvinceArea">
+            <summary>
+            Gets or Sets the State/Province/Area.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.Country">
+            <summary>
+            Gets or sets the Country.
+            </summary>
+        </member>
+        <member name="M:Diverse.Address.#ctor(Diverse.AddressFormat,Diverse.CountryCallingCode)">
+            <summary>
+            Instantiates an <see cref="T:Diverse.Address"/>.
+            </summary>
+            <param name="format"></param>
+        </member>
+        <member name="T:Diverse.AddressFormat">
+            <summary>
+            Format of an <see cref="T:Diverse.Address"/>.
+            </summary>
+        </member>
+        <member name="F:Diverse.AddressFormat.French">
+            <summary>
+            French address format.
+            </summary>
+        </member>
+        <member name="T:Diverse.Country">
+            <summary>
+            Country.
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.France">
+            <summary>
+            France
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.England">
+            <summary>
+            England
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.US">
+            <summary>
+            United States of America
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.China">
+            <summary>
+            China
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.India">
+            <summary>
+            India
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.Australia">
+            <summary>
+            Australia
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.NewZeland">
+            <summary>
+            New Zeland
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.Sweden">
+            <summary>
+            Sweden
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.CentralAfricanRepublic">
+            <summary>
+            Central African Republic
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.Senegal">
+            <summary>
+            Senegal
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.Nigeria">
+            <summary>
+            Nigeria
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.Russia">
+            <summary>
+            Russia
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.Ukraine">
+            <summary>
+            Ukraine
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.Japan">
+            <summary>
+            Japan
+            </summary>
+        </member>
+        <member name="F:Diverse.Country.Thailand">
+            <summary>
+            Thailand
+            </summary>
+        </member>
+        <member name="T:Diverse.CountryCallingCode">
+            <summary>
+            International Telecommunication Union (ITU) Calling code for a Country.
+            </summary>
+        </member>
+        <member name="M:Diverse.CountryCallingCode.ToString">
+            <summary>
+            Returns the string description of a <see cref="T:Diverse.CountryCallingCode"/>.
+            </summary>
+            <returns>The string description of a <see cref="T:Diverse.CountryCallingCode"/>.</returns>
+        </member>
+        <member name="T:Diverse.Geography">
+            <summary>
+            Gathers all infos related to Geography (continent, countries, cities).
+            </summary>
+            <remarks>Note: All associations between cities, state/province/area and Countries are made here.</remarks>
+        </member>
+        <member name="F:Diverse.StateProvinceArea.Bangui">
+            <summary>
+            Bangui la douce.
+            </summary>
+        </member>
+        <member name="F:Diverse.StateProvinceArea.NewYork">
+            <summary>
+            New York City (NYC)
+            </summary>
+        </member>
+        <member name="F:Diverse.StateProvinceArea.London">
+            <summary>
+             London
+            </summary>
         </member>
         <member name="T:Diverse.ContextualizedFirstName">
             <summary>

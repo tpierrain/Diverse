@@ -13,21 +13,25 @@
     <RepositoryUrl>https://github.com/42skillz/Diverse</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
-    <PackageReleaseNotes>- Add more names for the Person generation.
+    <PackageReleaseNotes>
+      - Add more names for the Person generation
 
-- Allow to avoid duplication in fuzzed values (by instantiating a fuzzer with this option: e.g.: var fuzzer = new Fuzzer(avoidDuplication: true); )
+      - Allow to avoid duplication in fuzzed values (by instantiating a fuzzer with this option: e.g.: var fuzzer = new Fuzzer(avoidDuplication: true); )
 
-- Provide random picking of any value contained in a collection.
+      - Provide random picking of any value contained in a collection
 
-- Provide fuzzing of Guid
+      - Provide fuzzing of Guid
 
-- Provide fuzzing of decimal
+      - Provide fuzzing of decimal
 
-- Provide fuzzing of words, sentences, paragraphs and texts in latin (Lorem ipsum...)
+      - Provide fuzzing of words, sentences, paragraphs and texts in latin (Lorem ipsum...)
 
-- Add optional min and max bounds for every number generation
+      - Add optional min and max bounds for every number generation
 
-- Add RemoveDiacritics() extension method on string</PackageReleaseNotes>
+      - Add RemoveDiacritics() extension method on string
+
+      - Add support of Address for Persons
+    </PackageReleaseNotes>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <Version>1.0.0.0</Version>

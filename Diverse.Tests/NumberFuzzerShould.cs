@@ -128,12 +128,9 @@ namespace Diverse.Tests
         {
             var fuzzer = new Fuzzer();
 
-            var minDate = new DateTime(2020, 3, 28);
-            var maxDate = new DateTime(2020, 11, 1);
-
             for (var i = 0; i < 50; i++)
             {
-                var generated = fuzzer.GenerateDateTimeBetween(minDate, maxDate);
+                var generated = fuzzer.GenerateAddress();
 
                 TestContext.WriteLine(generated);
             }
