@@ -24,7 +24,7 @@
             var streetName = _fuzzer.PickOneFrom(Geography.GiveMeStreetsOf(country));
             var city = _fuzzer.PickOneFrom(Geography.GiveMeCitiesOf(country));
 
-            var zipCode = _fuzzer.GenerateFromPattern(Geography.GiveMeZipCodeFormatOf(city));
+            var zipCode = _fuzzer.GenerateStringFromPattern(Geography.GiveMeZipCodeFormatOf(city));
             var stateProvinceArea = Geography.GiveMeStateProvinceAreaOf(city);
             //var country = Geography.GiveMeCountryOf(city);
            

@@ -109,6 +109,9 @@ var dateTime = fuzzer.GenerateDateTime();
 var dateTimeInRange = fuzzer.GenerateDateTimeBetween("1974/06/08", "2020/11/01");
 var otherDateTimeInRange = fuzzer.GenerateDateTimeBetween(new DateTime(1974,6,8), new DateTime(2020, 11, 1));
 
+// or any string following simple patterns
+var value = fuzzer.GenerateStringFromPattern("X#A02x"); // e.g.: U3A02k or B6A02t
+
 // or any type actually (either, class, enum)
 var player = fuzzer.GenerateInstanceOf<ChessPlayer>();
 

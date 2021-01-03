@@ -44,7 +44,7 @@ namespace Diverse.Strings
         /// </summary>
         /// <param name="diverseFormat">The 'diverse' format to use.</param>
         /// <returns>A randomly generated string followin the 'diverse' format.</returns>
-        public string GenerateFromPattern(string diverseFormat)
+        public string GenerateStringFromPattern(string diverseFormat)
         {
             var builder = new StringBuilder(diverseFormat.Length);
             foreach (var c in diverseFormat.ToCharArray())

@@ -743,9 +743,9 @@ namespace YouNameSpaceHere.Tests
         /// </summary>
         /// <param name="diverseFormat">The 'diverse' format to use.</param>
         /// <returns>A randomly generated string following the 'diverse' format.</returns>
-        public string GenerateFromPattern(string diverseFormat)
+        public string GenerateStringFromPattern(string diverseFormat)
         {
-            return _stringFuzzer.GenerateFromPattern(diverseFormat);
+            return _stringFuzzer.GenerateStringFromPattern(diverseFormat);
         }
 
         #endregion

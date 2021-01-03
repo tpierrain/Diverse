@@ -19,6 +19,6 @@ namespace Diverse
         /// </summary>
         /// <param name="diverseFormat">The 'diverse' format to use.</param>
         /// <returns>A randomly generated string followin the 'diverse' format.</returns>
-        string GenerateFromPattern(string diverseFormat);
+        string GenerateStringFromPattern(string diverseFormat);
     }
 }
