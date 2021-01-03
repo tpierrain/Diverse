@@ -69,7 +69,8 @@
         /// <summary>
         /// Instantiates an <see cref="Address"/>.
         /// </summary>
-        /// <param name="format"></param>
+        /// <param name="format">The <see cref="AddressFormat"/> for this Address.</param>
+        /// <param name="countryCode">The <see cref="CountryCallingCode"/></param>
         protected Address(AddressFormat format, CountryCallingCode countryCode)
         {
             Format = format;

@@ -12,6 +12,10 @@ namespace Diverse.Address
     public static class Geography
     {
         private static string[] _cityNames;
+        
+        /// <summary>
+        /// Gets the names of all the cities registered in the Diverse lib.
+        /// </summary>
         public static string[] CityNames
         {
             get
@@ -27,6 +31,11 @@ namespace Diverse.Address
             set => _cityNames = value;
         }
 
+        /// <summary>
+        /// Gives an array with all the cities related to a <see cref="Country"/>.
+        /// </summary>
+        /// <param name="country">The <see cref="Country"/>.</param>
+        /// <returns>An array with all the cities related to a <see cref="Country"/>.</returns>
         public static string[] GiveMeCitiesOf(Country country)
         {
             return _citiesOfTheWorld
@@ -36,6 +45,11 @@ namespace Diverse.Address
                 .ToArray();
         }
 
+        /// <summary>
+        /// Gives an array with all the <see cref="StateProvinceArea"/> related to a <see cref="Country"/>.
+        /// /// </summary>
+        /// <param name="country">The <see cref="Country"/>.</param>
+        /// <returns>An array of all the <see cref="StateProvinceArea"/> registered for this <see cref="Country"/> in the Diverse lib.</returns>
         public static StateProvinceArea[] GiveMeStateProvinceAreaOf(Country country)
         {
             return _citiesOfTheWorld
@@ -143,21 +157,41 @@ namespace Diverse.Address
                             }}
             };
 
+        /// <summary>
+        /// Gives the <see cref="StateProvinceArea"/> of a given city name.
+        /// </summary>
+        /// <param name="cityName">The name of the city.</param>
+        /// <returns>The <see cref="StateProvinceArea"/> where this city belongs.</returns>
         public static StateProvinceArea GiveMeStateProvinceAreaOf(string cityName)
         {
             return _citiesOfTheWorld.Single(c => c.CityName == cityName).StateProvinceArea;
         }
 
+        /// <summary>
+        /// Gives the <see cref="Country"/> of a given city name.
+        /// </summary>
+        /// <param name="cityName">The name of the city.</param>
+        /// <returns>The <see cref="Country"/> where this city belongs.</returns>
         public static Country GiveMeCountryOf(string cityName)
         {
             return _citiesOfTheWorld.Single(c => c.CityName == cityName).Country;
         }
 
+        /// <summary>
+        /// Gives all the registered streets of a <see cref="Country"/>.
+        /// </summary>
+        /// <param name="country">The <see cref="Country"/></param>
+        /// <returns>All the streets of the provided <see cref="Country"/> that are registered in Diverse lib.</returns>
         public static string[] GiveMeStreetsOf(Country country)
         {
             return _streetsOfCountries[country];
         }
 
+        /// <summary>
+        /// Gives the ZipCode format registered for this city in Diverse.
+        /// </summary>
+        /// <param name="cityName">The name of the city you want to get the ZipCode format.</param>
+        /// <returns>The ZipCode format registered for this city in Diverse.</returns>
         public static string GiveMeZipCodeFormatOf(string cityName)
         {
             return _citiesOfTheWorld.Single(c => c.CityName == cityName).ZipCodeFormat;

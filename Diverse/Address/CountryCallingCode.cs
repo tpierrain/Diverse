@@ -5,10 +5,21 @@
     /// </summary>
     public class CountryCallingCode
     {
+        /// <summary>
+        /// Prefix for this ITU calling code.
+        /// </summary>
         public string Prefix { get; }
         
+        /// <summary>
+        /// Code for the Country.
+        /// </summary>
         public int Code { get; }
 
+        /// <summary>
+        /// Instantiates a <see cref="CountryCallingCode"/>.
+        /// </summary>
+        /// <param name="code">Code of the country.</param>
+        /// <param name="prefix">Prefix for this Country ITU.</param>
         public CountryCallingCode(int code, string prefix = "+")
         {
             Code = code;

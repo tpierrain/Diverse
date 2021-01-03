@@ -60,7 +60,8 @@
             <summary>
             Instantiates an <see cref="T:Diverse.Address.Address"/>.
             </summary>
-            <param name="format"></param>
+            <param name="format">The <see cref="T:Diverse.Address.AddressFormat"/> for this Address.</param>
+            <param name="countryCode">The <see cref="T:Diverse.Address.CountryCallingCode"/></param>
         </member>
         <member name="T:Diverse.Address.AddressFormat">
             <summary>
@@ -168,6 +169,23 @@
             International Telecommunication Union (ITU) Calling code for a Country.
             </summary>
         </member>
+        <member name="P:Diverse.Address.CountryCallingCode.Prefix">
+            <summary>
+            Prefix for this ITU calling code.
+            </summary>
+        </member>
+        <member name="P:Diverse.Address.CountryCallingCode.Code">
+            <summary>
+            Code for the Country.
+            </summary>
+        </member>
+        <member name="M:Diverse.Address.CountryCallingCode.#ctor(System.Int32,System.String)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.Address.CountryCallingCode"/>.
+            </summary>
+            <param name="code">Code of the country.</param>
+            <param name="prefix">Prefix for this Country ITU.</param>
+        </member>
         <member name="M:Diverse.Address.CountryCallingCode.ToString">
             <summary>
             Returns the string description of a <see cref="T:Diverse.Address.CountryCallingCode"/>.
@@ -180,9 +198,141 @@
             </summary>
             <remarks>Note: All associations between cities, state/province/area and Countries are made here.</remarks>
         </member>
+        <member name="P:Diverse.Address.Geography.CityNames">
+            <summary>
+            Gets the names of all the cities registered in the Diverse lib.
+            </summary>
+        </member>
+        <member name="M:Diverse.Address.Geography.GiveMeCitiesOf(Diverse.Address.Country)">
+            <summary>
+            Gives an array with all the cities related to a <see cref="T:Diverse.Address.Country"/>.
+            </summary>
+            <param name="country">The <see cref="T:Diverse.Address.Country"/>.</param>
+            <returns>An array with all the cities related to a <see cref="T:Diverse.Address.Country"/>.</returns>
+        </member>
+        <member name="M:Diverse.Address.Geography.GiveMeStateProvinceAreaOf(Diverse.Address.Country)">
+            <summary>
+            Gives an array with all the <see cref="T:Diverse.Address.StateProvinceArea"/> related to a <see cref="T:Diverse.Address.Country"/>.
+            /// </summary>
+            <param name="country">The <see cref="T:Diverse.Address.Country"/>.</param>
+            <returns>An array of all the <see cref="T:Diverse.Address.StateProvinceArea"/> registered for this <see cref="T:Diverse.Address.Country"/> in the Diverse lib.</returns>
+        </member>
+        <member name="M:Diverse.Address.Geography.GiveMeStateProvinceAreaOf(System.String)">
+            <summary>
+            Gives the <see cref="T:Diverse.Address.StateProvinceArea"/> of a given city name.
+            </summary>
+            <param name="cityName">The name of the city.</param>
+            <returns>The <see cref="T:Diverse.Address.StateProvinceArea"/> where this city belongs.</returns>
+        </member>
+        <member name="M:Diverse.Address.Geography.GiveMeCountryOf(System.String)">
+            <summary>
+            Gives the <see cref="T:Diverse.Address.Country"/> of a given city name.
+            </summary>
+            <param name="cityName">The name of the city.</param>
+            <returns>The <see cref="T:Diverse.Address.Country"/> where this city belongs.</returns>
+        </member>
+        <member name="M:Diverse.Address.Geography.GiveMeStreetsOf(Diverse.Address.Country)">
+            <summary>
+            Gives all the registered streets of a <see cref="T:Diverse.Address.Country"/>.
+            </summary>
+            <param name="country">The <see cref="T:Diverse.Address.Country"/></param>
+            <returns>All the streets of the provided <see cref="T:Diverse.Address.Country"/> that are registered in Diverse lib.</returns>
+        </member>
+        <member name="M:Diverse.Address.Geography.GiveMeZipCodeFormatOf(System.String)">
+            <summary>
+            Gives the ZipCode format registered for this city in Diverse.
+            </summary>
+            <param name="cityName">The name of the city you want to get the ZipCode format.</param>
+            <returns>The ZipCode format registered for this city in Diverse.</returns>
+        </member>
+        <member name="T:Diverse.Address.StateProvinceArea">
+            <summary>
+            The State/Province or Area.
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.IleDeFrance">
+            <summary>
+            Ile de France (France)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Bretagne">
+            <summary>
+            Bretagne (France)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.AuvergneRhoneAlpes">
+            <summary>
+            Auvergne Rhône Alpes (France)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Occitanie">
+            <summary>
+            Occitanie (France)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.PaysDeLaLoire">
+            <summary>
+            Pays de la Loire (France)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.NouvelleAquitaine">
+            <summary>
+            Nouvelle Aquitaine (France)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.ProvenceAlpesCoteDAzur">
+            <summary>
+            Provence-Alpes-Côte d'Azure (France)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.ChineseAutonomous">
+            <summary>
+            Autonomous region (China)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.ChineseMunicipal">
+            <summary>
+            Municipal (China)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Yunnan">
+            <summary>
+            Yunnan (China)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Hubei">
+            <summary>
+            Hubei (China)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Hainan">
+            <summary>
+            Hainan (China)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Maharashtra">
+            <summary>
+            Maharashtra (India)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Delhi">
+            <summary>
+            Delhi (India)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Karnataka">
+            <summary>
+            Karnataka (India)
+            </summary>
+        </member>
         <member name="F:Diverse.Address.StateProvinceArea.Bangui">
             <summary>
-            Bangui la douce.
+            Bangui la douce region (Central African Republic).
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.StateProvinceArea.Dakar">
+            <summary>
+            Dakar region (Senegal)
             </summary>
         </member>
         <member name="F:Diverse.Address.StateProvinceArea.NewYork">
@@ -511,6 +661,13 @@
             </summary>
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.GenerateStringFromPattern(System.String)">
+            <summary>
+            Generates a string from a given 'diverse' format.
+            </summary>
+            <param name="diverseFormat">The 'diverse' format to use.</param>
+            <returns>A randomly generated string following the 'diverse' format.</returns>
         </member>
         <member name="M:Diverse.Fuzzer.GenerateGuid">
             <summary>
@@ -935,6 +1092,13 @@
             </summary>
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        </member>
+        <member name="M:Diverse.IFuzzStrings.GenerateStringFromPattern(System.String)">
+            <summary>
+            Generates a string from a given 'diverse' format.
+            </summary>
+            <param name="diverseFormat">The 'diverse' format to use.</param>
+            <returns>A randomly generated string followin the 'diverse' format.</returns>
         </member>
         <member name="T:Diverse.IFuzzTypes">
             <summary>
@@ -1375,6 +1539,13 @@
             </summary>
             <param name="feeling">The expected feeling of the adjective</param>
             <returns>An adjective based on a particular feeling or random one if not provided</returns>
+        </member>
+        <member name="M:Diverse.Strings.StringFuzzer.GenerateStringFromPattern(System.String)">
+            <summary>
+            Generates a string from a given 'diverse' format.
+            </summary>
+            <param name="diverseFormat">The 'diverse' format to use.</param>
+            <returns>A randomly generated string followin the 'diverse' format.</returns>
         </member>
         <member name="T:Diverse.Types">
             <summary>
