@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Diverse.Address;
 
 namespace Diverse
 {
@@ -74,7 +75,7 @@ namespace Diverse
 
             var age = GenerateAge();
 
-            var address = _fuzzer.GenerateAddress();
+            var address = _fuzzer.GenerateAddress(Country.France);
 
             return new Person(firstName, lastName, gender.Value, eMail, isMarried, age, address);
         }
