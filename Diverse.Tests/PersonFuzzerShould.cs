@@ -37,7 +37,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName(Gender.Female));
             }
 
-            Check.That(firstNames).ContainsExactly("Nzinga", "Guri", "Lan", "Giovanna", "Kwame", "Valeria", "Dhalia", "Kione", "Xian", "Zayneb");
+            Check.That(firstNames).ContainsExactly("Nakeisha", "Guri", "Chan", "Chiara", "Kwame", "Valeria", "Dhalia", "Kione", "Xian", "Zayneb");
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName());
             }
 
-            Check.That(firstNames).ContainsExactly("Goo", "Uélé", "Katsuki", "Enrico", "Jung-sook", "Atahualpa", "Soske", "Manua", "Maffalda", "Aminata");
+            Check.That(firstNames).ContainsExactly("Hei-Ran", "Uélé", "Katsuki", "Enrico", "Jung-sook", "Atahualpa", "Soske", "Manua", "Maffalda", "Aminata");
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace Diverse.Tests
                 lastNames.Add($"{firstName} {fuzzer.GenerateLastName(firstName)}");
             }
 
-            Check.That(lastNames).ContainsExactly("Itxaro González", "Josh Walker", "Yue Laghari", "Olamide Diop", "Kevin Sanchez", "Bao Madan", "Nichelle Baker", "Xing Xing Laghari", "Simba Ibrahim", "Abeba Nwadike");
+            Check.That(lastNames).ContainsExactly("Itxaro González", "Josh Walker", "Qiao Laghari", "Olamide Diop", "Kevin Sanchez", "Bao Madan", "Nichelle Baker", "Xing Xing Laghari", "Simba Ibrahim", "Abeba Nwadike");
         }
 
         [Test]
@@ -130,7 +130,7 @@ namespace Diverse.Tests
 
             var person = fuzzer.GeneratePerson();
 
-            Check.That(person.Address.StreetNumber).IsInstanceOf<int?>().And.IsNotEqualTo(0);
+            Check.That(person.Address.StreetNumber).IsInstanceOf<string>().And.IsNotEmpty();
             Check.That(person.Address.StreetName).IsNotEmpty();
             Check.That(person.Address.Street).IsNotEmpty();
             Check.That(person.Address.City).IsNotEmpty();

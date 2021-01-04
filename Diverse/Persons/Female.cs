@@ -266,6 +266,7 @@ namespace Diverse
             new ContextualizedFirstName("Enrica", Continent.Europe),
             new ContextualizedFirstName("Giovanna", Continent.Europe),
             new ContextualizedFirstName("Gioconda", Continent.Europe),
+            new ContextualizedFirstName("Chiara", Continent.Europe),
             new ContextualizedFirstName("Donna-Marie", Continent.Europe),
             new ContextualizedFirstName("Hildagard", Continent.Europe),
             new ContextualizedFirstName("Ulrike", Continent.Europe),
@@ -324,6 +325,7 @@ namespace Diverse
             new ContextualizedFirstName("Errin", Continent.NorthAmerica),
             new ContextualizedFirstName("Jariah", Continent.NorthAmerica),
 
+            new ContextualizedFirstName("Facunda", Continent.SouthAmerica),
             new ContextualizedFirstName("Penelope", Continent.SouthAmerica),
             new ContextualizedFirstName("Sierra", Continent.SouthAmerica),
             new ContextualizedFirstName("Dhalia", Continent.SouthAmerica),

@@ -12,7 +12,7 @@ namespace Diverse.Address
         /// <summary>
         /// Gets or sets the number for this apartment/condo/house in the street.
         /// </summary>
-        public int? StreetNumber { get; set; }
+        public string StreetNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the street name.
@@ -71,7 +71,7 @@ namespace Diverse.Address
         /// <param name="zipCode">The zip code</param>
         /// <param name="stateProvinceArea">The <see cref="StateProvinceArea"/></param>
         /// <param name="country">The <see cref="Country"/></param>
-        public Address(int streetNumber, string streetName, string city, string zipCode, StateProvinceArea stateProvinceArea, Country country)
+        public Address(string streetNumber, string streetName, string city, string zipCode, StateProvinceArea stateProvinceArea, Country country)
         {
             StreetName = streetName;
             City = city;

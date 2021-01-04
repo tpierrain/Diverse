@@ -16,7 +16,7 @@ namespace Diverse.Tests
             var address = fuzzer.GenerateAddress(country);
             TestContext.WriteLine(address);
 
-            Check.That(address.StreetNumber).IsInstanceOf<int?>().And.IsNotEqualTo(0);
+            Check.That(address.StreetNumber).IsNotEmpty();
             Check.That(address.Street).IsNotEmpty();
 
             Check.That(Geography.GiveMeStreetsOf(country)).Contains(address.StreetName);

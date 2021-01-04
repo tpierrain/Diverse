@@ -32,7 +32,7 @@
             var zipCode = _fuzzer.GenerateStringFromPattern(Geography.GiveMeZipCodeFormatOf(city));
             var stateProvinceArea = Geography.GiveMeStateProvinceAreaOf(city);
 
-            var address = new Address(streetNumber, streetName, city, zipCode, stateProvinceArea, country.Value);
+            var address = new Address(streetNumber.ToString(), streetName, city, zipCode, stateProvinceArea, country.Value);
 
             return address;
         }
