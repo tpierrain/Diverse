@@ -6,19 +6,19 @@
     public static class China
     {
         /// <summary>
-        /// Gets the list of <see cref="CityWithRelatedInformations"/> one can find in <see cref="Country.China"/>.
+        /// Gets the list of <see cref="CityWithRelatedInformation"/> one can find in <see cref="Country.China"/>.
         /// </summary>
-        public static CityWithRelatedInformations[] Cities = new[]
+        public static CityWithRelatedInformation[] Cities = new[]
         {
-            new CityWithRelatedInformations("Wuhan", StateProvinceArea.Hubei, Country.China, Continent.Asia, zipCodeFormat:"4300##"),
-            new CityWithRelatedInformations("Beijing", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"1000##"),
-            new CityWithRelatedInformations("Shanghai", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"2000##"),
-            new CityWithRelatedInformations("Tianjin", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"300###"),
-            new CityWithRelatedInformations("Chongqing",StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"4000##"),
-            new CityWithRelatedInformations("Danzhou", StateProvinceArea.Hainan, Country.China, Continent.Asia, zipCodeFormat:"5717##"),
-            new CityWithRelatedInformations("Kunming", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat: "650###"),
-            new CityWithRelatedInformations("Lijiang", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat: "6741##"),
-            new CityWithRelatedInformations("Shangri-La", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat:"674400"),
+            new CityWithRelatedInformation("Wuhan", StateProvinceArea.Hubei, Country.China, Continent.Asia, zipCodeFormat:"4300##"),
+            new CityWithRelatedInformation("Beijing", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"1000##"),
+            new CityWithRelatedInformation("Shanghai", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"2000##"),
+            new CityWithRelatedInformation("Tianjin", StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"300###"),
+            new CityWithRelatedInformation("Chongqing",StateProvinceArea.ChineseMunicipal, Country.China, Continent.Asia, zipCodeFormat:"4000##"),
+            new CityWithRelatedInformation("Danzhou", StateProvinceArea.Hainan, Country.China, Continent.Asia, zipCodeFormat:"5717##"),
+            new CityWithRelatedInformation("Kunming", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat: "650###"),
+            new CityWithRelatedInformation("Lijiang", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat: "6741##"),
+            new CityWithRelatedInformation("Shangri-La", StateProvinceArea.Yunnan, Country.China, Continent.Asia, zipCodeFormat:"674400"),
         };
 
 

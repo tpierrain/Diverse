@@ -6,23 +6,23 @@
     public static class UnitedStatesOfAmerica
     {
         /// <summary>
-        /// Gets the list of <see cref="CityWithRelatedInformations"/> one can find in <see cref="Country.Usa"/>.
+        /// Gets the list of <see cref="CityWithRelatedInformation"/> one can find in <see cref="Country.Usa"/>.
         /// </summary>
-        public static CityWithRelatedInformations[] Cities = new[]
+        public static CityWithRelatedInformation[] Cities = new[]
         {
-            new CityWithRelatedInformations("New York", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"1001#"),
-            new CityWithRelatedInformations("Los Angeles", StateProvinceArea.California, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"900##"),
-            new CityWithRelatedInformations("Denver", StateProvinceArea.Colorado, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"8020#"),
-            new CityWithRelatedInformations("Chicago", StateProvinceArea.Illinois, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"606##"),
-            new CityWithRelatedInformations("Seattle", StateProvinceArea.Washington, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"981##"),
-            new CityWithRelatedInformations("Washington", StateProvinceArea.DC, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"2000#"),
-            new CityWithRelatedInformations("Miami", StateProvinceArea.Florida, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"3314#"),
-            new CityWithRelatedInformations("Las Vegas", StateProvinceArea.Nevada, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"891##"),
-            new CityWithRelatedInformations("New Orleans", StateProvinceArea.Louisiana, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"701##"),
-            new CityWithRelatedInformations("Houston", StateProvinceArea.Texas, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"770##"),
-            new CityWithRelatedInformations("Milwaukee", StateProvinceArea.Wisconsin, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"5320#"),
-            new CityWithRelatedInformations("Philadelphia", StateProvinceArea.Pennsylvania, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"191##"),
-            new CityWithRelatedInformations("Phoenix", StateProvinceArea.Arizona, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"850##"),
+            new CityWithRelatedInformation("New York", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"1001#"),
+            new CityWithRelatedInformation("Los Angeles", StateProvinceArea.California, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"900##"),
+            new CityWithRelatedInformation("Denver", StateProvinceArea.Colorado, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"8020#"),
+            new CityWithRelatedInformation("Chicago", StateProvinceArea.Illinois, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"606##"),
+            new CityWithRelatedInformation("Seattle", StateProvinceArea.Washington, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"981##"),
+            new CityWithRelatedInformation("Washington", StateProvinceArea.DC, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"2000#"),
+            new CityWithRelatedInformation("Miami", StateProvinceArea.Florida, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"3314#"),
+            new CityWithRelatedInformation("Las Vegas", StateProvinceArea.Nevada, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"891##"),
+            new CityWithRelatedInformation("New Orleans", StateProvinceArea.Louisiana, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"701##"),
+            new CityWithRelatedInformation("Houston", StateProvinceArea.Texas, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"770##"),
+            new CityWithRelatedInformation("Milwaukee", StateProvinceArea.Wisconsin, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"5320#"),
+            new CityWithRelatedInformation("Philadelphia", StateProvinceArea.Pennsylvania, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"191##"),
+            new CityWithRelatedInformation("Phoenix", StateProvinceArea.Arizona, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"850##"),
         };
 
         /// <summary>

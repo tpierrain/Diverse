@@ -62,9 +62,9 @@ namespace Diverse.Address.Geography
         }
 
         /// <summary>
-        /// Gets an array containing all the <see cref="CityWithRelatedInformations"/> registered in Diverse.
+        /// Gets an array containing all the <see cref="CityWithRelatedInformation"/> registered in Diverse.
         /// </summary>
-        public static CityWithRelatedInformations[] CitiesOfTheWorld
+        public static CityWithRelatedInformation[] CitiesOfTheWorld
         {
             get
             {
@@ -80,7 +80,7 @@ namespace Diverse.Address.Geography
             }
         }
 
-        private static CityWithRelatedInformations[] _citiesOfTheWorld;
+        private static CityWithRelatedInformation[] _citiesOfTheWorld;
 
         private static readonly Dictionary<Country, string[]> _streetsOfCountries =
             new Dictionary<Country, string[]>

@@ -9,11 +9,6 @@
             Address of a <see cref="T:Diverse.Person"/>.
             </summary>
         </member>
-        <member name="P:Diverse.Address.Address.Format">
-            <summary>
-            Gets the <see cref="T:Diverse.Address.AddressFormat"/> of the <see cref="T:Diverse.Address.Address"/>.
-            </summary>
-        </member>
         <member name="P:Diverse.Address.Address.StreetNumber">
             <summary>
             Gets or sets the number for this apartment/condo/house in the street.
@@ -45,17 +40,32 @@
             Gets or sets the State/Province/Area.
             </summary>
         </member>
+        <member name="P:Diverse.Address.Address.CountryLabel">
+            <summary>
+            Gets or sets the Country.
+            </summary>
+        </member>
         <member name="P:Diverse.Address.Address.Country">
             <summary>
             Gets or sets the Country.
             </summary>
         </member>
-        <member name="M:Diverse.Address.Address.#ctor(Diverse.Address.AddressFormat)">
+        <member name="M:Diverse.Address.Address.#ctor(System.String,System.String,System.String,System.String,Diverse.Address.Geography.StateProvinceArea,Diverse.Address.Geography.Country)">
             <summary>
             Instantiates an <see cref="T:Diverse.Address.Address"/>.
             </summary>
-            <param name="format">The <see cref="T:Diverse.Address.AddressFormat"/> for this Address.</param>
-            <param name="countryCode">The <see cref="T:Diverse.Address.CountryCallingCode"/></param>
+            <param name="streetNumber">The street number</param>
+            <param name="streetName">The street name</param>
+            <param name="city">The city</param>
+            <param name="zipCode">The zip code</param>
+            <param name="stateProvinceArea">The <see cref="P:Diverse.Address.Address.StateProvinceArea"/></param>
+            <param name="country">The <see cref="P:Diverse.Address.Address.Country"/></param>
+        </member>
+        <member name="M:Diverse.Address.Address.ToString">
+            <summary>
+            Returns the string description of a <see cref="T:Diverse.Address.Address"/>.
+            </summary>
+            <returns>The string description of a <see cref="T:Diverse.Address.Address"/>.</returns>
         </member>
         <member name="T:Diverse.Address.AddressFormat">
             <summary>
@@ -65,6 +75,11 @@
         <member name="F:Diverse.Address.AddressFormat.French">
             <summary>
             French address format.
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.AddressFormat.China">
+            <summary>
+            Chinese address format.
             </summary>
         </member>
         <member name="T:Diverse.Address.AddressFuzzer">
@@ -78,85 +93,12 @@
             </summary>
             <param name="fuzzer">Instance of <see cref="T:Diverse.IFuzz"/> to use.</param>
         </member>
-        <member name="T:Diverse.Address.Country">
+        <member name="M:Diverse.Address.AddressFuzzer.GenerateAddress(System.Nullable{Diverse.Address.Geography.Country})">
             <summary>
-            Country.
+            Randomly generates an <see cref="T:Diverse.Address.Address"/>.
             </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.France">
-            <summary>
-            France
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.England">
-            <summary>
-            England
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.US">
-            <summary>
-            United States of America
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.China">
-            <summary>
-            China
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.India">
-            <summary>
-            India
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.Australia">
-            <summary>
-            Australia
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.NewZeland">
-            <summary>
-            New Zeland
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.Sweden">
-            <summary>
-            Sweden
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.CentralAfricanRepublic">
-            <summary>
-            Central African Republic
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.Senegal">
-            <summary>
-            Senegal
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.Nigeria">
-            <summary>
-            Nigeria
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.Russia">
-            <summary>
-            Russia
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.Ukraine">
-            <summary>
-            Ukraine
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.Japan">
-            <summary>
-            Japan
-            </summary>
-        </member>
-        <member name="F:Diverse.Address.Country.Thailand">
-            <summary>
-            Thailand
-            </summary>
+            <param name="country">The <see cref="T:Diverse.Address.Geography.Country"/> of the address to generate.</param>
+            <returns>The generated Address.</returns>
         </member>
         <member name="T:Diverse.Address.CountryCallingCode">
             <summary>
@@ -186,160 +128,345 @@
             </summary>
             <returns>The string description of a <see cref="T:Diverse.Address.CountryCallingCode"/>.</returns>
         </member>
-        <member name="T:Diverse.Address.FrenchAddress">
+        <member name="T:Diverse.Address.Geography.Countries.China">
             <summary>
-            French address (including how it is ToString() etc).
+            Provides samples of what could be find in <see cref="F:Diverse.Address.Geography.Country.China"/>.
             </summary>
         </member>
-        <member name="T:Diverse.Address.GeographyExpert">
+        <member name="F:Diverse.Address.Geography.Countries.China.Cities">
             <summary>
-            Gathers all infos related to GeographyExpert (continent, countries, cities).
+            Gets the list of <see cref="T:Diverse.Address.Geography.CityWithRelatedInformation"/> one can find in <see cref="F:Diverse.Address.Geography.Country.China"/>.
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Countries.China.StreetNames">
+            <summary>
+            Gets samples of street names one could find in <see cref="F:Diverse.Address.Geography.Country.China"/>.
+            </summary>
+        </member>
+        <member name="T:Diverse.Address.Geography.Countries.France">
+            <summary>
+            Provides samples of what could be find in <see cref="F:Diverse.Address.Geography.Country.France"/>.
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Countries.France.Cities">
+            <summary>
+            Gets the list of <see cref="T:Diverse.Address.Geography.CityWithRelatedInformation"/> one can find in <see cref="F:Diverse.Address.Geography.Country.France"/>.
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Countries.France.StreetNames">
+            <summary>
+            Gets samples of street names one could find in <see cref="F:Diverse.Address.Geography.Country.France"/>.
+            </summary>
+        </member>
+        <member name="T:Diverse.Address.Geography.Countries.UnitedStatesOfAmerica">
+            <summary>
+            Provides samples of what could be find in <see cref="F:Diverse.Address.Geography.Country.Usa"/>.
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Countries.UnitedStatesOfAmerica.Cities">
+            <summary>
+            Gets the list of <see cref="T:Diverse.Address.Geography.CityWithRelatedInformation"/> one can find in <see cref="F:Diverse.Address.Geography.Country.Usa"/>.
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Countries.UnitedStatesOfAmerica.StreetNames">
+            <summary>
+            Gets samples of street names one can find in <see cref="F:Diverse.Address.Geography.Country.Usa"/>.
+            </summary>
+        </member>
+        <member name="T:Diverse.Address.Geography.Country">
+            <summary>
+            Country.
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.France">
+            <summary>
+            France
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.England">
+            <summary>
+            England
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Usa">
+            <summary>
+            United States of America
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.China">
+            <summary>
+            China
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.India">
+            <summary>
+            India
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Australia">
+            <summary>
+            Australia
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.NewZeland">
+            <summary>
+            New Zeland
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Sweden">
+            <summary>
+            Sweden
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.CentralAfricanRepublic">
+            <summary>
+            Central African Republic
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Senegal">
+            <summary>
+            Senegal
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Nigeria">
+            <summary>
+            Nigeria
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Russia">
+            <summary>
+            Russia
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Ukraine">
+            <summary>
+            Ukraine
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Japan">
+            <summary>
+            Japan
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.Country.Thailand">
+            <summary>
+            Thailand
+            </summary>
+        </member>
+        <member name="T:Diverse.Address.Geography.GeographyExpert">
+            <summary>
+            Gathers all infos related to Geography (continent, countries, cities).
             </summary>
             <remarks>Note: All associations between cities, state/province/area and Countries are made here.</remarks>
         </member>
-        <member name="P:Diverse.Address.GeographyExpert.CityNames">
+        <member name="P:Diverse.Address.Geography.GeographyExpert.CityNames">
             <summary>
             Gets the names of all the cities registered in the Diverse lib.
             </summary>
         </member>
-        <member name="M:Diverse.Address.GeographyExpert.GiveMeCitiesOf(Diverse.Address.Country)">
+        <member name="M:Diverse.Address.Geography.GeographyExpert.GiveMeCitiesOf(Diverse.Address.Geography.Country)">
             <summary>
-            Gives an array with all the cities related to a <see cref="T:Diverse.Address.Country"/>.
+            Gives an array with all the cities related to a <see cref="T:Diverse.Address.Geography.Country"/>.
             </summary>
-            <param name="country">The <see cref="T:Diverse.Address.Country"/>.</param>
-            <returns>An array with all the cities related to a <see cref="T:Diverse.Address.Country"/>.</returns>
+            <param name="country">The <see cref="T:Diverse.Address.Geography.Country"/>.</param>
+            <returns>An array with all the cities related to a <see cref="T:Diverse.Address.Geography.Country"/>.</returns>
         </member>
-        <member name="M:Diverse.Address.GeographyExpert.GiveMeStateProvinceAreaOf(Diverse.Address.Country)">
+        <member name="M:Diverse.Address.Geography.GeographyExpert.GiveMeStateProvinceAreaOf(Diverse.Address.Geography.Country)">
             <summary>
-            Gives an array with all the <see cref="T:Diverse.Address.StateProvinceArea"/> related to a <see cref="T:Diverse.Address.Country"/>.
+            Gives an array with all the <see cref="T:Diverse.Address.Geography.StateProvinceArea"/> related to a <see cref="T:Diverse.Address.Geography.Country"/>.
             /// </summary>
-            <param name="country">The <see cref="T:Diverse.Address.Country"/>.</param>
-            <returns>An array of all the <see cref="T:Diverse.Address.StateProvinceArea"/> registered for this <see cref="T:Diverse.Address.Country"/> in the Diverse lib.</returns>
+            <param name="country">The <see cref="T:Diverse.Address.Geography.Country"/>.</param>
+            <returns>An array of all the <see cref="T:Diverse.Address.Geography.StateProvinceArea"/> registered for this <see cref="T:Diverse.Address.Geography.Country"/> in the Diverse lib.</returns>
         </member>
-        <member name="M:Diverse.Address.GeographyExpert.GiveMeStateProvinceAreaOf(System.String)">
+        <member name="P:Diverse.Address.Geography.GeographyExpert.CitiesOfTheWorld">
             <summary>
-            Gives the <see cref="T:Diverse.Address.StateProvinceArea"/> of a given city name.
+            Gets an array containing all the <see cref="T:Diverse.Address.Geography.CityWithRelatedInformation"/> registered in Diverse.
+            </summary>
+        </member>
+        <member name="M:Diverse.Address.Geography.GeographyExpert.GiveMeStateProvinceAreaOf(System.String)">
+            <summary>
+            Gives the <see cref="T:Diverse.Address.Geography.StateProvinceArea"/> of a given city name.
             </summary>
             <param name="cityName">The name of the city.</param>
-            <returns>The <see cref="T:Diverse.Address.StateProvinceArea"/> where this city belongs.</returns>
+            <returns>The <see cref="T:Diverse.Address.Geography.StateProvinceArea"/> where this city belongs.</returns>
         </member>
-        <member name="M:Diverse.Address.GeographyExpert.GiveMeCountryOf(System.String)">
+        <member name="M:Diverse.Address.Geography.GeographyExpert.GiveMeCountryOf(System.String)">
             <summary>
-            Gives the <see cref="T:Diverse.Address.Country"/> of a given city name.
+            Gives the <see cref="T:Diverse.Address.Geography.Country"/> of a given city name.
             </summary>
             <param name="cityName">The name of the city.</param>
-            <returns>The <see cref="T:Diverse.Address.Country"/> where this city belongs.</returns>
+            <returns>The <see cref="T:Diverse.Address.Geography.Country"/> where this city belongs.</returns>
         </member>
-        <member name="M:Diverse.Address.GeographyExpert.GiveMeStreetsOf(Diverse.Address.Country)">
+        <member name="M:Diverse.Address.Geography.GeographyExpert.GiveMeStreetsOf(Diverse.Address.Geography.Country)">
             <summary>
-            Gives all the registered streets of a <see cref="T:Diverse.Address.Country"/>.
+            Gives all the registered streets of a <see cref="T:Diverse.Address.Geography.Country"/>.
             </summary>
-            <param name="country">The <see cref="T:Diverse.Address.Country"/></param>
-            <returns>All the streets of the provided <see cref="T:Diverse.Address.Country"/> that are registered in Diverse lib.</returns>
+            <param name="country">The <see cref="T:Diverse.Address.Geography.Country"/></param>
+            <returns>All the streets of the provided <see cref="T:Diverse.Address.Geography.Country"/> that are registered in Diverse lib.</returns>
         </member>
-        <member name="M:Diverse.Address.GeographyExpert.GiveMeZipCodeFormatOf(System.String)">
+        <member name="M:Diverse.Address.Geography.GeographyExpert.GiveMeZipCodeFormatOf(System.String)">
             <summary>
             Gives the ZipCode format registered for this city in Diverse.
             </summary>
             <param name="cityName">The name of the city you want to get the ZipCode format.</param>
             <returns>The ZipCode format registered for this city in Diverse.</returns>
         </member>
-        <member name="T:Diverse.Address.StateProvinceArea">
+        <member name="T:Diverse.Address.Geography.StateProvinceArea">
             <summary>
             The State/Province or Area.
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.IleDeFrance">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.IleDeFrance">
             <summary>
             Ile de France (France)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Bretagne">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Bretagne">
             <summary>
             Bretagne (France)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.AuvergneRhoneAlpes">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.AuvergneRhoneAlpes">
             <summary>
             Auvergne Rhône Alpes (France)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Occitanie">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Occitanie">
             <summary>
             Occitanie (France)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.PaysDeLaLoire">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.PaysDeLaLoire">
             <summary>
             Pays de la Loire (France)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.NouvelleAquitaine">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.NouvelleAquitaine">
             <summary>
             Nouvelle Aquitaine (France)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.ProvenceAlpesCoteDAzur">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.ProvenceAlpesCoteDAzur">
             <summary>
             Provence-Alpes-Côte d'Azure (France)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.ChineseAutonomous">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.ChineseAutonomous">
             <summary>
             Autonomous region (China)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.ChineseMunicipal">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.ChineseMunicipal">
             <summary>
             Municipal (China)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Yunnan">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Yunnan">
             <summary>
             Yunnan (China)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Hubei">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Hubei">
             <summary>
             Hubei (China)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Hainan">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Hainan">
             <summary>
             Hainan (China)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Maharashtra">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.California">
+            <summary>
+            California
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Colorado">
+            <summary>
+            Colorado
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Illinois">
+            <summary>
+            Illinois
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Wisconsin">
+            <summary>
+            Wisconsin
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Washington">
+            <summary>
+            Washington state
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.DC">
+            <summary>
+            District of Columbia (DC)
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Florida">
+            <summary>
+            Florida
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Nevada">
+            <summary>
+            Nevada
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Louisiana">
+            <summary>
+            Louisiana
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Texas">
+            <summary>
+            Texas
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Pennsylvania">
+            <summary>
+            Pennsylvania
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Arizona">
+            <summary>
+            Arizona
+            </summary>
+        </member>
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Maharashtra">
             <summary>
             Maharashtra (India)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Delhi">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Delhi">
             <summary>
             Delhi (India)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Karnataka">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Karnataka">
             <summary>
             Karnataka (India)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Bangui">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Bangui">
             <summary>
             Bangui la douce region (Central African Republic).
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.Dakar">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.Dakar">
             <summary>
             Dakar region (Senegal)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.NewYork">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.NewYork">
             <summary>
             New York City (NYC)
             </summary>
         </member>
-        <member name="F:Diverse.Address.StateProvinceArea.London">
+        <member name="F:Diverse.Address.Geography.StateProvinceArea.London">
             <summary>
              London
             </summary>
@@ -578,10 +705,11 @@
             <param name="maxValue">The inclusive upper bound of the random number returned.</param>
             <returns>A long value generated randomly.</returns>
         </member>
-        <member name="M:Diverse.Fuzzer.GenerateAddress">
+        <member name="M:Diverse.Fuzzer.GenerateAddress(System.Nullable{Diverse.Address.Geography.Country})">
             <summary>
             Randomly generates an <see cref="N:Diverse.Address"/>.
             </summary>
+            <param name="country">The <see cref="T:Diverse.Address.Geography.Country"/> of the address to generate.</param>
             <returns>The generated Address.</returns>
         </member>
         <member name="M:Diverse.Fuzzer.GenerateFirstName(System.Nullable{Diverse.Gender})">
@@ -886,10 +1014,11 @@
             Fuzz <see cref="N:Diverse.Address"/>.
             </summary>
         </member>
-        <member name="M:Diverse.IFuzzAddress.GenerateAddress">
+        <member name="M:Diverse.IFuzzAddress.GenerateAddress(System.Nullable{Diverse.Address.Geography.Country})">
             <summary>
-            Randomly generates an <see cref="N:Diverse.Address"/>.
+            Randomly generates an <see cref="T:Diverse.Address.Address"/>.
             </summary>
+            <param name="country">The <see cref="T:Diverse.Address.Geography.Country"/> of the address to generate.</param>
             <returns>The generated Address.</returns>
         </member>
         <member name="T:Diverse.IFuzzDatesAndTime">

@@ -6,26 +6,26 @@
     public static class France
     {
         /// <summary>
-        /// Gets the list of <see cref="CityWithRelatedInformations"/> one can find in <see cref="Country.France"/>.
+        /// Gets the list of <see cref="CityWithRelatedInformation"/> one can find in <see cref="Country.France"/>.
         /// </summary>
-        public static CityWithRelatedInformations[] Cities = new []
+        public static CityWithRelatedInformation[] Cities = new []
         {
-            new CityWithRelatedInformations("Paris", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "750##"),
-            new CityWithRelatedInformations("Saint-Ouen", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe,zipCodeFormat: "93400"),
-            new CityWithRelatedInformations("Saint-Denis", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "93200"),
-            new CityWithRelatedInformations("Versailles", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat:"78000"),
-            new CityWithRelatedInformations("La Courneuve", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat:"93120"),
-            new CityWithRelatedInformations("Quiberon", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"56170"),
-            new CityWithRelatedInformations("Rennes", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"35#00"),
-            new CityWithRelatedInformations("Brest", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"29200"),
-            new CityWithRelatedInformations("Nantes", StateProvinceArea.PaysDeLaLoire, Country.France, Continent.Europe, zipCodeFormat:"44###"),
-            new CityWithRelatedInformations("Bordeaux", StateProvinceArea.NouvelleAquitaine, Country.France, Continent.Europe, zipCodeFormat:"33#00"),
-            new CityWithRelatedInformations("Marseille", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"130##"),
-            new CityWithRelatedInformations("Nice", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"06#00"),
-            new CityWithRelatedInformations("Lyon", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"6900#"),
-            new CityWithRelatedInformations("Grenoble", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"38###"),
-            new CityWithRelatedInformations("Montpellier", StateProvinceArea.Occitanie, Country.France, Continent.Europe, zipCodeFormat:"340##"),
-            new CityWithRelatedInformations("Toulouse", StateProvinceArea.Occitanie, Country.France, Continent.Europe, zipCodeFormat:"31###"),
+            new CityWithRelatedInformation("Paris", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "750##"),
+            new CityWithRelatedInformation("Saint-Ouen", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe,zipCodeFormat: "93400"),
+            new CityWithRelatedInformation("Saint-Denis", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "93200"),
+            new CityWithRelatedInformation("Versailles", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat:"78000"),
+            new CityWithRelatedInformation("La Courneuve", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat:"93120"),
+            new CityWithRelatedInformation("Quiberon", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"56170"),
+            new CityWithRelatedInformation("Rennes", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"35#00"),
+            new CityWithRelatedInformation("Brest", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"29200"),
+            new CityWithRelatedInformation("Nantes", StateProvinceArea.PaysDeLaLoire, Country.France, Continent.Europe, zipCodeFormat:"44###"),
+            new CityWithRelatedInformation("Bordeaux", StateProvinceArea.NouvelleAquitaine, Country.France, Continent.Europe, zipCodeFormat:"33#00"),
+            new CityWithRelatedInformation("Marseille", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"130##"),
+            new CityWithRelatedInformation("Nice", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"06#00"),
+            new CityWithRelatedInformation("Lyon", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"6900#"),
+            new CityWithRelatedInformation("Grenoble", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"38###"),
+            new CityWithRelatedInformation("Montpellier", StateProvinceArea.Occitanie, Country.France, Continent.Europe, zipCodeFormat:"340##"),
+            new CityWithRelatedInformation("Toulouse", StateProvinceArea.Occitanie, Country.France, Continent.Europe, zipCodeFormat:"31###"),
         };
 
         /// <summary>
