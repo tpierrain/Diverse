@@ -1,5 +1,5 @@
 ﻿// ReSharper disable CommentTypo
-namespace Diverse.Address
+namespace Diverse.Address.Geography
 {
     public class CityWithRelatedInformations
     {

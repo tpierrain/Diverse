@@ -1,4 +1,4 @@
-﻿namespace Diverse.Address
+﻿namespace Diverse.Address.Geography
 {
     /// <summary>
     /// Provides samples of what could be find in <see cref="Country.Usa"/>.
@@ -11,18 +11,18 @@
         public static CityWithRelatedInformations[] Cities = new[]
         {
             new CityWithRelatedInformations("New York", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"1001#"),
-            new CityWithRelatedInformations("Los Angeles", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"900##"),
-            new CityWithRelatedInformations("Denver", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"8020#"),
-            new CityWithRelatedInformations("Chicago", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("Seattle", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("Washington", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("Miami", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("Las Vegas", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("New Orleans", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("Houston", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("Milwaukee", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("Philadelphia", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
-            new CityWithRelatedInformations("Phoenix", StateProvinceArea.NewYork, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("Los Angeles", StateProvinceArea.California, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"900##"),
+            new CityWithRelatedInformations("Denver", StateProvinceArea.Colorado, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"8020#"),
+            new CityWithRelatedInformations("Chicago", StateProvinceArea.Illinois, Country.Usa, Continent.NorthAmerica, zipCodeFormat:"606##"),
+            new CityWithRelatedInformations("Seattle", StateProvinceArea.Washington, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("Washington", StateProvinceArea.DC, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("Miami", StateProvinceArea.Florida, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("Las Vegas", StateProvinceArea.Nevada, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("New Orleans", StateProvinceArea.Louisiana, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("Houston", StateProvinceArea.Texas, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("Milwaukee", StateProvinceArea.Wisconsin, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("Philadelphia", StateProvinceArea.Pennsylvania, Country.Usa, Continent.NorthAmerica),
+            new CityWithRelatedInformations("Phoenix", StateProvinceArea.Arizona, Country.Usa, Continent.NorthAmerica),
         };
 
         /// <summary>
@@ -49,7 +49,10 @@
            "West Century Boulevard",
            "Ocean Avenue",
            "Stout Street",
-           "Grant Street"
+           "Grant Street",
+           "Amphitheatre Parkway Mountain View",
+           "North State Street",
+           "North Wabash Avenue",
         };
 
         /*
@@ -68,12 +71,19 @@
         101 West Century Boulevard, Los Angeles, CA 90045, États-Unis 
         1515 Ocean Avenue, Santa Monica, Los Angeles, CA 90401, États-Unis 
 
+        1600 Amphitheatre Parkway Mountain View, CA 94043, USA
 
         Denver
         8020#
         440 14Th Street, Denver, CO 80202 , États-Unis 
         1420 Stout Street, Denver, CO 80202, États-Unis
         1776 Grant Street, Capitol Hill, Denver, CO 80203, États-Unis
+        
+        606##
+        660 North State Street, River North, Chicago, IL 60654, États-Unis
+        203 N Wabash Ave, Le Loop (Chicago), Chicago, 60601, États-Unis 
+        221 North Columbus Drive, Le Loop (Chicago), Chicago, IL 60601, États-Unis
+         330 North Wabash Avenue, River North, Chicago, IL 60611, États-Unis 
          */
     }
 }

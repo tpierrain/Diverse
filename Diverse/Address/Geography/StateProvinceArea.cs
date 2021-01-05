@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Diverse.Address
+namespace Diverse.Address.Geography
 {
     /// <summary>
     /// The State/Province or Area.
@@ -76,8 +76,72 @@ namespace Diverse.Address
         /// </summary>
         Hainan,
 
-        // India --------------------------------------
+
+        // USA ----------------------------------------
+
+        /// <summary>
+        /// California
+        /// </summary>
+        California,
+
+        /// <summary>
+        /// Colorado
+        /// </summary>
+        Colorado,
+
+        /// <summary>
+        /// Illinois
+        /// </summary>
+        Illinois,
+
+        /// <summary>
+        /// Wisconsin
+        /// </summary>
+        Wisconsin,
+
+        /// <summary>
+        /// Washington state
+        /// </summary>
+        Washington,
+
+        /// <summary>
+        /// District of Columbia (DC)
+        /// </summary>
+        [Description("District of Columbia")]
+        DC,
+
+        /// <summary>
+        /// Florida
+        /// </summary>
+        Florida,
+
+        /// <summary>
+        /// Nevada
+        /// </summary>
+        Nevada,
+
+        /// <summary>
+        /// Louisiana
+        /// </summary>
+        Louisiana,
         
+        /// <summary>
+        /// Texas
+        /// </summary>
+        Texas,
+
+        /// <summary>
+        /// Pennsylvania
+        /// </summary>
+        Pennsylvania,
+
+        /// <summary>
+        /// Arizona
+        /// </summary>
+        Arizona,
+
+        // India --------------------------------------
+
         /// <summary>
         /// Maharashtra (India)
         /// </summary>

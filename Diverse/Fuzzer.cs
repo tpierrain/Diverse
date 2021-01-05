@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Diverse.Address;
+using Diverse.Address.Geography;
 using Diverse.Collections;
 using Diverse.DateTimes;
 using Diverse.Numbers;

@@ -1,4 +1,5 @@
 ﻿using System;
+using Diverse.Address.Geography;
 
 namespace Diverse.Address
 {

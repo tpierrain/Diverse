@@ -3,13 +3,13 @@ using System.Linq;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Diverse.Address
+namespace Diverse.Address.Geography
 {
     /// <summary>
     /// Gathers all infos related to Geography (continent, countries, cities).
     /// </summary>
     /// <remarks>Note: All associations between cities, state/province/area and Countries are made here.</remarks>
-    public static class Geography
+    public static class GeographyExpert
     {
         private static string[] _cityNames;
 

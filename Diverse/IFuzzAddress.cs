@@ -1,4 +1,4 @@
-﻿using Country = Diverse.Address.Country;
+﻿using Country = Diverse.Address.Geography.Country;
 
 namespace Diverse
 {

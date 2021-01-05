@@ -1,4 +1,5 @@
 ﻿using Diverse.Address;
+using Diverse.Address.Geography;
 using NFluent;
 using NUnit.Framework;
 
@@ -20,9 +21,9 @@ namespace Diverse.Tests
             Check.That(address.StreetNumber).IsNotEmpty();
             Check.That(address.Street).IsNotEmpty();
 
-            Check.That(Geography.GiveMeStreetsOf(country)).Contains(address.StreetName);
-            Check.That(Geography.GiveMeCitiesOf(country)).Contains(address.City);
-            Check.That(Geography.GiveMeStateProvinceAreaOf(country)).Contains(address.StateProvinceArea);
+            Check.That(GeographyExpert.GiveMeStreetsOf(country)).Contains(address.StreetName);
+            Check.That(GeographyExpert.GiveMeCitiesOf(country)).Contains(address.City);
+            Check.That(GeographyExpert.GiveMeStateProvinceAreaOf(country)).Contains(address.StateProvinceArea);
             Check.ThatEnum(address.Country).IsEqualTo(country);
 
             Check.That(address.CountryLabel).IsNotEmpty();

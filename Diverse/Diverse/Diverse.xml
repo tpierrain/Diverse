@@ -191,53 +191,53 @@
             French address (including how it is ToString() etc).
             </summary>
         </member>
-        <member name="T:Diverse.Address.Geography">
+        <member name="T:Diverse.Address.GeographyExpert">
             <summary>
-            Gathers all infos related to Geography (continent, countries, cities).
+            Gathers all infos related to GeographyExpert (continent, countries, cities).
             </summary>
             <remarks>Note: All associations between cities, state/province/area and Countries are made here.</remarks>
         </member>
-        <member name="P:Diverse.Address.Geography.CityNames">
+        <member name="P:Diverse.Address.GeographyExpert.CityNames">
             <summary>
             Gets the names of all the cities registered in the Diverse lib.
             </summary>
         </member>
-        <member name="M:Diverse.Address.Geography.GiveMeCitiesOf(Diverse.Address.Country)">
+        <member name="M:Diverse.Address.GeographyExpert.GiveMeCitiesOf(Diverse.Address.Country)">
             <summary>
             Gives an array with all the cities related to a <see cref="T:Diverse.Address.Country"/>.
             </summary>
             <param name="country">The <see cref="T:Diverse.Address.Country"/>.</param>
             <returns>An array with all the cities related to a <see cref="T:Diverse.Address.Country"/>.</returns>
         </member>
-        <member name="M:Diverse.Address.Geography.GiveMeStateProvinceAreaOf(Diverse.Address.Country)">
+        <member name="M:Diverse.Address.GeographyExpert.GiveMeStateProvinceAreaOf(Diverse.Address.Country)">
             <summary>
             Gives an array with all the <see cref="T:Diverse.Address.StateProvinceArea"/> related to a <see cref="T:Diverse.Address.Country"/>.
             /// </summary>
             <param name="country">The <see cref="T:Diverse.Address.Country"/>.</param>
             <returns>An array of all the <see cref="T:Diverse.Address.StateProvinceArea"/> registered for this <see cref="T:Diverse.Address.Country"/> in the Diverse lib.</returns>
         </member>
-        <member name="M:Diverse.Address.Geography.GiveMeStateProvinceAreaOf(System.String)">
+        <member name="M:Diverse.Address.GeographyExpert.GiveMeStateProvinceAreaOf(System.String)">
             <summary>
             Gives the <see cref="T:Diverse.Address.StateProvinceArea"/> of a given city name.
             </summary>
             <param name="cityName">The name of the city.</param>
             <returns>The <see cref="T:Diverse.Address.StateProvinceArea"/> where this city belongs.</returns>
         </member>
-        <member name="M:Diverse.Address.Geography.GiveMeCountryOf(System.String)">
+        <member name="M:Diverse.Address.GeographyExpert.GiveMeCountryOf(System.String)">
             <summary>
             Gives the <see cref="T:Diverse.Address.Country"/> of a given city name.
             </summary>
             <param name="cityName">The name of the city.</param>
             <returns>The <see cref="T:Diverse.Address.Country"/> where this city belongs.</returns>
         </member>
-        <member name="M:Diverse.Address.Geography.GiveMeStreetsOf(Diverse.Address.Country)">
+        <member name="M:Diverse.Address.GeographyExpert.GiveMeStreetsOf(Diverse.Address.Country)">
             <summary>
             Gives all the registered streets of a <see cref="T:Diverse.Address.Country"/>.
             </summary>
             <param name="country">The <see cref="T:Diverse.Address.Country"/></param>
             <returns>All the streets of the provided <see cref="T:Diverse.Address.Country"/> that are registered in Diverse lib.</returns>
         </member>
-        <member name="M:Diverse.Address.Geography.GiveMeZipCodeFormatOf(System.String)">
+        <member name="M:Diverse.Address.GeographyExpert.GiveMeZipCodeFormatOf(System.String)">
             <summary>
             Gives the ZipCode format registered for this city in Diverse.
             </summary>

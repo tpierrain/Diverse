@@ -1,4 +1,4 @@
-﻿namespace Diverse.Address
+﻿namespace Diverse.Address.Geography
 {
     /// <summary>
     /// Country.

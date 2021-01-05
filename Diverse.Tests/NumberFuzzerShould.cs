@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Diverse.Address;
+using Diverse.Address.Geography;
 using NFluent;
 using NUnit.Framework;
 
