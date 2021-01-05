@@ -1,4 +1,6 @@
-﻿namespace Diverse.Address
+﻿using System.ComponentModel;
+
+namespace Diverse.Address
 {
     /// <summary>
     /// The State/Province or Area.
@@ -10,36 +12,41 @@
         /// <summary>
         /// Ile de France (France)
         /// </summary>
+        [Description("Ile de France")]
         IleDeFrance,
         
         /// <summary>
         /// Bretagne (France)
         /// </summary>
         Bretagne,
-        
+
         /// <summary>
         /// Auvergne Rhône Alpes (France)
         /// </summary>
+        [Description("Auvergne-Rhône-Alpes")]
         AuvergneRhoneAlpes,
         
         /// <summary>
         /// Occitanie (France)
         /// </summary>
         Occitanie,
-        
+
         /// <summary>
         /// Pays de la Loire (France)
         /// </summary>
+        [Description("Pays de la Loire")]
         PaysDeLaLoire,
         
         /// <summary>
         /// Nouvelle Aquitaine (France)
         /// </summary>
+        [Description("Nouvelle Aquitaine")]
         NouvelleAquitaine,
         
         /// <summary>
         /// Provence-Alpes-Côte d'Azure (France)
         /// </summary>
+        [Description("Provence-Alpes-Côte d'Azure")]
         ProvenceAlpesCoteDAzur,
 
         // China --------------------------------------
@@ -103,6 +110,7 @@
         /// <summary>
         /// New York City (NYC)
         /// </summary>
+        [Description("NY")]
         NewYork,
 
         // England -------------------------------------

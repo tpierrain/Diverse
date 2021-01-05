@@ -131,7 +131,7 @@ namespace Diverse.Tests
 
             for (var i = 0; i < 50; i++)
             {
-                var generated = fuzzer.GenerateAddress(Country.China);
+                var generated = fuzzer.GenerateAddress(Country.Usa);
 
                 TestContext.WriteLine(generated);
             }

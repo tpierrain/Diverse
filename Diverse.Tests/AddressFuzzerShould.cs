@@ -9,6 +9,7 @@ namespace Diverse.Tests
     {
         [TestCase(Country.France)]
         [TestCase(Country.China)]
+        [TestCase(Country.Usa)]
         public void Be_able_to_generate_proper_address_for_the_Country_of(Country country)
         {
             var fuzzer = new Fuzzer();

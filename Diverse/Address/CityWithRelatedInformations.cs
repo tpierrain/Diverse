@@ -1,7 +1,7 @@
 ﻿// ReSharper disable CommentTypo
 namespace Diverse.Address
 {
-    internal class CityWithRelatedInformations
+    public class CityWithRelatedInformations
     {
         public string CityName { get; }
         public string ZipCodeFormat { get; }
