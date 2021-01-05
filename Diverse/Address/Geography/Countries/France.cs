@@ -1,4 +1,4 @@
-﻿namespace Diverse.Address.Geography
+﻿namespace Diverse.Address.Geography.Countries
 {
     /// <summary>
     /// Provides samples of what could be find in <see cref="Country.France"/>.
