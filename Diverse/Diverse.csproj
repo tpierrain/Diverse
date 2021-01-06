@@ -32,7 +32,7 @@
 
       - Add RemoveDiacritics() extension method on string
 
-      - Add support of Address (in France, China) for Persons
+      - Add support of Address (in France, China, USA) for Persons
 </PackageReleaseNotes>
     <AssemblyVersion>0.7.1.0</AssemblyVersion>
     <FileVersion>0.7.1.0</FileVersion>
