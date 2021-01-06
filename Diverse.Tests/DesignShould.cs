@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using NFluent;
 using NUnit.Framework;
 
 namespace Diverse.Tests
@@ -10,12 +12,21 @@ namespace Diverse.Tests
     public class DesignShould
     {
         [Test]
-        [Ignore("This test made for documentation is failing on purpose. Ignored to avoid CI breaking.")]
         public void Allow_us_To_avoid_duplication_for_a_group_of_fuzzed_elements_only_otherwise_it_will_throw_for_nothing()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(avoidDuplication:true);
 
-            var brandAAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer, Brand.BrandA)
+            var set = new HashSet<int>();
+            for (var i = 0; i < 5; i++)
+            {
+                set.Add(fuzzer.GenerateInteger(1, 5));
+            }
+
+            Check.That(set).Contains(1, 2, 3, 4, 5);
+
+            Check.ThatCode(() => fuzzer.GenerateInteger(1, 5)).Throws<DuplicationException>();
+
+            var brandAAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer.GetFuzzerProvidingNoDuplication(), Brand.BrandA)
                 .WithHotelIn("Paris")
                 .WithHotelIn("Aubervilliers")
                 .WithHotelIn("Versailles")
@@ -23,15 +34,18 @@ namespace Diverse.Tests
                 .WithHotelIn("Vincennes")
                 .Build();  // (the Build() method will call 5 times fuzzer.GenerateInteger(1, 5))
 
+            Check.That(brandAAllKindOfStarsHotelGroup.Hotels.Select(h => h.Stars)).Contains(1, 2, 3, 4, 5);
+
             // So far we have called 5 times fuzzer.GenerateInteger(1, 5)
             // But since the fuzzer could find 5 different values, we are OK
 
             // But any other call to fuzzer.GenerateInteger(1, 5) will throw a duplication exception (can't find any non already provided value)
-            
+
             // This is what will happen in the builder calls below.
-            
+
             // THE NEXT LINE WILL THROW ;-(
-            var brandBAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer, Brand.BrandB)
+
+            var brandBAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer.GetFuzzerProvidingNoDuplication(), Brand.BrandB)
                 .WithHotelIn("Amsterdam")
                 .WithHotelIn("Barcelona")
                 .WithHotelIn("Los Angeles")
@@ -39,22 +53,10 @@ namespace Diverse.Tests
                 .WithHotelIn("Roma")
                 .Build(); // (will also call 5 times fuzzer.GenerateInteger(1, 5))
 
+            Check.That(brandBAllKindOfStarsHotelGroup.Hotels.Select(h => h.Stars)).Contains(1, 2, 3, 4, 5);
+
             
-
-            // This is a problem. We need to find another way to express how we want to avoid duplication.
-            // So far, I have these options in mind:
-            //
-            // 1. Remove the "avoid duplication" from the fuzzer level and allow to avoid duplication for some calls only,
-            //    through a token/scope object or identifier that could be provided to the fuzzer calls that we want
-            //    to associate and avoid duplication among them
-            //
-            // 2. Keep the "avoid duplication" option in general at the fuzzer level (like today), but with an
-            //    optional boolean added for every fuzzer method, that will allow us to escape/avoid the
-            //    no-duplication checks for these very specific method calls
-            //
-            //  What do you think?
-
-        }   
+        }
     }
 
     /// <summary>
@@ -69,11 +71,11 @@ namespace Diverse.Tests
 
     public class HotelGroupBuilder
     {
-        private readonly Fuzzer _fuzzer;
+        private readonly IFuzz _fuzzer;
         private readonly Brand _brand;
         private HashSet<string> _cities = new HashSet<string>();
 
-        public HotelGroupBuilder(Fuzzer fuzzer, Brand brand)
+        public HotelGroupBuilder(IFuzz fuzzer, Brand brand)
         {
             _fuzzer = fuzzer;
             _brand = brand;
@@ -112,7 +114,7 @@ namespace Diverse.Tests
         }
     }
 
-    
+
 
     public class HotelDescription
     {

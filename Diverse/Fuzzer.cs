@@ -146,6 +146,15 @@ namespace Diverse
 
         #region Core
 
+        /// <summary>
+        /// Gets a <see cref="IFuzz"/> instance that will not return twice the same value (whatever the method called).
+        /// </summary>
+        /// <returns></returns>
+        public IFuzz GetFuzzerProvidingNoDuplication()
+        {
+            return new Fuzzer(Seed, avoidDuplication: true);
+        }
+
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
         {
             var testName = FindTheNameOfTheTestInvolved();

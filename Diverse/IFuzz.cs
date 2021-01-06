@@ -22,5 +22,11 @@ namespace Diverse
         /// Gets of sets a value indicating whether the <see cref="Fuzzer"/> should avoid providing twice the same value or not.
         /// </summary>
         bool AvoidDuplication { get; set; }
+
+        /// <summary>
+        /// Gets a <see cref="IFuzz"/> instance that will not return twice the same value (whatever the method called).
+        /// </summary>
+        /// <returns></returns>
+        IFuzz GetFuzzerProvidingNoDuplication();
     }
 }
