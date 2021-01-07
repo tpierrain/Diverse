@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Diverse
@@ -107,6 +108,23 @@ namespace Diverse
             }
         };
 
-        
+
+        /// <summary>
+        /// Find which <see cref="Continent"/> we relate any given last name.
+        /// </summary>
+        /// <param name="lastName">The last name we want to find an associated <see cref="Continent"/> for.</param>
+        /// <returns>The <see cref="Continent"/> we have associated with this last name.</returns>
+        public static Continent FindAssociatedContinent(string lastName)
+        {
+            foreach (var keyValuePair in PerContinent)
+            {
+                if (keyValuePair.Value.Contains(lastName))
+                {
+                    return keyValuePair.Key;
+                }
+            }
+
+            throw new NotSupportedException($"The lastname ({lastName}) is not associated to any Continent in our lib.");
+        }
     }
 }

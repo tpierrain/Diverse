@@ -16,23 +16,9 @@
     <PackageReleaseNotes>
       - Add more names for the Person generation
 
-      - Allow to avoid duplication in fuzzed values (by instantiating a fuzzer with this option: e.g.: var fuzzer = new Fuzzer(avoidDuplication: true); )
-
-      - Provide random picking of any value contained in a collection
-
-      - Provide string generation from pattern (GenerateFromPattern(##AZ#)
-
-      - Provide fuzzing of Guid
-
-      - Provide fuzzing of decimal
-
-      - Provide fuzzing of words, sentences, paragraphs and texts in latin (Lorem ipsum...)
-
-      - Add optional min and max bounds for every number generation
-
-      - Add RemoveDiacritics() extension method on string
-
       - Add support of Address (in France, China, USA) for Persons
+
+
 </PackageReleaseNotes>
     <AssemblyVersion>0.8.0.0</AssemblyVersion>
     <FileVersion>0.8.0.0</FileVersion>

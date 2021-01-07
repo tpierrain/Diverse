@@ -56,7 +56,7 @@ namespace Diverse
         {
             var continent = Locations.FindContinent(firstName);
             var lastNames = LastNames.PerContinent[continent];
-            
+
             return _fuzzer.PickOneFrom(lastNames);
         }
 
@@ -76,9 +76,38 @@ namespace Diverse
 
             var age = GenerateAge();
 
-            var address = _fuzzer.GenerateAddress(Country.France);
+            var country = FindAssociatedCountry(lastName);
+
+            var address = _fuzzer.GenerateAddress(country);
 
             return new Person(firstName, lastName, gender.Value, eMail, isMarried, age, address);
+        }
+
+        private Country FindAssociatedCountry(string lastName)
+        {
+            var continent = LastNames.FindAssociatedContinent(lastName);
+
+            Country country;
+            switch (continent)
+            {
+                case Continent.Europe:
+                    country = Country.France;
+                    break;
+
+                case Continent.NorthAmerica:
+                    country = Country.Usa;
+                    break;
+
+                case Continent.Asia:
+                    country = Country.China;
+                    break;
+
+                default:
+                    country = _fuzzer.PickOneFrom(new[] { Country.Usa, Country.France });
+                    break;
+            }
+
+            return country;
         }
 
         /// <summary>

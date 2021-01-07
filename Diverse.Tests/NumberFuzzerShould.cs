@@ -60,7 +60,7 @@ namespace Diverse.Tests
 
             Check.WithCustomMessage($"number: {number} should be lower or equal to maxValue: {maxValue}")
                 .That(number <= maxValue).IsTrue();
-            
+
             Check.WithCustomMessage($"number: {number} should be greater or equal to minValue: {minValue}")
                 .That(number >= minValue).IsTrue();
         }
@@ -132,9 +132,11 @@ namespace Diverse.Tests
 
             for (var i = 0; i < 50; i++)
             {
-                var generated = fuzzer.GenerateAddress(Country.Usa);
+                //var value = fuzzer.GenerateAddress(Country.Usa);
 
-                TestContext.WriteLine(generated);
+                var value = fuzzer.GeneratePerson();
+
+                TestContext.WriteLine($"{value}{Environment.NewLine}");
             }
         }
     }

@@ -81,7 +81,19 @@ namespace Diverse
         /// <returns>The current string./</returns>
         public override string ToString()
         {
-            var marriageStatus = IsMarried ? "married - " :string.Empty;
+            var shortVersion = ToStringShortVersion();
+            var longVersion = $"{shortVersion}{Environment.NewLine}{Address}";
+
+            return longVersion;
+        }
+
+        /// <summary>
+        /// Returns a short string version of this instance.
+        /// </summary>
+        /// <returns>The short string version of this instance./</returns>
+        public string ToStringShortVersion()
+        {
+            var marriageStatus = IsMarried ? "married - " : string.Empty;
             var status = $"({marriageStatus}age: {Age} years)";
 
             return $"{Title}. {FirstName} {LastName.ToUpper()} ({Gender}) {EMail} {status}";
