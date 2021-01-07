@@ -26,7 +26,7 @@ namespace Diverse.Tests
 
             Check.ThatCode(() => fuzzer.GenerateInteger(1, 5)).Throws<DuplicationException>();
 
-            var brandAAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer.GetFuzzerProvidingNoDuplication(), Brand.BrandA)
+            var brandAAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer.GenerateFuzzerAlwaysReturningDifferentValues(), Brand.BrandA)
                 .WithHotelIn("Paris")
                 .WithHotelIn("Aubervilliers")
                 .WithHotelIn("Versailles")
@@ -45,7 +45,7 @@ namespace Diverse.Tests
 
             // THE NEXT LINE WILL THROW ;-(
 
-            var brandBAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer.GetFuzzerProvidingNoDuplication(), Brand.BrandB)
+            var brandBAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer.GenerateFuzzerAlwaysReturningDifferentValues(), Brand.BrandB)
                 .WithHotelIn("Amsterdam")
                 .WithHotelIn("Barcelona")
                 .WithHotelIn("Los Angeles")
