@@ -79,7 +79,7 @@ But it will soon probably do the second part too.
 ```csharp
 
 // First, you can instantiate Fuzzers that will never return the same entries twice (if you want)
-var fuzzer = new Fuzzer(avoidDuplication: true);
+var fuzzer = new Fuzzer(noDuplication: true);
 
 // avoid using always the same hard-coded values in your tests code => use Fuzzers instead
 var age = fuzzer.GenerateInteger(minValue: 17, maxValue: 54);

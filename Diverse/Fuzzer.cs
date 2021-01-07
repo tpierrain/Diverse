@@ -32,8 +32,8 @@ namespace Diverse
         private readonly IFuzzFromCollections _collectionFuzzer;
         
 
-        // For AvoidDuplication mode
-        private const int MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue = 100;
+        // For NoDuplication mode
+        private const int MaxFailingAttemptsForNoDuplicationDefaultValue = 100;
         private const int MaxRangeSizeAllowedForMemoizationDefaultValue = 1000000;
         private readonly Memoizer _memoizer = new Memoizer();
         private IFuzz _sideEffectFreeFuzzer;
@@ -41,17 +41,17 @@ namespace Diverse
 
         /// <summary>
         /// internal Fuzzer instance to be used by the various lambdas
-        /// related to the AvoidDuplication mode (i.e. when the option is
+        /// related to the NoDuplication mode (i.e. when the option is
         /// set to <b>true</b>).
         ///
-        /// Ironically, the AvoidDuplication mode of this Fuzzer needs
+        /// Ironically, the NoDuplication mode of this Fuzzer needs
         /// to use another fuzzer instance for the Lastchance mode (i.e. when the
-        /// MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue has been
+        /// MaxFailingAttemptsForNoDuplicationDefaultValue has been
         /// reached).
         ///
         /// E.g.: if you call the <see cref="GenerateAge"/> method on a Fuzzer with
-        /// AvoidDuplication set to <b>true</b> in a situation where the
-        /// <see cref="MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue"/>
+        /// NoDuplication set to <b>true</b> in a situation where the
+        /// <see cref="MaxFailingAttemptsForNoDuplicationDefaultValue"/>
         /// was not enough to find another original value, the lastChance lambda
         /// of the <see cref="GenerateWithoutDuplication{T}"/> method will be called.
         ///
@@ -61,19 +61,19 @@ namespace Diverse
         /// a <see cref="SideEffectFreeSafeFuzzer"/> instance in that specific case
         /// (in all lastChance lambdas actually).
         /// </summary>
-        private IFuzz SideEffectFreeSafeFuzzer => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, avoidDuplication: false));
+        private IFuzz SideEffectFreeSafeFuzzer => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, noDuplication: false));
 
         /// <summary>
         /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
-        /// a not already provided value when <see cref="AvoidDuplication"/> mode
+        /// a not already provided value when <see cref="NoDuplication"/> mode
         /// is enabled (via constructor).
         /// </summary>
-        public int MaxFailingAttemptsToFindNotAlreadyProvidedValue { get; set; } =
-            MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue;
+        public int MaxFailingAttemptsForNoDuplication { get; set; } =
+            MaxFailingAttemptsForNoDuplicationDefaultValue;
 
         /// <summary>
         /// Gets or sets the maximum number of entries to be memoized if
-        /// <see cref="AvoidDuplication"/> mode is enabled (via constructor).
+        /// <see cref="NoDuplication"/> mode is enabled (via constructor).
         /// </summary>
         public ulong MaxRangeSizeAllowedForMemoization { get; set; } = MaxRangeSizeAllowedForMemoizationDefaultValue;
 
@@ -90,7 +90,7 @@ namespace Diverse
         /// <summary>
         /// Gets of sets a value indicating whether the <see cref="Fuzzer"/> should avoid providing twice the same value or not.
         /// </summary>
-        public bool AvoidDuplication { get; set; }
+        public bool NoDuplication { get; set; }
 
         /// <summary>
         /// Gets the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
@@ -113,8 +113,8 @@ namespace Diverse
         /// </summary>
         /// <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
         /// <param name="name">The name you want to specify for this <see cref="Fuzzer"/> instance (useful for debuging purpose).</param>
-        /// <param name="avoidDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
-        public Fuzzer(int? seed = null, string name = null, bool? avoidDuplication = false)
+        /// <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
+        public Fuzzer(int? seed = null, string name = null, bool? noDuplication = false)
         {
             var seedWasProvided = seed.HasValue;
 
@@ -127,8 +127,8 @@ namespace Diverse
             name = name ?? GenerateFuzzerName();
             Name = name;
 
-            avoidDuplication = avoidDuplication ?? false;
-            AvoidDuplication = avoidDuplication.Value;
+            noDuplication = noDuplication ?? false;
+            NoDuplication = noDuplication.Value;
 
             LogSeedAndTestInformations(seed.Value, seedWasProvided, name);
 
@@ -154,7 +154,7 @@ namespace Diverse
         /// <returns>A <see cref="IFuzz"/> instance that will never return twice the same value (whatever the method called).</returns>
         public IFuzz GenerateFuzzerProvidingNoDuplication()
         {
-            return new Fuzzer(Seed, avoidDuplication: true);
+            return new Fuzzer(Seed, noDuplication: true);
         }
 
         private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
@@ -265,7 +265,7 @@ namespace YouNameSpaceHere.Tests
         }
 
         /// <summary>
-        /// Methods to be used when <see cref="AvoidDuplication"/> is set to <b>true</b>
+        /// Methods to be used when <see cref="NoDuplication"/> is set to <b>true</b>
         /// for any fuzzing method of this <see cref="Fuzzer"/> instance.
         /// It encapsulates the logic of various attempts and retries before
         /// falling back to a very specific <paramref name="lastChanceGenerationFunction"/>
@@ -287,7 +287,7 @@ namespace YouNameSpaceHere.Tests
         /// <param name="standardGenerationFunction">
         ///     The function to use in order to generate the thing(s) we want.
         ///     It should be the same function that the one we call for the cases
-        ///     where <see cref="AvoidDuplication"/> is set to <b>false</b>.
+        ///     where <see cref="NoDuplication"/> is set to <b>false</b>.
         /// </param>
         /// <param name="lastChanceGenerationFunction">
         ///     The function to use in order to generate the thing(s) we want when
@@ -382,10 +382,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>An integer value generated randomly.</returns>
         public int GenerateInteger(int? minValue = null, int? maxValue = null)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateInteger(minValue, maxValue),
                     lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindNotAlreadyProvidedInteger(alreadyProvidedValues, minValue.Value, maxValue.Value, _collectionFuzzer));
             }
@@ -420,10 +420,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A positive integer value generated randomly.</returns>
         public int GeneratePositiveInteger(int? maxValue = null)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(maxValue),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GeneratePositiveInteger(maxValue));
             }
 
@@ -463,7 +463,7 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A long value generated randomly.</returns>
         public long GenerateLong(long? minValue = null, long? maxValue = null)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 // We will only memoize if the range is not too wide
                 var uRange = NumberExtensions.ComputeRange(minValue, maxValue);
@@ -472,7 +472,7 @@ namespace YouNameSpaceHere.Tests
                 {
                     return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
                         maxFailingAttemptsBeforeLastChanceFunctionIsCalled:
-                        MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                        MaxFailingAttemptsForNoDuplication,
                         standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLong(minValue, maxValue),
                         lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
                 }
@@ -537,10 +537,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A 'Diverse' first name.</returns>
         public string GenerateFirstName(Gender? gender = null)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(gender),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    MaxFailingAttemptsForNoDuplication, 
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateFirstName(gender));
             }
 
@@ -554,10 +554,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A 'Diverse' last name.</returns>
         public string GenerateLastName(string firstName)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    MaxFailingAttemptsForNoDuplication, 
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLastName(firstName),
                     lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindLastName(firstName, alreadyProvidedSortedSet, this));
             }
@@ -587,10 +587,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>The number of year to be associated with a person.</returns>
         public int GenerateAge()
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (fuzzerWithDuplicationAllowed) => fuzzerWithDuplicationAllowed.GenerateAge(),
                     lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindAge(alreadyProvidedValues, 18, 97, _collectionFuzzer));
             }
@@ -631,10 +631,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>A random Email.</returns>
         public string GenerateEMail(string firstName = null, string lastName = null)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName, lastName),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateEMail(firstName, lastName));
             }
 
@@ -647,11 +647,11 @@ namespace YouNameSpaceHere.Tests
         /// <returns>The generated password</returns>
         public string GeneratePassword(int? minSize = null, int? maxSize = null, bool? includeSpecialCharacters = null)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(),
                     HashArguments(minSize, maxSize, includeSpecialCharacters),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GeneratePassword(minSize, maxSize, includeSpecialCharacters));
             }
 
@@ -669,10 +669,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>One of the elements from the candidates collection.</returns>
         public T PickOneFrom<T>(IList<T> candidates)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(candidates),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    MaxFailingAttemptsForNoDuplication, 
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.PickOneFrom(candidates));
             }
 
@@ -725,10 +725,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>An adjective based on a particular feeling or random one if not provided</returns>
         public string GenerateAdjective(Feeling? feeling = null)
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(feeling),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    MaxFailingAttemptsForNoDuplication, 
                     standardGenerationFunction: safeFuzzer => safeFuzzer.GenerateAdjective(feeling),
                     lastChanceGenerationFunction: alreadyProvidedSortedSet => LastChanceToFindAdjective(feeling, alreadyProvidedSortedSet, this));
             }
@@ -795,10 +795,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>An random value of the specified <see cref="Enum"/> type.</returns>
         public T GenerateEnum<T>()
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue, 
+                    MaxFailingAttemptsForNoDuplication, 
                     (safeFuzzer) => safeFuzzer.GenerateEnum<T>());
             }
 
@@ -812,7 +812,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generates random latin words.
         /// </summary>
-        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
+        /// <remarks>This method won't be affected by the <see cref="NoDuplication"/> mode.</remarks>
         /// <param name="number">(optional) Number of words to generate.</param>
         /// <returns>The generated latin words.</returns>
         public IEnumerable<string> GenerateWords(int? number = null)
@@ -823,7 +823,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generate a sentence in latin.
         /// </summary>
-        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
+        /// <remarks>This method won't be affected by the <see cref="NoDuplication"/> mode.</remarks>
         /// <param name="nbOfWords">(optional) Number of words for this sentence.</param>
         /// <returns>The generated sentence in latin.</returns>
         public string GenerateSentence(int? nbOfWords = null)
@@ -834,7 +834,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generates a paragraph in latin.
         /// </summary>
-        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
+        /// <remarks>This method won't be affected by the <see cref="NoDuplication"/> mode.</remarks>
         /// <param name="nbOfSentences">(optional) Number of sentences for this paragraph.</param>
         /// <returns>The generated paragraph in latin.</returns>
         public string GenerateParagraph(int? nbOfSentences = null)
@@ -845,7 +845,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generates a collection of paragraphs. 
         /// </summary>
-        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
+        /// <remarks>This method won't be affected by the <see cref="NoDuplication"/> mode.</remarks>
         /// <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
         /// <returns>The collection of paragraphs.</returns>
         public IEnumerable<string> GenerateParagraphs(int? nbOfParagraphs = null)
@@ -856,7 +856,7 @@ namespace YouNameSpaceHere.Tests
         /// <summary>
         /// Generates a text in latin with a specified number of paragraphs.
         /// </summary>
-        /// <remarks>This method won't be affected by the <see cref="AvoidDuplication"/> mode.</remarks>
+        /// <remarks>This method won't be affected by the <see cref="NoDuplication"/> mode.</remarks>
         /// <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
         /// <returns>The generated text in latin.</returns>
         public string GenerateText(int? nbOfParagraphs = null)
@@ -870,10 +870,10 @@ namespace YouNameSpaceHere.Tests
         /// <returns>The generated letter.</returns>
         public char GenerateLetter()
         {
-            if (AvoidDuplication)
+            if (NoDuplication)
             {
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
-                    MaxFailingAttemptsToFindNotAlreadyProvidedValue,
+                    MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLetter(),
                     lastChanceGenerationFunction: alreadyProvidedSortedSet => LastChanceToFindLetter(alreadyProvidedSortedSet, this));
             }

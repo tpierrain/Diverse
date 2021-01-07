@@ -23,7 +23,7 @@ namespace Diverse.Tests
         [Repeat(200)]
         public void Be_able_to_provide_always_different_values_of_MagnificentSeven_Enum()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = Enum.GetValues(typeof(MagnificentSeven)).Length;
             CheckThatNoDuplicationIsMadeWhileGenerating<MagnificentSeven>(fuzzer, maxNumberOfElements, () =>
@@ -36,7 +36,7 @@ namespace Diverse.Tests
         [Repeat(200)]
         public void Be_able_to_provide_always_different_values_of_The_good_the_bad_and_the_ugly_Enum()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = Enum.GetValues(typeof(TheGoodTheBadAndTheUgly)).Length;
             CheckThatNoDuplicationIsMadeWhileGenerating<TheGoodTheBadAndTheUgly>(fuzzer, maxNumberOfElements, () =>
@@ -53,7 +53,7 @@ namespace Diverse.Tests
         //[Repeat(200)]
         public void Be_able_to_provide_always_different_values_of_Guids()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = 100000;
             CheckThatNoDuplicationIsMadeWhileGenerating<Guid>(fuzzer, maxNumberOfElements, () =>
@@ -70,7 +70,7 @@ namespace Diverse.Tests
         [Repeat(200)]
         public void Be_able_to_provide_always_different_values_of_integers_within_a_range()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = 10;
             CheckThatNoDuplicationIsMadeWhileGenerating<int>(fuzzer, maxNumberOfElements, () =>
@@ -82,7 +82,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_provide_always_different_values_of_integers()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = 1000;
             CheckThatNoDuplicationIsMadeWhileGenerating<int>(fuzzer, maxNumberOfElements, () =>
@@ -95,7 +95,7 @@ namespace Diverse.Tests
         [Repeat(200)]
         public void Be_able_to_provide_always_different_values_of_positive_integers()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = 10;
             CheckThatNoDuplicationIsMadeWhileGenerating<int>(fuzzer, maxNumberOfElements, () =>
@@ -108,7 +108,7 @@ namespace Diverse.Tests
         [Repeat(100)]
         public void Be_able_to_provide_always_different_values_of_long_within_a_small_range()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var minValue = 0;
             var maxValue = 3;
@@ -128,7 +128,7 @@ namespace Diverse.Tests
         [TestCase(-10000, 10000)]
         public void Be_able_to_provide_always_different_values_of_long_within_a_wide_range(int minValue, int maxValue)
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = (int)(maxValue - minValue + 1); // +1 since it is upper bound inclusive
             CheckThatNoDuplicationIsMadeWhileGenerating<long>(fuzzer, maxNumberOfElements, () =>
@@ -140,7 +140,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_provide_always_different_values_of_long_within_a_huge_range()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var minValue = long.MinValue;
             var maxValue = long.MaxValue;
@@ -160,7 +160,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_pick_always_different_values_from_a_list_of_string()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var candidates = new List<string>() { "un", "dos", "tres", "quatro", "cinquo", "seis" };
 
@@ -173,7 +173,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_pick_always_different_values_from_a_list_of_int()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var candidates = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
@@ -186,7 +186,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_pick_always_different_values_from_a_list_of_enum()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var candidates = new List<TheGoodTheBadAndTheUgly>() { TheGoodTheBadAndTheUgly.TheGood, TheGoodTheBadAndTheUgly.TheBad, TheGoodTheBadAndTheUgly.TheUgly };
 
@@ -203,7 +203,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_provide_always_different_values_of_FirstName()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, 80, () =>
             {
                 return fuzzer.GenerateFirstName();
@@ -213,7 +213,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_provide_always_different_values_of_LastName()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var firstName = fuzzer.GenerateFirstName();
             var continent = Locations.FindContinent(firstName);
@@ -230,7 +230,7 @@ namespace Diverse.Tests
         [Repeat(100)]
         public void Be_able_to_provide_always_different_values_of_Emails()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var firstName = fuzzer.GenerateFirstName();
             var lastName = fuzzer.GenerateLastName(firstName);
@@ -245,7 +245,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_provide_always_different_values_of_Passwords()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = 100000;
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
@@ -257,7 +257,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_provide_always_different_values_of_Age()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = 97 - 18;
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
@@ -275,7 +275,7 @@ namespace Diverse.Tests
         [TestCase(Feeling.Positive)]
         public void Be_able_to_provide_always_different_values_of_Adjective(Feeling feeling)
         {
-            var fuzzer = new Fuzzer(2023547856, avoidDuplication: true);
+            var fuzzer = new Fuzzer(2023547856, noDuplication: true);
 
             var maxNumberOfAdjectives = Adjectives.PerFeeling[feeling].Distinct().Count();
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfAdjectives, () =>
@@ -294,7 +294,7 @@ namespace Diverse.Tests
         [Repeat(5000)]
         public void Be_able_to_provide_always_different_Letters()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = LoremFuzzer.Alphabet.Length;
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
@@ -310,7 +310,7 @@ namespace Diverse.Tests
         [Test]
         public void Be_able_to_provide_always_different_values_of_DateTime()
         {
-            var fuzzer = new Fuzzer(avoidDuplication: true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var maxNumberOfElements = 10000;
             CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, maxNumberOfElements, () =>
@@ -324,10 +324,10 @@ namespace Diverse.Tests
         [Test]
         public void Throw_DuplicationException_with_fix_explanation_when_number_of_attempts_is_too_low()
         {
-            var fuzzer = new Fuzzer(707888174, avoidDuplication: true);
+            var fuzzer = new Fuzzer(707888174, noDuplication: true);
 
             // Make it fail on purpose
-            fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue = 1;
+            fuzzer.MaxFailingAttemptsForNoDuplication = 1;
 
             Check.ThatCode(() =>
                 {
@@ -339,8 +339,10 @@ namespace Diverse.Tests
                     }
                 }).Throws<DuplicationException>()
                 .AndWhichMessage()
-                .StartsWith($"Couldn't find a non-already provided value of System.Int32 after {fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue} attempts. Already provided values:").
-                And.EndsWith($". In your case, try to increase the value of the {nameof(Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue)} property for your Fuzzer.");
+                .StartsWith($"Couldn't find a non-already provided value of System.Int32 after {fuzzer.MaxFailingAttemptsForNoDuplication} attempts. Already provided values:").
+                And.EndsWith($@". You can either:
+- Generate a new specific fuzzer to ensure no duplication is provided for a sub-group of fuzzed values (anytime you want through the {nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}() method of your current Fuzzer instance. E.g.: var tempFuzzer = fuzzer.{nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}();)
+- Increase the value of the {nameof(Fuzzer.MaxFailingAttemptsForNoDuplication)} property for your {nameof(IFuzz)} instance.");
         }
 
         private static void CheckThatNoDuplicationIsMadeWhileGenerating<T>(Fuzzer fuzzer, long maxNumberOfElements, Func<T> fuzzingFunction)

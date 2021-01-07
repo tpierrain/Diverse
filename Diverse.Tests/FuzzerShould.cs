@@ -6,15 +6,15 @@ using NUnit.Framework;
 namespace Diverse.Tests
 {
     /// <summary>
-    /// A naive test to illustrate a design issue I just found yesterday
+    /// Tests related to the core features of the Fuzzer.
     /// </summary>
     [TestFixture]
-    public class DesignShould
+    public class FuzzerShould
     {
         [Test]
-        public void Allow_us_To_avoid_duplication_for_a_group_of_fuzzed_elements_only_otherwise_it_will_throw_for_nothing()
+        public void Indicate_what_to_do_in_the_DuplicationException_message_when_using_NoDuplication_mode()
         {
-            var fuzzer = new Fuzzer(avoidDuplication:true);
+            var fuzzer = new Fuzzer(noDuplication: true);
 
             var set = new HashSet<int>();
             for (var i = 0; i < 5; i++)
@@ -24,9 +24,28 @@ namespace Diverse.Tests
 
             Check.That(set).Contains(1, 2, 3, 4, 5);
 
-            Check.ThatCode(() => fuzzer.GenerateInteger(1, 5)).Throws<DuplicationException>();
+            // So far we have called 5 times fuzzer.GenerateInteger(1, 5)
+            // But since the fuzzer could find 5 different values, we are OK
 
-            var brandAAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer.GenerateFuzzerProvidingNoDuplication(), Brand.BrandA)
+            Check.ThatCode(() =>
+                {
+                    // But this will be the call one should not make ;-)
+                    return fuzzer.GenerateInteger(1, 5);
+                })
+                .Throws<DuplicationException>()
+                .WithMessage(@$"Couldn't find a non-already provided value of System.Int32 after 100 attempts. Already provided values: 1, 2, 3, 4, 5. You can either:
+- Generate a new specific fuzzer to ensure no duplication is provided for a sub-group of fuzzed values (anytime you want through the {nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}() method of your current Fuzzer instance. E.g.: var tempFuzzer = fuzzer.{nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}();)
+- Increase the value of the {nameof(Fuzzer.MaxFailingAttemptsForNoDuplication)} property for your {nameof(IFuzz)} instance.");
+
+        }
+
+        [Test]
+        public void Allow_us_to_avoid_duplication_but_only_for_various_sub_groups_of_fuzzed_elements_via_the_GenerateFuzzerProvidingNoDuplication_method()
+        {
+            var fuzzer = new Fuzzer();
+            
+            var specificFuzzerWithNoDuplication = fuzzer.GenerateFuzzerProvidingNoDuplication();
+            var brandAAllKindOfStarsHotelGroup = new HotelGroupBuilder(specificFuzzerWithNoDuplication, Brand.BrandA)
                 .WithHotelIn("Paris")
                 .WithHotelIn("Aubervilliers")
                 .WithHotelIn("Versailles")
@@ -36,26 +55,17 @@ namespace Diverse.Tests
 
             Check.That(brandAAllKindOfStarsHotelGroup.Hotels.Select(h => h.Stars)).Contains(1, 2, 3, 4, 5);
 
-            // So far we have called 5 times fuzzer.GenerateInteger(1, 5)
-            // But since the fuzzer could find 5 different values, we are OK
-
-            // But any other call to fuzzer.GenerateInteger(1, 5) will throw a duplication exception (can't find any non already provided value)
-
-            // This is what will happen in the builder calls below.
-
-            // THE NEXT LINE WILL THROW ;-(
-
-            var brandBAllKindOfStarsHotelGroup = new HotelGroupBuilder(fuzzer.GenerateFuzzerProvidingNoDuplication(), Brand.BrandB)
+            // Another one.
+            var anotherSpecificFuzzerWithNoDuplication = specificFuzzerWithNoDuplication.GenerateFuzzerProvidingNoDuplication();
+            var brandBAllKindOfStarsHotelGroup = new HotelGroupBuilder(anotherSpecificFuzzerWithNoDuplication, Brand.BrandB)
                 .WithHotelIn("Amsterdam")
                 .WithHotelIn("Barcelona")
                 .WithHotelIn("Los Angeles")
                 .WithHotelIn("Athens")
                 .WithHotelIn("Roma")
-                .Build(); // (will also call 5 times fuzzer.GenerateInteger(1, 5))
+                .Build(); // (will also call 5 times fuzzer.GenerateInteger(1, 5). One should not throw DuplicationException)
 
             Check.That(brandBAllKindOfStarsHotelGroup.Hotels.Select(h => h.Stars)).Contains(1, 2, 3, 4, 5);
-
-            
         }
     }
 

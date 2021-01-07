@@ -21,7 +21,7 @@ namespace Diverse
         /// <summary>
         /// Gets of sets a value indicating whether the <see cref="Fuzzer"/> should avoid providing twice the same value or not.
         /// </summary>
-        bool AvoidDuplication { get; set; }
+        bool NoDuplication { get; set; }
 
         /// <summary>
         /// Returns a <see cref="IFuzz"/> instance that you can use to generate always different values from now
@@ -30,5 +30,12 @@ namespace Diverse
         /// </summary>
         /// <returns>A <see cref="IFuzz"/> instance that will never return twice the same value (whatever the method called).</returns>
         IFuzz GenerateFuzzerProvidingNoDuplication();
+
+        /// <summary>
+        /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
+        /// a not already provided value when <see cref="NoDuplication"/> mode
+        /// is enabled (via constructor).
+        /// </summary>
+        int MaxFailingAttemptsForNoDuplication { get; set; }
     }
 }

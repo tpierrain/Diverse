@@ -524,7 +524,7 @@
         </member>
         <member name="T:Diverse.DuplicationException">
             <summary>
-            Represents errors that occur when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> is set to <b>true</b>
+            Represents errors that occur when <see cref="P:Diverse.Fuzzer.NoDuplication"/> is set to <b>true</b>
             and we couldn't find a non-already provided value after the max number
             of attempts configured within Diverse. 
             </summary>
@@ -546,16 +546,16 @@
         <member name="P:Diverse.Fuzzer.SideEffectFreeSafeFuzzer">
              <summary>
              internal Fuzzer instance to be used by the various lambdas
-             related to the AvoidDuplication mode (i.e. when the option is
+             related to the NoDuplication mode (i.e. when the option is
              set to <b>true</b>).
             
-             Ironically, the AvoidDuplication mode of this Fuzzer needs
+             Ironically, the NoDuplication mode of this Fuzzer needs
              to use another fuzzer instance for the Lastchance mode (i.e. when the
              MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue has been
              reached).
             
              E.g.: if you call the <see cref="M:Diverse.Fuzzer.GenerateAge"/> method on a Fuzzer with
-             AvoidDuplication set to <b>true</b> in a situation where the
+             NoDuplication set to <b>true</b> in a situation where the
              <see cref="F:Diverse.Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValueDefaultValue"/>
              was not enough to find another original value, the lastChance lambda
              of the <see cref="M:Diverse.Fuzzer.GenerateWithoutDuplication``1(System.Reflection.MethodBase,System.Int32,System.Int32,System.Func{Diverse.IFuzz,``0},System.Func{System.Collections.Generic.SortedSet{System.Object},Diverse.Maybe{``0}})"/> method will be called.
@@ -567,17 +567,17 @@
              (in all lastChance lambdas actually).
              </summary>
         </member>
-        <member name="P:Diverse.Fuzzer.MaxFailingAttemptsToFindNotAlreadyProvidedValue">
+        <member name="P:Diverse.Fuzzer.MaxFailingAttemptsForNoDuplication">
             <summary>
             Gets or sets the max number of attempts the Fuzzer should make in order to generate
-            a not already provided value when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode
+            a not already provided value when <see cref="P:Diverse.Fuzzer.NoDuplication"/> mode
             is enabled (via constructor).
             </summary>
         </member>
         <member name="P:Diverse.Fuzzer.MaxRangeSizeAllowedForMemoization">
             <summary>
             Gets or sets the maximum number of entries to be memoized if
-            <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode is enabled (via constructor).
+            <see cref="P:Diverse.Fuzzer.NoDuplication"/> mode is enabled (via constructor).
             </summary>
         </member>
         <member name="P:Diverse.Fuzzer.Seed">
@@ -590,7 +590,7 @@
             Gets the name of this <see cref="T:Diverse.Fuzzer"/> instance.
             </summary>
         </member>
-        <member name="P:Diverse.Fuzzer.AvoidDuplication">
+        <member name="P:Diverse.Fuzzer.NoDuplication">
             <summary>
             Gets of sets a value indicating whether the <see cref="T:Diverse.Fuzzer"/> should avoid providing twice the same value or not.
             </summary>
@@ -617,7 +617,7 @@
             </summary>
             <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
             <param name="name">The name you want to specify for this <see cref="T:Diverse.Fuzzer"/> instance (useful for debuging purpose).</param>
-            <param name="avoidDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
+            <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
         </member>
         <member name="M:Diverse.Fuzzer.HeadsOrTails">
             <summary>
@@ -627,7 +627,7 @@
         </member>
         <member name="M:Diverse.Fuzzer.GenerateWithoutDuplication``1(System.Reflection.MethodBase,System.Int32,System.Int32,System.Func{Diverse.IFuzz,``0},System.Func{System.Collections.Generic.SortedSet{System.Object},Diverse.Maybe{``0}})">
             <summary>
-            Methods to be used when <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> is set to <b>true</b>
+            Methods to be used when <see cref="P:Diverse.Fuzzer.NoDuplication"/> is set to <b>true</b>
             for any fuzzing method of this <see cref="T:Diverse.Fuzzer"/> instance.
             It encapsulates the logic of various attempts and retries before
             falling back to a very specific <paramref name="lastChanceGenerationFunction"/>
@@ -649,7 +649,7 @@
             <param name="standardGenerationFunction">
                 The function to use in order to generate the thing(s) we want.
                 It should be the same function that the one we call for the cases
-                where <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> is set to <b>false</b>.
+                where <see cref="P:Diverse.Fuzzer.NoDuplication"/> is set to <b>false</b>.
             </param>
             <param name="lastChanceGenerationFunction">
                 The function to use in order to generate the thing(s) we want when
@@ -819,7 +819,7 @@
             <summary>
             Generates random latin words.
             </summary>
-            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.NoDuplication"/> mode.</remarks>
             <param name="number">(optional) Number of words to generate.</param>
             <returns>The generated latin words.</returns>
         </member>
@@ -827,7 +827,7 @@
             <summary>
             Generate a sentence in latin.
             </summary>
-            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.NoDuplication"/> mode.</remarks>
             <param name="nbOfWords">(optional) Number of words for this sentence.</param>
             <returns>The generated sentence in latin.</returns>
         </member>
@@ -835,7 +835,7 @@
             <summary>
             Generates a paragraph in latin.
             </summary>
-            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.NoDuplication"/> mode.</remarks>
             <param name="nbOfSentences">(optional) Number of sentences for this paragraph.</param>
             <returns>The generated paragraph in latin.</returns>
         </member>
@@ -843,7 +843,7 @@
             <summary>
             Generates a collection of paragraphs. 
             </summary>
-            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.NoDuplication"/> mode.</remarks>
             <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
             <returns>The collection of paragraphs.</returns>
         </member>
@@ -851,7 +851,7 @@
             <summary>
             Generates a text in latin with a specified number of paragraphs.
             </summary>
-            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.AvoidDuplication"/> mode.</remarks>
+            <remarks>This method won't be affected by the <see cref="P:Diverse.Fuzzer.NoDuplication"/> mode.</remarks>
             <param name="nbOfParagraphs">(optional) Number of paragraphs to generate.</param>
             <returns>The generated text in latin.</returns>
         </member>
@@ -937,7 +937,7 @@
         <member name="T:Diverse.MemoizerKey">
             <summary>
             Key used by the internal Memoizer
-            (enabled if AvoidDuplication is set to <b>true</b>).
+            (enabled if NoDuplication is set to <b>true</b>).
             </summary>
         </member>
         <member name="T:Diverse.NumberExtensions">
@@ -1004,7 +1004,7 @@
             </summary>
             <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
-        <member name="P:Diverse.IFuzz.AvoidDuplication">
+        <member name="P:Diverse.IFuzz.NoDuplication">
             <summary>
             Gets of sets a value indicating whether the <see cref="T:Diverse.Fuzzer"/> should avoid providing twice the same value or not.
             </summary>

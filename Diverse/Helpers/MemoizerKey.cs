@@ -4,7 +4,7 @@ namespace Diverse
 {
     /// <summary>
     /// Key used by the internal Memoizer
-    /// (enabled if AvoidDuplication is set to <b>true</b>).
+    /// (enabled if NoDuplication is set to <b>true</b>).
     /// </summary>
     internal readonly struct MemoizerKey
     {
