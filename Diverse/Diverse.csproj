@@ -6,24 +6,17 @@
     <Authors>Thomas PIERRAIN (use case driven)</Authors>
     <Company>42 skillz</Company>
     <Description>Diverse, the Fuzzer pico library you need to make your .NET tests more *Diverse*</Description>
-    <Copyright>Copyright © Thomas PIERRAIN 2020</Copyright>
+    <Copyright>Copyright © Thomas PIERRAIN 2021</Copyright>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/42skillz/Diverse</PackageProjectUrl>
     <PackageIcon>wave-icon.jpg</PackageIcon>
     <RepositoryUrl>https://github.com/42skillz/Diverse</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
-    <PackageReleaseNotes>
-      - Add the ability to create a NoDuplication fuzzer at any point via otherFuzzer = fuzzer.GenerateNoDuplicationFuzzer();
-
-      - Add support of Address (in France, China, USA) for Persons
-
-      - Add more names for the Person generation
-
-    </PackageReleaseNotes>
-    <AssemblyVersion>0.8.0.0</AssemblyVersion>
-    <FileVersion>0.8.0.0</FileVersion>
-    <Version>0.8.0.0</Version>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <AssemblyVersion>0.9.0.0</AssemblyVersion>
+    <FileVersion>0.9.0.0</FileVersion>
+    <Version>0.9.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
