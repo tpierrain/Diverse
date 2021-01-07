@@ -14,12 +14,13 @@
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
     <PackageReleaseNotes>
-      - Add more names for the Person generation
+      - Add the ability to create a NoDuplication fuzzer at any point via otherFuzzer = fuzzer.GenerateNoDuplicationFuzzer();
 
       - Add support of Address (in France, China, USA) for Persons
 
+      - Add more names for the Person generation
 
-</PackageReleaseNotes>
+    </PackageReleaseNotes>
     <AssemblyVersion>0.8.0.0</AssemblyVersion>
     <FileVersion>0.8.0.0</FileVersion>
     <Version>0.8.0.0</Version>
