@@ -152,7 +152,7 @@ namespace Diverse
         /// In other word, a <see cref="IFuzz"/> instance that will never return twice the same value (whatever the method called).
         /// </summary>
         /// <returns>A <see cref="IFuzz"/> instance that will never return twice the same value (whatever the method called).</returns>
-        public IFuzz GenerateFuzzerProvidingNoDuplication()
+        public IFuzz GenerateNoDuplicationFuzzer()
         {
             return new Fuzzer(Seed, noDuplication: true);
         }

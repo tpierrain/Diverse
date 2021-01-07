@@ -341,7 +341,7 @@ namespace Diverse.Tests
                 .AndWhichMessage()
                 .StartsWith($"Couldn't find a non-already provided value of System.Int32 after {fuzzer.MaxFailingAttemptsForNoDuplication} attempts. Already provided values:").
                 And.EndsWith($@". You can either:
-- Generate a new specific fuzzer to ensure no duplication is provided for a sub-group of fuzzed values (anytime you want through the {nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}() method of your current Fuzzer instance. E.g.: var tempFuzzer = fuzzer.{nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}();)
+- Generate a new specific fuzzer to ensure no duplication is provided for a sub-group of fuzzed values (anytime you want through the {nameof(IFuzz.GenerateNoDuplicationFuzzer)}() method of your current Fuzzer instance. E.g.: var tempFuzzer = fuzzer.{nameof(IFuzz.GenerateNoDuplicationFuzzer)}();)
 - Increase the value of the {nameof(Fuzzer.MaxFailingAttemptsForNoDuplication)} property for your {nameof(IFuzz)} instance.");
         }
 

@@ -34,7 +34,7 @@ namespace Diverse.Tests
                 })
                 .Throws<DuplicationException>()
                 .WithMessage(@$"Couldn't find a non-already provided value of System.Int32 after 100 attempts. Already provided values: 1, 2, 3, 4, 5. You can either:
-- Generate a new specific fuzzer to ensure no duplication is provided for a sub-group of fuzzed values (anytime you want through the {nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}() method of your current Fuzzer instance. E.g.: var tempFuzzer = fuzzer.{nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}();)
+- Generate a new specific fuzzer to ensure no duplication is provided for a sub-group of fuzzed values (anytime you want through the {nameof(IFuzz.GenerateNoDuplicationFuzzer)}() method of your current Fuzzer instance. E.g.: var tempFuzzer = fuzzer.{nameof(IFuzz.GenerateNoDuplicationFuzzer)}();)
 - Increase the value of the {nameof(Fuzzer.MaxFailingAttemptsForNoDuplication)} property for your {nameof(IFuzz)} instance.");
 
         }
@@ -43,8 +43,8 @@ namespace Diverse.Tests
         public void Allow_us_to_avoid_duplication_but_only_for_various_sub_groups_of_fuzzed_elements_via_the_GenerateFuzzerProvidingNoDuplication_method()
         {
             var fuzzer = new Fuzzer();
-            
-            var specificFuzzerWithNoDuplication = fuzzer.GenerateFuzzerProvidingNoDuplication();
+
+            var specificFuzzerWithNoDuplication = fuzzer.GenerateNoDuplicationFuzzer();
             var brandAAllKindOfStarsHotelGroup = new HotelGroupBuilder(specificFuzzerWithNoDuplication, Brand.BrandA)
                 .WithHotelIn("Paris")
                 .WithHotelIn("Aubervilliers")
@@ -54,9 +54,11 @@ namespace Diverse.Tests
                 .Build();  // (the Build() method will call 5 times fuzzer.GenerateInteger(1, 5))
 
             Check.That(brandAAllKindOfStarsHotelGroup.Hotels.Select(h => h.Stars)).Contains(1, 2, 3, 4, 5);
+            Check.ThatCode(() => specificFuzzerWithNoDuplication.GenerateInteger(1, 5)).Throws<DuplicationException>();
+
 
             // Another one.
-            var anotherSpecificFuzzerWithNoDuplication = specificFuzzerWithNoDuplication.GenerateFuzzerProvidingNoDuplication();
+            var anotherSpecificFuzzerWithNoDuplication = specificFuzzerWithNoDuplication.GenerateNoDuplicationFuzzer();
             var brandBAllKindOfStarsHotelGroup = new HotelGroupBuilder(anotherSpecificFuzzerWithNoDuplication, Brand.BrandB)
                 .WithHotelIn("Amsterdam")
                 .WithHotelIn("Barcelona")
@@ -66,8 +68,13 @@ namespace Diverse.Tests
                 .Build(); // (will also call 5 times fuzzer.GenerateInteger(1, 5). One should not throw DuplicationException)
 
             Check.That(brandBAllKindOfStarsHotelGroup.Hotels.Select(h => h.Stars)).Contains(1, 2, 3, 4, 5);
+            Check.ThatCode(() => anotherSpecificFuzzerWithNoDuplication.GenerateInteger(1, 5)).Throws<DuplicationException>();
+
+            var itDoesNotThrow = fuzzer.GenerateInteger(1, 5);
         }
     }
+
+    #region helpers
 
     /// <summary>
     /// Hotel Brand
@@ -141,4 +148,6 @@ namespace Diverse.Tests
             Stars = stars;
         }
     }
+
+    #endregion
 }

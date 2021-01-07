@@ -26,7 +26,7 @@ namespace Diverse
         {
             //return $"Couldn't find a non-already provided value of {typeRequested} after {maxAttemptsToFindNotAlreadyProvidedValue} attempts. Already provided values: {string.Join(", ", alreadyProvidedValues) }. In your case, try to increase the value of the {nameof(Fuzzer.MaxFailingAttemptsForNoDuplication)} property for your Fuzzer.";
             var errorMessage = $@"Couldn't find a non-already provided value of {typeRequested} after {maxAttemptsToFindNotAlreadyProvidedValue} attempts. Already provided values: {string.Join(", ", alreadyProvidedValues) }. You can either:
-- Generate a new specific fuzzer to ensure no duplication is provided for a sub-group of fuzzed values (anytime you want through the {nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}() method of your current Fuzzer instance. E.g.: var tempFuzzer = fuzzer.{nameof(IFuzz.GenerateFuzzerProvidingNoDuplication)}();)
+- Generate a new specific fuzzer to ensure no duplication is provided for a sub-group of fuzzed values (anytime you want through the {nameof(IFuzz.GenerateNoDuplicationFuzzer)}() method of your current Fuzzer instance. E.g.: var tempFuzzer = fuzzer.{nameof(IFuzz.GenerateNoDuplicationFuzzer)}();)
 - Increase the value of the {nameof(Fuzzer.MaxFailingAttemptsForNoDuplication)} property for your {nameof(IFuzz)} instance.";
             return errorMessage;
         }

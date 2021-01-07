@@ -29,7 +29,7 @@ namespace Diverse
         /// In other word, a <see cref="IFuzz"/> instance that will never return twice the same value (whatever the method called).
         /// </summary>
         /// <returns>A <see cref="IFuzz"/> instance that will never return twice the same value (whatever the method called).</returns>
-        IFuzz GenerateFuzzerProvidingNoDuplication();
+        IFuzz GenerateNoDuplicationFuzzer();
 
         /// <summary>
         /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
