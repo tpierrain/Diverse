@@ -752,9 +752,9 @@ namespace YouNameSpaceHere.Tests
         }
 
         /// <summary>
-        /// Generates a string from a given 'diverse' format.
+        /// Generates a string from a given 'diverse' format (# for a single digit number, X for upper-cased letter, x for lower-cased letter). 
         /// </summary>
-        /// <param name="diverseFormat">The 'diverse' format to use.</param>
+        /// <param name="diverseFormat">The 'diverse' format to use (# for a single digit number, X for upper-cased letter, x for lower-cased letter).</param>
         /// <returns>A randomly generated string following the 'diverse' format.</returns>
         public string GenerateStringFromPattern(string diverseFormat)
         {
