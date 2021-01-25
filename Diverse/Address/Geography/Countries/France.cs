@@ -10,7 +10,7 @@
         /// </summary>
         public static CityWithRelatedInformation[] Cities = new []
         {
-            new CityWithRelatedInformation("Paris", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "750##"),
+            new CityWithRelatedInformation("Paris", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "7501#"),
             new CityWithRelatedInformation("Saint-Ouen", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe,zipCodeFormat: "93400"),
             new CityWithRelatedInformation("Saint-Denis", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat: "93200"),
             new CityWithRelatedInformation("Versailles", StateProvinceArea.IleDeFrance, Country.France, Continent.Europe, zipCodeFormat:"78000"),
@@ -20,7 +20,7 @@
             new CityWithRelatedInformation("Brest", StateProvinceArea.Bretagne, Country.France, Continent.Europe, zipCodeFormat:"29200"),
             new CityWithRelatedInformation("Nantes", StateProvinceArea.PaysDeLaLoire, Country.France, Continent.Europe, zipCodeFormat:"44###"),
             new CityWithRelatedInformation("Bordeaux", StateProvinceArea.NouvelleAquitaine, Country.France, Continent.Europe, zipCodeFormat:"33#00"),
-            new CityWithRelatedInformation("Marseille", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"130##"),
+            new CityWithRelatedInformation("Marseille", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"1301#"),
             new CityWithRelatedInformation("Nice", StateProvinceArea.ProvenceAlpesCoteDAzur, Country.France, Continent.Europe, zipCodeFormat:"06#00"),
             new CityWithRelatedInformation("Lyon", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"6900#"),
             new CityWithRelatedInformation("Grenoble", StateProvinceArea.AuvergneRhoneAlpes, Country.France, Continent.Europe, zipCodeFormat:"38###"),
