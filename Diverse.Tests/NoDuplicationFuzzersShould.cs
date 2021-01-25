@@ -15,7 +15,7 @@ namespace Diverse.Tests
     /// </summary>
     [TestFixture]
     [SuppressMessage("ReSharper", "ConvertToLambdaExpression")]
-    public class FuzzerWithoutDuplicationShould
+    public class NoDuplicationFuzzersShould
     {
         #region enums
 
@@ -29,6 +29,21 @@ namespace Diverse.Tests
             CheckThatNoDuplicationIsMadeWhileGenerating<MagnificentSeven>(fuzzer, maxNumberOfElements, () =>
             {
                 return fuzzer.GenerateEnum<MagnificentSeven>();
+            });
+        }
+
+        [Test]
+        [Repeat(200)]
+        public void Be_able_to_provide_always_different_values_of_MagnificentSeven_Enum_when_instantiating_from_fuzzer()
+        {
+            var fuzzer = new Fuzzer();
+
+            var duplicationFuzzer = fuzzer.GenerateNoDuplicationFuzzer();
+
+            var maxNumberOfElements = Enum.GetValues(typeof(MagnificentSeven)).Length;
+            CheckThatNoDuplicationIsMadeWhileGenerating<MagnificentSeven>(duplicationFuzzer, maxNumberOfElements, () =>
+            {
+                return duplicationFuzzer.GenerateEnum<MagnificentSeven>();
             });
         }
 
