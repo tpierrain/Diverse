@@ -387,21 +387,20 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
                     MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateInteger(minValue, maxValue),
-                    lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindNotAlreadyProvidedInteger(alreadyProvidedValues, minValue.Value, maxValue.Value, _collectionFuzzer));
+                    lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindNotAlreadyProvidedInteger(alreadyProvidedValues, minValue.Value, maxValue.Value, this));
             }
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
         }
  
-        private static Maybe<int> LastChanceToFindNotAlreadyProvidedInteger(SortedSet<object> alreadyProvidedValues,
-            int? minValue, int? maxValue, IFuzzFromCollections fuzzer)
+        private static Maybe<int> LastChanceToFindNotAlreadyProvidedInteger(SortedSet<object> alreadyProvidedValues, int? minValue, int? maxValue, IFuzz fuzzer)
         {
             minValue = minValue ?? int.MinValue;
             maxValue = maxValue ?? int.MaxValue;
 
             var allPossibleValues = Enumerable.Range(minValue.Value, maxValue.Value).ToArray();
-            var remainingCandidates =
-                allPossibleValues.Where(number => !alreadyProvidedValues.Contains(number)).ToList();
+
+            var remainingCandidates = allPossibleValues.Except<int>(alreadyProvidedValues.Cast<int>()).ToArray();
 
             if (remainingCandidates.Any())
             {
@@ -481,19 +480,19 @@ namespace YouNameSpaceHere.Tests
             return _numberFuzzer.GenerateLong(minValue, maxValue);
         }
 
-        private static Maybe<long> LastChanceToFindNotAlreadyProvidedLong(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
+        private static Maybe<long> LastChanceToFindNotAlreadyProvidedLong(ref long? minValue, ref long? maxValue, SortedSet<object> alreadyProvidedValues, IFuzz fuzzer)
         {
             minValue = minValue ?? long.MinValue;
             maxValue = maxValue ?? long.MaxValue;
 
-            var allPossibleOptions = GenerateAllPossibleOptions(minValue.Value, maxValue.Value);
-
-            var remainingNumbers = allPossibleOptions.Where(n => !alreadyProvidedSortedSet.Contains(n)).ToArray();
-
-            if (remainingNumbers.Any())
+            var allPossibleValues = GenerateAllPossibleOptions(minValue.Value, maxValue.Value);
+            
+            var remainingCandidates = allPossibleValues.Except<long>(alreadyProvidedValues.Cast<long>()).ToArray();
+            
+            if (remainingCandidates.Any())
             {
-                var index = fuzzer.GenerateInteger(0, remainingNumbers.Length - 1);
-                var randomRemainingNumber = remainingNumbers[index];
+                var index = fuzzer.GenerateInteger(0, remainingCandidates.Length - 1);
+                var randomRemainingNumber = remainingCandidates[index];
 
                 return new Maybe<long>(randomRemainingNumber);
             }
@@ -565,16 +564,16 @@ namespace YouNameSpaceHere.Tests
             return _personFuzzer.GenerateLastName(firstName);
         }
 
-        private static Maybe<string> LastChanceToFindLastName(string firstName, SortedSet<object> alreadyProvidedLastNames, IFuzz fuzzer)
+        private static Maybe<string> LastChanceToFindLastName(string firstName, SortedSet<object> alreadyProvidedValues, IFuzz fuzzer)
         {
             var continent = Locations.FindContinent(firstName);
-            var allPossibleOptions = LastNames.PerContinent[continent];
+            var allPossibleValues = LastNames.PerContinent[continent];
 
-            var remainingLastNames = allPossibleOptions.Where(n => !alreadyProvidedLastNames.Contains(n)).ToArray();
+            var remainingCandidates = allPossibleValues.Except(alreadyProvidedValues.Cast<string>()).ToArray();
 
-            if (remainingLastNames.Any())
+            if (remainingCandidates.Any())
             {
-                var lastName = fuzzer.PickOneFrom(remainingLastNames);
+                var lastName = fuzzer.PickOneFrom(remainingCandidates);
                 return new Maybe<string>(lastName);
             }
 
@@ -592,17 +591,17 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
                     MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (fuzzerWithDuplicationAllowed) => fuzzerWithDuplicationAllowed.GenerateAge(),
-                    lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindAge(alreadyProvidedValues, 18, 97, _collectionFuzzer));
+                    lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindAge(alreadyProvidedValues, 18, 97, this));
             }
 
             return _personFuzzer.GenerateAge();
         }
 
-        private static Maybe<int> LastChanceToFindAge(SortedSet<object> alreadyProvidedValues, int minAge, int maxAge,
-            IFuzzFromCollections fuzzer)
+        private static Maybe<int> LastChanceToFindAge(SortedSet<object> alreadyProvidedValues, int minAge, int maxAge, IFuzz fuzzer)
         {
             var allPossibleValues = Enumerable.Range(minAge, maxAge - minAge).ToArray();
-            var remainingCandidates = allPossibleValues.Where(age => !alreadyProvidedValues.Contains(age)).ToList();
+
+            var remainingCandidates = allPossibleValues.Except(alreadyProvidedValues.Cast<int>()).ToArray();
 
             if (remainingCandidates.Any())
             {
@@ -754,15 +753,15 @@ namespace YouNameSpaceHere.Tests
             return _stringFuzzer.GenerateAdjective(feeling);
         }
 
-        private static Maybe<string> LastChanceToFindAdjective(Feeling? feeling,
-            SortedSet<object> alreadyProvidedLastNames, IFuzz fuzzer)
+        private static Maybe<string> LastChanceToFindAdjective(Feeling? feeling, SortedSet<object> alreadyProvidedValues, IFuzz fuzzer)
         {
-            var remainingAdjectives = Adjectives.PerFeeling[feeling.Value]
-                .Where(n => !alreadyProvidedLastNames.Contains(n)).ToArray();
+            var allPossibleValues = Adjectives.PerFeeling[feeling.Value];
 
-            if (remainingAdjectives.Any())
+            var remainingCandidates = allPossibleValues.Except(alreadyProvidedValues.Cast<string>()).ToArray();
+
+            if (remainingCandidates.Any())
             {
-                var adjective = fuzzer.PickOneFrom(remainingAdjectives);
+                var adjective = fuzzer.PickOneFrom(remainingCandidates);
                 return new Maybe<string>(adjective);
             }
 
@@ -899,16 +898,15 @@ namespace YouNameSpaceHere.Tests
             return _loremFuzzer.GenerateLetter();
         }
 
-        private Maybe<char> LastChanceToFindLetter(SortedSet<object> alreadyProvidedSortedSet, IFuzz fuzzer)
+        private Maybe<char> LastChanceToFindLetter(SortedSet<object> alreadyProvidedValues, IFuzz fuzzer)
         {
             var allPossibleValues = LoremFuzzer.Alphabet;
-            var alreadyProvidedLetters = alreadyProvidedSortedSet.Cast<char>();
 
-            var remainingOptions = allPossibleValues.Except(alreadyProvidedLetters).ToList();
-
-            if (remainingOptions.Any())
+            var remainingCandidates = allPossibleValues.Except(alreadyProvidedValues.Cast<char>()).ToArray();
+            
+            if (remainingCandidates.Any())
             {
-                var letter = fuzzer.PickOneFrom<char>(remainingOptions);
+                var letter = fuzzer.PickOneFrom<char>(remainingCandidates);
                 return new Maybe<char>(letter);
             }
 
