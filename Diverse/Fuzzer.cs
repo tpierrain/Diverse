@@ -897,7 +897,7 @@ namespace YouNameSpaceHere.Tests
             return _loremFuzzer.GenerateLetter();
         }
 
-        private Maybe<char> LastChanceToFindLetter(SortedSet<object> alreadyProvidedValues, IFuzz fuzzer)
+        private static Maybe<char> LastChanceToFindLetter(SortedSet<object> alreadyProvidedValues, IFuzz fuzzer)
         {
             var allPossibleValues = LoremFuzzer.Alphabet;
 
