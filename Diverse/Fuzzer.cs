@@ -305,19 +305,18 @@ namespace YouNameSpaceHere.Tests
         private T GenerateWithoutDuplication<T>(MethodBase currentMethod, int argumentsHashCode,
                             int maxFailingAttemptsBeforeLastChanceFunctionIsCalled, 
                             Func<IFuzz, T> standardGenerationFunction,
-                            Func<SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
+                            Func<IFuzz, SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
         {
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
 
-            var maybe = TryGetNonAlreadyProvidedValuesWithRegularGenerationFunction<T>(memoizerKey, out var alreadyProvidedValues,
-                standardGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
+            var maybe = TryGetNonAlreadyProvidedValuesWithRegularGenerationFunction<T>(memoizerKey, out var alreadyProvidedValues, standardGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
 
             if (!maybe.HasItem)
             {
                 if (lastChanceGenerationFunction != null)
                 {
                     // last attempt, we randomly pick the missing bits from the memoizer
-                    maybe = lastChanceGenerationFunction(_memoizer.GetAlreadyProvidedValues(memoizerKey));
+                    maybe = lastChanceGenerationFunction(SideEffectFreeSafeFuzzer, _memoizer.GetAlreadyProvidedValues(memoizerKey));
                 }
 
                 if (!maybe.HasItem)
@@ -387,7 +386,7 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(minValue, maxValue),
                     MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateInteger(minValue, maxValue),
-                    lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindNotAlreadyProvidedInteger(alreadyProvidedValues, minValue.Value, maxValue.Value, this));
+                    lastChanceGenerationFunction: (safeFuzzer, alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedInteger(alreadyProvidedSortedSet, minValue.Value, maxValue.Value, safeFuzzer));
             }
 
             return _numberFuzzer.GenerateInteger(minValue, maxValue);
@@ -473,7 +472,7 @@ namespace YouNameSpaceHere.Tests
                         maxFailingAttemptsBeforeLastChanceFunctionIsCalled:
                         MaxFailingAttemptsForNoDuplication,
                         standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLong(minValue, maxValue),
-                        lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet, this));
+                        lastChanceGenerationFunction: (safeFuzzer, alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyProvidedLong(ref minValue, ref maxValue, alreadyProvidedSortedSet, safeFuzzer));
                 }
             }
 
@@ -558,7 +557,7 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(firstName),
                     MaxFailingAttemptsForNoDuplication, 
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLastName(firstName),
-                    lastChanceGenerationFunction: (alreadyProvidedSortedSet) => LastChanceToFindLastName(firstName, alreadyProvidedSortedSet, this));
+                    lastChanceGenerationFunction: (safeFuzzer, alreadyProvidedSortedSet) => LastChanceToFindLastName(firstName, alreadyProvidedSortedSet, safeFuzzer));
             }
 
             return _personFuzzer.GenerateLastName(firstName);
@@ -591,7 +590,7 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
                     MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (fuzzerWithDuplicationAllowed) => fuzzerWithDuplicationAllowed.GenerateAge(),
-                    lastChanceGenerationFunction: (alreadyProvidedValues) => LastChanceToFindAge(alreadyProvidedValues, 18, 97, this));
+                    lastChanceGenerationFunction: (safeFuzzer, alreadyProvidedSortedSet) => LastChanceToFindAge(alreadyProvidedSortedSet, 18, 97, safeFuzzer));
             }
 
             return _personFuzzer.GenerateAge();
@@ -673,7 +672,7 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(candidates),
                     MaxFailingAttemptsForNoDuplication, 
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.PickOneFrom(candidates),
-                    lastChanceGenerationFunction: alreadyProvidedSortedSet => LastChanceToFindNotAlreadyPickedValue(alreadyProvidedSortedSet, candidates, this));
+                    lastChanceGenerationFunction: (safeFuzzer, alreadyProvidedSortedSet) => LastChanceToFindNotAlreadyPickedValue(alreadyProvidedSortedSet, candidates, safeFuzzer));
             }
 
             return _collectionFuzzer.PickOneFrom(candidates);
@@ -747,7 +746,7 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(feeling),
                     MaxFailingAttemptsForNoDuplication, 
                     standardGenerationFunction: safeFuzzer => safeFuzzer.GenerateAdjective(feeling),
-                    lastChanceGenerationFunction: alreadyProvidedSortedSet => LastChanceToFindAdjective(feeling, alreadyProvidedSortedSet, this));
+                    lastChanceGenerationFunction: (safeFuzzer, alreadyProvidedSortedSet) => LastChanceToFindAdjective(feeling, alreadyProvidedSortedSet, safeFuzzer));
             }
 
             return _stringFuzzer.GenerateAdjective(feeling);
@@ -892,7 +891,7 @@ namespace YouNameSpaceHere.Tests
                 return GenerateWithoutDuplication(CaptureCurrentMethod(), HashArguments(),
                     MaxFailingAttemptsForNoDuplication,
                     standardGenerationFunction: (safeFuzzer) => safeFuzzer.GenerateLetter(),
-                    lastChanceGenerationFunction: alreadyProvidedSortedSet => LastChanceToFindLetter(alreadyProvidedSortedSet, this));
+                    lastChanceGenerationFunction: (safeFuzzer, alreadyProvidedSortedSet) => LastChanceToFindLetter(alreadyProvidedSortedSet, safeFuzzer));
             }
 
             return _loremFuzzer.GenerateLetter();
