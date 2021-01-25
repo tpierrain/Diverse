@@ -673,10 +673,28 @@ namespace YouNameSpaceHere.Tests
             {
                 return GenerateWithoutDuplication<T>(CaptureCurrentMethod(), HashArguments(candidates),
                     MaxFailingAttemptsForNoDuplication, 
-                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.PickOneFrom(candidates));
+                    standardGenerationFunction: (safeFuzzer) => safeFuzzer.PickOneFrom(candidates),
+                    lastChanceGenerationFunction: alreadyProvidedSortedSet => LastChanceToFindNotAlreadyPickedValue(alreadyProvidedSortedSet, candidates, this));
             }
 
             return _collectionFuzzer.PickOneFrom(candidates);
+        }
+
+        private static Maybe<T> LastChanceToFindNotAlreadyPickedValue<T>(SortedSet<object> alreadyProvidedValues, IList<T> candidates, IFuzz fuzzer)
+        {
+            var allPossibleValues = candidates.ToArray();
+
+            var remainingCandidates = allPossibleValues.Except<T>(alreadyProvidedValues.Cast<T>()).ToArray();
+
+            if (remainingCandidates.Any())
+            {
+                var index = fuzzer.GenerateInteger(0, remainingCandidates.Length - 1);
+                var pickOneFrom = remainingCandidates[index];
+
+                return new Maybe<T>(pickOneFrom);
+            }
+
+            return new Maybe<T>();
         }
 
         #endregion

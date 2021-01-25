@@ -184,6 +184,19 @@ namespace Diverse.Tests
         }
 
         [Test]
+        public void Be_able_to_pick_always_different_values_from_a_medium_size_list_of_int()
+        {
+            var fuzzer = new Fuzzer(noDuplication: true);
+
+            var candidates = Enumerable.Range(-10000, 10000).ToArray();
+
+            CheckThatNoDuplicationIsMadeWhileGenerating(fuzzer, candidates.LongLength, () =>
+            {
+                return fuzzer.PickOneFrom(candidates);
+            });
+        }
+
+        [Test]
         public void Be_able_to_pick_always_different_values_from_a_list_of_enum()
         {
             var fuzzer = new Fuzzer(noDuplication: true);
@@ -194,6 +207,21 @@ namespace Diverse.Tests
             {
                 return fuzzer.PickOneFrom(candidates);
             });
+        }
+
+        [Test]
+        public void Be_able_to_pick_different_values_from_a_list_of_string()
+        {
+            var fuzzer = new Fuzzer(884871408);
+            var rateCodes = new[] { "PRBA", "LRBAMC", "AVG1", "PRBB", "LRBA", "BBSP", "PRBA2", "LRBA2MC", "PRPH", "PBCITE_tes", "PRPH2", "PRP2N2", "PR3NS1", "PBHS", "PBSNWH", "PBTHE", "PBVPOM", "PBZOO", "PHBO", "PHBPP", "PAB01", "PHB01", "PH3P", "LH3PMC", "CAMI", "FRCAMIF", "GENERICRATECODE", "PBGGG", "PBPPBRAZIL", "PBSENIOR" };
+
+            var noDupFuzzer = fuzzer.GenerateNoDuplicationFuzzer();
+
+            CheckThatNoDuplicationIsMadeWhileGenerating(noDupFuzzer, rateCodes.Length, () =>
+            {
+                return noDupFuzzer.PickOneFrom(rateCodes);
+            });
+            
         }
 
         #endregion
@@ -320,6 +348,8 @@ namespace Diverse.Tests
         }
 
         #endregion
+
+
         
         [Test]
         public void Throw_DuplicationException_with_fix_explanation_when_number_of_attempts_is_too_low()
@@ -345,7 +375,7 @@ namespace Diverse.Tests
 - Increase the value of the {nameof(Fuzzer.MaxFailingAttemptsForNoDuplication)} property for your {nameof(IFuzz)} instance.");
         }
 
-        private static void CheckThatNoDuplicationIsMadeWhileGenerating<T>(Fuzzer fuzzer, long maxNumberOfElements, Func<T> fuzzingFunction)
+        private static void CheckThatNoDuplicationIsMadeWhileGenerating<T>(IFuzz fuzzer, long maxNumberOfElements, Func<T> fuzzingFunction)
         {
             var returnedElements = new HashSet<T>(); //T
             for (var i = 0; i < maxNumberOfElements; i++)
