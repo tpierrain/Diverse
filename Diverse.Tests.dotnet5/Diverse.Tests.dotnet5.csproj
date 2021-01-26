@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Diverse.Tests\AddressFuzzerShould.cs" Link="AddressFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\AllTestFixtures.cs" Link="AllTestFixtures.cs" />
+    <Compile Include="..\Diverse.Tests\ArgumentHasherShould.cs" Link="ArgumentHasherShould.cs" />
+    <Compile Include="..\Diverse.Tests\CollectionFuzzerShould.cs" Link="CollectionFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\DateTimeFuzzerShould.cs" Link="DateTimeFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\FuzzerShould.cs" Link="FuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\FuzzerShouldBeDocumented.cs" Link="FuzzerShouldBeDocumented.cs" />
+    <Compile Include="..\Diverse.Tests\FuzzerThatIsExtensibleShould.cs" Link="FuzzerThatIsExtensibleShould.cs" />
+    <Compile Include="..\Diverse.Tests\FuzzerWithItsOwnDeterministicCapabilitiesShould.cs" Link="FuzzerWithItsOwnDeterministicCapabilitiesShould.cs" />
+    <Compile Include="..\Diverse.Tests\GuidFuzzerShould.cs" Link="GuidFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\LoremFuzzerShould.cs" Link="LoremFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\MethodCaptureShould.cs" Link="MethodCaptureShould.cs" />
+    <Compile Include="..\Diverse.Tests\NamesShould.cs" Link="NamesShould.cs" />
+    <Compile Include="..\Diverse.Tests\NoDuplicationFuzzersShould.cs" Link="NoDuplicationFuzzersShould.cs" />
+    <Compile Include="..\Diverse.Tests\NumberExtensionsShould.cs" Link="NumberExtensionsShould.cs" />
+    <Compile Include="..\Diverse.Tests\NumberFuzzerShould.cs" Link="NumberFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\PersonFuzzerShould.cs" Link="PersonFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\PersonFuzzerWithPasswordShould.cs" Link="PersonFuzzerWithPasswordShould.cs" />
+    <Compile Include="..\Diverse.Tests\StringFuzzerShould.cs" Link="StringFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\TypeFuzzerShould.cs" Link="TypeFuzzerShould.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\AccountService.cs" Link="Utils\AccountService.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\ChessLevel.cs" Link="Utils\ChessLevel.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\ChessPlayerWithPublicConstructor.cs" Link="Utils\ChessPlayerWithPublicConstructor.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\Ingredient.cs" Link="Utils\Ingredient.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\PlayerWithProtectedConstructor.cs" Link="Utils\PlayerWithProtectedConstructor.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\PropertyOfAllTypes.cs" Link="Utils\PropertyOfAllTypes.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\SelfReferencingTypeWithACollectionOfItself.cs" Link="Utils\SelfReferencingTypeWithACollectionOfItself.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\SignUpRequest.cs" Link="Utils\SignUpRequest.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\SignUpResponse.cs" Link="Utils\SignUpResponse.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\SignUpStatus.cs" Link="Utils\SignUpStatus.cs" />
+    <Compile Include="..\Diverse.Tests\Utils\TypeWithPrivateEmptyConstructorOnly.cs" Link="Utils\TypeWithPrivateEmptyConstructorOnly.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NFluent" Version="2.7.1" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utils\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Diverse\Diverse.csproj" />
+  </ItemGroup>
+
+</Project>
