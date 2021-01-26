@@ -225,18 +225,17 @@ namespace Diverse.Tests
         }
 
         [Test]
-        public void Be_able_to_pick_different_values_from_a_list_of_string()
+        public void Be_able_to_pick_different_values_from_two_list_of_strings_containing_the_same_values()
         {
-            var fuzzer = new Fuzzer(884871408);
+            var noDupFuzzer = new Fuzzer(884871408).GenerateNoDuplicationFuzzer();
+
             var rateCodes = new[] { "PRBA", "LRBAMC", "AVG1", "PRBB", "LRBA", "BBSP", "PRBA2", "LRBA2MC", "PRPH", "PBCITE_tes", "PRPH2", "PRP2N2", "PR3NS1", "PBHS", "PBSNWH", "PBTHE", "PBVPOM", "PBZOO", "PHBO", "PHBPP", "PAB01", "PHB01", "PH3P", "LH3PMC", "CAMI", "FRCAMIF", "GENERICRATECODE", "PBGGG", "PBPPBRAZIL", "PBSENIOR" };
+            var identicalRateCodes = new[] { "PRBA", "LRBAMC", "AVG1", "PRBB", "LRBA", "BBSP", "PRBA2", "LRBA2MC", "PRPH", "PBCITE_tes", "PRPH2", "PRP2N2", "PR3NS1", "PBHS", "PBSNWH", "PBTHE", "PBVPOM", "PBZOO", "PHBO", "PHBPP", "PAB01", "PHB01", "PH3P", "LH3PMC", "CAMI", "FRCAMIF", "GENERICRATECODE", "PBGGG", "PBPPBRAZIL", "PBSENIOR" };
 
-            var noDupFuzzer = fuzzer.GenerateNoDuplicationFuzzer();
+            var firstValue = noDupFuzzer.PickOneFrom(rateCodes);
+            var secondValue = noDupFuzzer.PickOneFrom(identicalRateCodes);
 
-            CheckThatNoDuplicationIsMadeWhileGenerating(noDupFuzzer, rateCodes.Length, () =>
-            {
-                return noDupFuzzer.PickOneFrom(rateCodes);
-            });
-            
+            Check.That(secondValue).IsNotEqualTo(firstValue);
         }
 
         #endregion
