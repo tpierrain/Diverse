@@ -14,9 +14,9 @@
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
     <PackageReleaseNotes>- Fix the possible duplications despite the NoDuplication mode due to bad memoization of collections (by ref instead of by value)</PackageReleaseNotes>
-    <AssemblyVersion>0.9.0.0</AssemblyVersion>
-    <FileVersion>0.9.0.0</FileVersion>
-    <Version>0.9.0.0</Version>
+    <AssemblyVersion>0.10.0.0</AssemblyVersion>
+    <FileVersion>0.10.0.0</FileVersion>
+    <Version>0.10.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
