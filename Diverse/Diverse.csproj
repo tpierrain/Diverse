@@ -13,11 +13,7 @@
     <RepositoryUrl>https://github.com/42skillz/Diverse</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
-    <PackageReleaseNotes>- Add intellisense documentation for the GenerateStringFromPattern() method
-- Improve overall performance of NoDuplication mode
-- Add the NoDuplication support for PickOneFrom() method
-- Improve Postal Code generation for Paris and Marseille cities
-</PackageReleaseNotes>
+    <PackageReleaseNotes>- Fix the possible duplications despite the NoDuplication mode due to bad memoization of collections (by ref instead of by value)</PackageReleaseNotes>
     <AssemblyVersion>0.9.0.0</AssemblyVersion>
     <FileVersion>0.9.0.0</FileVersion>
     <Version>0.9.0.0</Version>

@@ -7,14 +7,19 @@ namespace Diverse
     /// </summary>
     public class ArgumentHasher
     {
-        public static int HashArguments(params object[] parameters)
+        /// <summary>
+        /// Hash provided arguments.
+        /// </summary>
+        /// <param name="arguments">the </param>
+        /// <returns></returns>
+        public static int HashArguments(params object[] arguments)
         {
             var hash = 17;
-            foreach (var parameter in parameters)
+            foreach (var parameter in arguments)
             {
-                if (parameter is IEnumerable)
+                if (parameter is IEnumerable enumerable)
                 {
-                    var parameterHashCode = GetByValueHashCode(parameter as IEnumerable);
+                    var parameterHashCode = GetByValueHashCode(enumerable);
                     hash = hash * 23 + parameterHashCode;
                 }
                 else
@@ -27,6 +32,11 @@ namespace Diverse
             return hash;
         }
 
+        /// <summary>
+        /// Handle the case of collections (where we want to compare their content and not the reference of the collection).
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <returns></returns>
         private static int GetByValueHashCode(IEnumerable collection)
         {
             var hash = 17;
