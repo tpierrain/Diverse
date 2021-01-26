@@ -375,8 +375,6 @@ namespace Diverse.Tests
         }
 
         #endregion
-
-
         
         [Test]
         public void Throw_DuplicationException_with_fix_explanation_when_number_of_attempts_is_too_low()

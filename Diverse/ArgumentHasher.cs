@@ -15,16 +15,16 @@ namespace Diverse
         public static int HashArguments(params object[] arguments)
         {
             var hash = 17;
-            foreach (var parameter in arguments)
+            foreach (var argument in arguments)
             {
-                if (parameter is IEnumerable enumerable)
+                if (argument is IEnumerable enumerable)
                 {
                     var parameterHashCode = GetByValueHashCode(enumerable);
                     hash = hash * 23 + parameterHashCode;
                 }
                 else
                 {
-                    var parameterHashCode = parameter?.GetHashCode() ?? 17;
+                    var parameterHashCode = argument?.GetHashCode() ?? 17;
                     hash = hash * 23 + parameterHashCode;
                 }
             }

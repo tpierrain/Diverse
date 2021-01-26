@@ -93,6 +93,7 @@ namespace Diverse
 
         /// <summary>
         /// Gets the Random instance to be used when we want to create a new extension method for the <see cref="Fuzzer"/>.
+        /// Beware: do not use this property if you do not want duplication (use all existing methods of <see cref="IFuzz"/> that can handle no duplication mode, like <see cref="PickOneFrom{T}"/>).
         /// <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
         /// </summary>
         Random IFuzz.Random => _internalRandom;
