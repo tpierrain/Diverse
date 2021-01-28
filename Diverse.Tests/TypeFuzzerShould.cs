@@ -7,6 +7,7 @@ using NUnit.Framework;
 namespace Diverse.Tests
 {
     [TestFixture]
+    [Ignore("Redesign of the TypeFuzzer is needed.")]
     public class TypeFuzzerShould
     {
         [Test]
