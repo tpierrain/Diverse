@@ -11,7 +11,7 @@ namespace Diverse
     /// </summary>
     internal class TypeFuzzer : IFuzzTypes
     {
-        private const int MaxRecursionAllowedWhileFuzzing = 400;
+        private const int MaxRecursionAllowedWhileFuzzing = 125;
         private const int MaxCountToFuzzInLists = 5;
         private readonly IFuzz _fuzzer;
 

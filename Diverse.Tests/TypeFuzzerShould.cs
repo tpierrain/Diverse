@@ -96,8 +96,8 @@ namespace Diverse.Tests
             Check.That(aggregatedFavOpponent.LastName).IsNotEmpty();
             Check.That(aggregatedFavOpponent.FirstName).IsNotEmpty();
             Check.That(aggregatedFavOpponent.FirstName).IsNotEmpty();
-            Check.That(aggregatedFavOpponent.CurrentClub.Name).IsEqualTo("Mehmet");
-            Check.ThatEnum(aggregatedFavOpponent.CurrentClub.Country).IsEqualTo(Country.Ukraine);
+            Check.That(aggregatedFavOpponent.CurrentClub.Name).IsEqualTo("Maëla");
+            Check.ThatEnum(aggregatedFavOpponent.CurrentClub.Country).IsEqualTo(Country.Senegal);
 
             Check.That(player.FormerClubs).HasSize(5);
         }
