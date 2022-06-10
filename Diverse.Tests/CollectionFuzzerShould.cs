@@ -20,6 +20,18 @@ namespace Diverse.Tests
                 Check.That(chosenOne).IsOneOf(candidates);
             }
         }
+        
+        [Test]
+        public void Be_able_to_PickOneFrom_using_params_api()
+        {
+            var fuzzer = new Fuzzer();
+
+            for (var i = 0; i < 10; i++)
+            {
+                var chosenOne = fuzzer.PickOneFrom("one", "two", "three", "four", "five");
+                Check.That(chosenOne).IsOneOf("one", "two", "three", "four", "five");
+            }
+        }
 
         [Test]
         public void Throw_an_Exception_when_list_of_candidates_is_null()
