@@ -48,9 +48,10 @@ dotnet build Diverse.sln
 dotnet test Diverse.Tests/Diverse.Tests.csproj
 ```
 
-- Library: `Diverse/Diverse.csproj` -- targets **netstandard2.0**
-- Tests: `Diverse.Tests/Diverse.Tests.csproj` -- targets **netcoreapp3.1**
+- Library: `Diverse/Diverse.csproj` -- multi-targets **netstandard2.0** + **net8.0**
+- Tests: `Diverse.Tests/Diverse.Tests.csproj` -- targets **net8.0**
 - Test framework: **NUnit** + **NFluent** (assertions)
+- Test framework detection: `IsATestMethod()` recognizes **NUnit**, **xUnit**, and **MSTest** attributes (zero-dependency, string-based matching)
 - No external runtime dependencies in the library itself
 
 ## Coding conventions

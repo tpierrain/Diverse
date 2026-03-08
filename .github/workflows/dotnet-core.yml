@@ -3,10 +3,10 @@ name: .NET Core
 on:
   push:
     branches: [ main ]
-    paths-ignore: 
+    paths-ignore:
       - 'README.md'
       - '**.jpg'
-  
+
   pull_request:
     branches: [ main ]
 
@@ -15,14 +15,14 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     strategy:
-      matrix: 
+      matrix:
         os: [ ubuntu-latest ]
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 3.1.301
+        dotnet-version: 8.0.x
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -39,8 +39,7 @@ jobs:
         dotnet pack --configuration Release
     - name: Upload Artifact
       if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
-        env: OurVersion
-        name: nupkg-${OurVersion}
-        path: /home/runner/work/Diverse/Diverse/Diverse/bin/Release/*.nupkg
+        name: nupkg
+        path: Diverse/bin/Release/*.nupkg

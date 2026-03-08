@@ -193,11 +193,12 @@ The only thing you have to do is to set a value for the static " +
                 $"{nameof(Log)} property of the {nameof(Fuzzer)} type." + @"
 
 The best location for this call is within a unique AllFixturesSetup class.
+
 e.g.: with NUnit:
 
 using NUnit.Framework;
 
-namespace YouNameSpaceHere.Tests
+namespace YourNameSpaceHere.Tests
 {
     [SetUpFixture]
     public class AllTestFixtures
@@ -209,6 +210,14 @@ namespace YouNameSpaceHere.Tests
         }
     }
 }
+
+e.g.: with xUnit (use ITestOutputHelper):
+
+    " + $"{nameof(Fuzzer)}.{nameof(Log)} = testOutputHelper.WriteLine;" + @"
+
+e.g.: with MSTest:
+
+    " + $"{nameof(Fuzzer)}.{nameof(Log)} = Console.WriteLine;" + @"
 
 ";
             return message;
@@ -232,19 +241,24 @@ namespace YouNameSpaceHere.Tests
             return testName;
         }
 
+        private static readonly HashSet<string> TestAttributeNames = new HashSet<string>
+        {
+            // NUnit
+            "TestAttribute",
+            "TestCaseAttribute",
+            "TestCaseSourceAttribute",
+            // xUnit
+            "FactAttribute",
+            "TheoryAttribute",
+            // MSTest
+            "TestMethodAttribute",
+            "DataTestMethodAttribute"
+        };
+
         private static bool IsATestMethod(MethodBase mb)
         {
             var attributeTypes = mb.CustomAttributes.Select(c => c.AttributeType);
-
-            var hasACustomAttributeOfTypeTest = attributeTypes.Any(y =>
-                (y.Name == "TestAttribute" || y.Name == "TestCaseAttribute" || y.Name == "Fact"));
-
-            if (hasACustomAttributeOfTypeTest)
-            {
-                return true;
-            }
-
-            return hasACustomAttributeOfTypeTest;
+            return attributeTypes.Any(y => TestAttributeNames.Contains(y.Name));
         }
 
         private string GenerateFuzzerName(bool upperCased = true)
