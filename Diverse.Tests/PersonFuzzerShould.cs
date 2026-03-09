@@ -23,7 +23,7 @@ namespace Diverse.Tests
                 firstNames.Add( fuzzer.GenerateFirstName(Gender.Male));
             }
 
-            Check.That(firstNames).ContainsExactly("Bjorn", "Jean-Pierre", "Abhimanyu", "Cheng", "Jarmaine", "Akshay", "Milen", "Sékou", "Tuve", "Hwang");
+            Check.That(firstNames).ContainsExactly("Jensson", "Alexei", "Ranjit", "Mu", "Ricardo", "Achille", "Mitt", "Djiby", "Shui", "Gemi");
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName(Gender.Female));
             }
 
-            Check.That(firstNames).ContainsExactly("Nakeisha", "Guri", "Chan", "Chiara", "Kwame", "Valeria", "Dhalia", "Kione", "Xian", "Zayneb");
+            Check.That(firstNames).ContainsExactly("Zuri", "Fleur", "Esther", "Shayna", "Nyofu", "Chiquita", "Pepita", "Nimeesha", "Qiao", "Jamila");
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace Diverse.Tests
                 firstNames.Add(fuzzer.GenerateFirstName());
             }
 
-            Check.That(firstNames).ContainsExactly("Hei-Ran", "Uélé", "Katsuki", "Enrico", "Jung-sook", "Atahualpa", "Soske", "Manua", "Maffalda", "Aminata");
+            Check.That(firstNames).ContainsExactly("Nhung", "Mugisa", "Nataniel", "Jarmaine", "Diễm Hạnh", "Riley", "Mehmet", "Aroha", "Evelyn", "Isis");
         }
 
         [Test]
@@ -66,11 +66,10 @@ namespace Diverse.Tests
                 lastNames.Add($"{firstName} {fuzzer.GenerateLastName(firstName)}");
             }
 
-            Check.That(lastNames).ContainsExactly("Itxaro González", "Josh Walker", "Qiao Laghari", "Olamide Diop", "Kevin Sanchez", "Bao Madan", "Nichelle Baker", "Xing Xing Laghari", "Simba Ibrahim", "Abeba Nwadike");
+            Check.That(lastNames).ContainsExactly("Femi Keita", "Kai NQuoc", "Kamini Laghari", "Sekou Diop", "Latrell Sanchez", "Yael Madan", "Deloise Baker", "Loc Laghari", "Olamide Ibrahim", "Aminata Nwadike");
         }
 
         [Test]
-        [Ignore("To be restored once v1 is sealed.")]
         public void Be_able_to_Fuzz_Diverse_Persons()
         {
             var fuzzer = new Fuzzer(722752479);
@@ -83,7 +82,16 @@ namespace Diverse.Tests
 
             Check.That(persons.Select(x => x.ToString()))
                 .ContainsExactly(
-                    "Mrs. Zahara NGOMA (Female) zngoma@yopmail.com (married - age: 20 years)", "Mx. Mohammed TESFAYE (NonBinary) mohammed.tesfaye@kolab.com (age: 24 years)", "Ms. Ella DAVIS (Female) ella.davis@protonmail.com (age: 27 years)", "Mx. Akmal KASONGO (NonBinary) akmal.kasongo@aol.com (age: 23 years)", "Mx. Shing KHATRI (NonBinary) shing.khatri@aol.com (married - age: 20 years)", "Ms. Jolanta BOTELHO (Female) jolanta.botelho@gmail.com (age: 23 years)", "Mx. Dzigbode DIOP (NonBinary) dzigbode.diop@gmail.com (age: 31 years)", "Mrs. Ishani LǏ (Female) ili@yahoo.fr (married - age: 24 years)", "Mrs. Gioconda GOMES (Female) gioconda.gomes@ibm.com (married - age: 19 years)", "Ms. Manutea FORSYTHE (Female) mforsythe@protonmail.com (age: 18 years)");
+                    "Mrs. Amber NGOMA (Female) angoma@yopmail.com (married - age: 20 years)\n90 quai Claude-Bernard\n93400 - Saint-Ouen\nFrance",
+                    "Mrs. Aissatou BADU (Female) abadu@kolab.com (married - age: 28 years)\n76 rue Tristan Tzara\n56170 - Quiberon\nFrance",
+                    "Mx. Marija DUPUY (NonBinary) marija.dupuy@yopmail.com (age: 21 years)\n173 quai Claude-Bernard\n44405 - Nantes\nFrance",
+                    "Mr. Obi ZIDANE (Male) ozidane@yopmail.com (age: 25 years)\n260 bd de la Somme\n75011 - Paris\nFrance",
+                    "Ms. Laurence PETIT (Female) lpetit@gmail.com (age: 20 years)\n45 rue de la Poste\n93400 - Saint-Ouen\nFrance",
+                    "Ms. Trini SOLBERG (Female) trini.solberg@ibm.com (age: 41 years)\n248 rue de la r\u00e9sistance\n38626 - Grenoble\nFrance",
+                    "Mx. Malik MWANGI (NonBinary) mmwangi@kolab.com (married - age: 27 years)\n311 1st Avenue\n77009 - Houston\nUsa",
+                    "Ms. Goo ACHARYA (Female) gacharya@ibm.com (age: 82 years)\n49 Changjiang Binjiang Road\uff0cYuzhong District, Yu Zhong\n674110 - Lijiang\nChina",
+                    "Mrs. Audrey RIZZO (Female) audrey.rizzo@microsoft.com (married - age: 29 years)\n224 bd des Arceaux\n33200 - Bordeaux\nFrance",
+                    "Mrs. R\u00e9jane FERN\u00c1NDEZ (Female) rfernandez@ibm.com (married - age: 23 years)\n241 quai des Orf\u00e8vres\n34069 - Montpellier\nFrance");
         }
 
         [Test]
@@ -95,9 +103,9 @@ namespace Diverse.Tests
             var email2 = fuzzer.GenerateEMail();
             var email3 = fuzzer.GenerateEMail();
 
-            Check.That(email).IsEqualTo("sekou.ben-achour@yopmail.com");
-            Check.That(email2).IsEqualTo("jdubois@kolab.com");
-            Check.That(email3).IsEqualTo("maxime.hendricks@42skillz.com");
+            Check.That(email).IsEqualTo("okal.ben-achour@yopmail.com");
+            Check.That(email2).IsEqualTo("adubois@kolab.com");
+            Check.That(email3).IsEqualTo("lucca.hendricks@42skillz.com");
         }
 
         [Test]

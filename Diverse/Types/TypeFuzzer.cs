@@ -8,12 +8,17 @@ namespace Diverse
 {
     /// <summary>
     /// Fuzz instance of Types.
+    /// Uses a <see cref="GenerationContext"/> to track the ancestry chain of types
+    /// during recursive generation, preventing stack overflow and geometric explosion
+    /// for self-referencing or mutually-referencing types.
     /// </summary>
     internal class TypeFuzzer : IFuzzTypes
     {
-        private const int MaxRecursionAllowedWhileFuzzing = 125;
-        private const int MaxCountToFuzzInLists = 5;
+        private const int DefaultMaxCollectionSize = 5;
+        private const int DefaultMaxDepthForRecursiveTypes = 2;
+
         private readonly IFuzz _fuzzer;
+        private readonly ParameterNameMatcher _parameterNameMatcher;
 
         /// <summary>
         /// Instantiates a <see cref="TypeFuzzer"/>.
@@ -22,6 +27,7 @@ namespace Diverse
         public TypeFuzzer(IFuzz fuzzer)
         {
             _fuzzer = fuzzer;
+            _parameterNameMatcher = new ParameterNameMatcher(fuzzer);
         }
 
         /// <summary>
@@ -30,195 +36,15 @@ namespace Diverse
         /// <returns>An instance of type T with some fuzzed properties.</returns>
         public T GenerateInstanceOf<T>()
         {
-            var instance = GenerateInstanceOf<T>(0);
+            var context = new GenerationContext(DefaultMaxDepthForRecursiveTypes, DefaultMaxCollectionSize);
+            var result = GenerateInstance(typeof(T), context);
 
-            return instance;
-        }
-
-        private T GenerateInstanceOf<T>(int recursionLevel)
-        {
-            recursionLevel++;
-            if (recursionLevel > MaxRecursionAllowedWhileFuzzing)
+            if (result == null)
             {
                 return default(T);
             }
 
-            var type = typeof(T);
-
-            var constructor = type.GetConstructorWithBiggestNumberOfParameters();
-            if (constructor == null || type.IsCoveredByAFuzzer()) // the case with some BCL types
-            {
-                var instance = FuzzAnyDotNetType(Type.GetTypeCode(type), type, recursionLevel);
-                return (T)instance;
-            }
-
-            if (constructor.IsEmpty())
-            {
-                var instance = InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(constructor, recursionLevel, type);
-                return instance;
-            }
-            else
-            {
-                try
-                {
-                    return InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructor, recursionLevel);
-                }
-                catch (Exception)
-                {
-                    return InstantiateAndFuzzViaOtherConstructorIteratingOnAllThemUntilItWorks<T>(recursionLevel, type);
-                }
-            }
-        }
-
-        private T InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(ConstructorInfo constructor, int recursionLevel)
-        {
-            var constructorParameters = PrepareFuzzedParametersForThisConstructor(constructor, recursionLevel);
-            var instance = constructor.Invoke(constructorParameters);
-            return (T)instance;
-        }
-
-        private T InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters<T>(ConstructorInfo constructor, int recursionLevel,
-            Type genericType, object instance = null)
-        {
-            if (instance == null)
-            {
-                instance = constructor.Invoke(new object[0]);
-            }
-
-            var propertyInfos = genericType.GetProperties().Where(prop => prop.CanWrite);
-            foreach (var propertyInfo in propertyInfos)
-            {
-                var propertyType = propertyInfo.PropertyType;
-                var propertyValue = FuzzAnyDotNetType(Type.GetTypeCode(propertyType), propertyType, recursionLevel);
-
-                propertyInfo.SetValue(instance, propertyValue);
-            }
-
-            return (T)instance;
-        }
-
-        private object[] PrepareFuzzedParametersForThisConstructor(ConstructorInfo constructor, int recursionLevel)
-        {
-            var parameters = new List<object>();
-            var parameterInfos = constructor.GetParameters();
-            foreach (var parameterInfo in parameterInfos)
-            {
-                var type = parameterInfo.ParameterType;
-
-                // Default .NET types
-                parameters.Add(FuzzAnyDotNetType(Type.GetTypeCode(type), type, recursionLevel));
-            }
-
-            return parameters.ToArray();
-        }
-
-        private object FuzzAnyDotNetType(TypeCode typeCode, Type type, int recursionLevel)
-        {
-            if (type.IsEnum)
-            {
-                return FuzzEnumValue(type);
-            }
-
-            if (type.IsEnumerable())
-            {
-                return GenerateListOf(type, recursionLevel);
-            }
-
-            object result;
-            switch (typeCode)
-            {
-                case TypeCode.Boolean:
-                    result = _fuzzer.HeadsOrTails();
-                    break;
-
-                case TypeCode.Int32:
-                    result = _fuzzer.GenerateInteger();
-                    break;
-
-                case TypeCode.Int64:
-                    result = _fuzzer.GenerateLong();
-                    break;
-
-                case TypeCode.Decimal:
-                    result = _fuzzer.GeneratePositiveDecimal();
-                    break;
-
-                case TypeCode.String:
-                    result = _fuzzer.GenerateFirstName();
-                    break;
-
-                case TypeCode.DateTime:
-                    result = _fuzzer.GenerateDateTime();
-                    break;
-
-                default:
-                    // is it an IEnumerable?
-                    result = GenerateInstanceOf(type, recursionLevel);
-                    break;
-            }
-
-            return result;
-        }
-
-        private T InstantiateAndFuzzViaOtherConstructorIteratingOnAllThemUntilItWorks<T>(int recursionLevel, Type type)
-        {
-            T instance;
-            // Some constructor are complicated to use (e.g. those accepting abstract classes as input)
-            // Try other constructors until it works
-            var constructors = type.GetConstructorsOrderedByNumberOfParametersDesc().Skip(1);
-            foreach (var constructorInfo in constructors)
-            {
-                try
-                {
-                    instance = InstantiateAndFuzzViaConstructorWithBiggestNumberOfParameters<T>(constructorInfo, recursionLevel);
-                    return instance;
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-            }
-
-            // We couldn't use any of its Constructor. Let's return a default instance (degraded mode)
-            instance = default(T);
-
-            return instance;
-        }
-
-        private IEnumerable GenerateListOf(Type type, int recursionLevel)
-        {
-            var typeGenericTypeArguments = type.GenericTypeArguments;
-
-            var listType = typeof(List<>);
-            var constructedListType = listType.MakeGenericType(typeGenericTypeArguments);
-
-            // Instantiates a collection of ...
-            var list = Activator.CreateInstance(constructedListType) as IList;
-
-            // Add 5 elements of this type
-            for (var i = 0; i < MaxCountToFuzzInLists; i++)
-            {
-                list.Add(GenerateInstanceOf(typeGenericTypeArguments.Single(), recursionLevel));
-            }
-
-            return list;
-        }
-
-        private object GenerateInstanceOf(Type type, int recursionLevel)
-        {
-            return CallPrivateGenericMethod(type, nameof(GenerateInstanceOf), new object[] { recursionLevel });
-        }
-
-        private object CallPrivateGenericMethod(Type typeOfT, string privateMethodName, object[] parameters)
-        {
-            var methodInfo = ((TypeInfo) typeof(TypeFuzzer)).DeclaredMethods.Single(m =>
-                m.IsGenericMethod && m.IsPrivate && m.Name.Contains(privateMethodName));
-            var generic = methodInfo.MakeGenericMethod(typeOfT);
-            
-            // private T GenerateInstanceOf<T>(int recursionLevel)
-            var result = generic.Invoke(this, parameters);
-            
-            return result;
+            return (T)result;
         }
 
         /// <summary>
@@ -230,6 +56,198 @@ namespace Diverse
         {
             var enumValues = Enum.GetValues(typeof(T));
             return (T)enumValues.GetValue(_fuzzer.Random.Next(0, enumValues.Length));
+        }
+
+        /// <summary>
+        /// Core generation method. Routes the type to the appropriate generation strategy:
+        /// enums, collections, BCL primitives, or constructor-based generation with cycle detection.
+        /// </summary>
+        private object GenerateInstance(Type type, GenerationContext context)
+        {
+            // 1. Enums
+            if (type.IsEnum)
+            {
+                return FuzzEnumValue(type);
+            }
+
+            // 2. Collections (IEnumerable<T>)
+            if (type.IsEnumerable())
+            {
+                return GenerateListOf(type, context);
+            }
+
+            // 3. BCL types covered by dedicated fuzzers (int, string, DateTime, etc.)
+            if (type.IsCoveredByAFuzzer())
+            {
+                return FuzzBclType(Type.GetTypeCode(type));
+            }
+
+            // 4. Complex/custom types: cycle detection to prevent stack overflow
+            if (context.ShouldStopRecursingFor(type))
+            {
+                return null;
+            }
+
+            var constructor = type.GetConstructorWithBiggestNumberOfParameters();
+            if (constructor == null)
+            {
+                // Interface, abstract class, or type with no accessible constructor
+                return null;
+            }
+
+            context.PushType(type);
+            try
+            {
+                if (constructor.IsEmpty())
+                {
+                    return InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters(constructor, context, type);
+                }
+
+                try
+                {
+                    return InstantiateViaConstructor(constructor, context);
+                }
+                catch (Exception)
+                {
+                    return TryOtherConstructorsUntilOneWorks(type, context);
+                }
+            }
+            finally
+            {
+                context.PopType();
+            }
+        }
+
+        private object FuzzBclType(TypeCode typeCode)
+        {
+            switch (typeCode)
+            {
+                case TypeCode.Boolean:
+                    return _fuzzer.HeadsOrTails();
+
+                case TypeCode.Int32:
+                    return _fuzzer.GenerateInteger();
+
+                case TypeCode.Int64:
+                    return _fuzzer.GenerateLong();
+
+                case TypeCode.Decimal:
+                    return _fuzzer.GeneratePositiveDecimal();
+
+                case TypeCode.String:
+                    return _fuzzer.GenerateFirstName();
+
+                case TypeCode.DateTime:
+                    return _fuzzer.GenerateDateTime();
+
+                default:
+                    return null;
+            }
+        }
+
+        private object InstantiateViaConstructor(ConstructorInfo constructor, GenerationContext context)
+        {
+            var parameters = PrepareFuzzedParametersForThisConstructor(constructor, context);
+            return constructor.Invoke(parameters);
+        }
+
+        private object InstantiateAndFuzzViaPropertiesWhenTheyHaveSetters(ConstructorInfo constructor,
+            GenerationContext context, Type type, object instance = null)
+        {
+            if (instance == null)
+            {
+                instance = constructor.Invoke(new object[0]);
+            }
+
+            var propertyInfos = type.GetProperties().Where(prop => prop.CanWrite);
+            var fuzzingContext = new ConstructorFuzzingContext();
+
+            foreach (var propertyInfo in propertyInfos)
+            {
+                // 1. Try name-based generation
+                var propertyValue = _parameterNameMatcher.TryGenerateFromName(
+                    propertyInfo.Name, propertyInfo.PropertyType, fuzzingContext);
+
+                // 2. Fallback to type-based generation
+                if (propertyValue == null)
+                {
+                    propertyValue = GenerateInstance(propertyInfo.PropertyType, context);
+                }
+
+                // 3. Store for cross-property dependencies
+                fuzzingContext.Store(propertyInfo.Name, propertyValue);
+                propertyInfo.SetValue(instance, propertyValue);
+            }
+
+            return instance;
+        }
+
+        private object[] PrepareFuzzedParametersForThisConstructor(ConstructorInfo constructor, GenerationContext context)
+        {
+            var parameters = new List<object>();
+            var parameterInfos = constructor.GetParameters();
+            var fuzzingContext = new ConstructorFuzzingContext();
+
+            foreach (var parameterInfo in parameterInfos)
+            {
+                // 1. Try name-based generation
+                var value = _parameterNameMatcher.TryGenerateFromName(
+                    parameterInfo.Name, parameterInfo.ParameterType, fuzzingContext);
+
+                // 2. Fallback to type-based generation
+                if (value == null)
+                {
+                    value = GenerateInstance(parameterInfo.ParameterType, context);
+                }
+
+                // 3. Store for cross-parameter dependencies (e.g., lastName needs firstName)
+                fuzzingContext.Store(parameterInfo.Name, value);
+                parameters.Add(value);
+            }
+
+            return parameters.ToArray();
+        }
+
+        private object TryOtherConstructorsUntilOneWorks(Type type, GenerationContext context)
+        {
+            // Some constructors are complicated to use (e.g. those accepting abstract classes as input)
+            // Try other constructors until it works
+            var constructors = type.GetConstructorsOrderedByNumberOfParametersDesc().Skip(1);
+            foreach (var constructorInfo in constructors)
+            {
+                try
+                {
+                    return InstantiateViaConstructor(constructorInfo, context);
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+
+            // We couldn't use any of its constructors. Return null (degraded mode).
+            return null;
+        }
+
+        private IEnumerable GenerateListOf(Type type, GenerationContext context)
+        {
+            var typeGenericTypeArguments = type.GenericTypeArguments;
+            var elementType = typeGenericTypeArguments.Single();
+
+            var listType = typeof(List<>);
+            var constructedListType = listType.MakeGenericType(typeGenericTypeArguments);
+
+            // Instantiate a List<elementType>
+            var list = Activator.CreateInstance(constructedListType) as IList;
+
+            // Use context-aware collection size (reduced for recursive types)
+            var collectionSize = context.GetCollectionSizeFor(elementType);
+            for (var i = 0; i < collectionSize; i++)
+            {
+                list.Add(GenerateInstance(elementType, context));
+            }
+
+            return list;
         }
 
         private object FuzzEnumValue(Type enumType)
