@@ -18,6 +18,7 @@ namespace Diverse
         private const int DefaultMaxDepthForRecursiveTypes = 2;
 
         private readonly IFuzz _fuzzer;
+        private readonly ParameterNameMatcher _parameterNameMatcher;
 
         /// <summary>
         /// Instantiates a <see cref="TypeFuzzer"/>.
@@ -26,6 +27,7 @@ namespace Diverse
         public TypeFuzzer(IFuzz fuzzer)
         {
             _fuzzer = fuzzer;
+            _parameterNameMatcher = new ParameterNameMatcher(fuzzer);
         }
 
         /// <summary>
@@ -158,9 +160,22 @@ namespace Diverse
             }
 
             var propertyInfos = type.GetProperties().Where(prop => prop.CanWrite);
+            var fuzzingContext = new ConstructorFuzzingContext();
+
             foreach (var propertyInfo in propertyInfos)
             {
-                var propertyValue = GenerateInstance(propertyInfo.PropertyType, context);
+                // 1. Try name-based generation
+                var propertyValue = _parameterNameMatcher.TryGenerateFromName(
+                    propertyInfo.Name, propertyInfo.PropertyType, fuzzingContext);
+
+                // 2. Fallback to type-based generation
+                if (propertyValue == null)
+                {
+                    propertyValue = GenerateInstance(propertyInfo.PropertyType, context);
+                }
+
+                // 3. Store for cross-property dependencies
+                fuzzingContext.Store(propertyInfo.Name, propertyValue);
                 propertyInfo.SetValue(instance, propertyValue);
             }
 
@@ -171,9 +186,23 @@ namespace Diverse
         {
             var parameters = new List<object>();
             var parameterInfos = constructor.GetParameters();
+            var fuzzingContext = new ConstructorFuzzingContext();
+
             foreach (var parameterInfo in parameterInfos)
             {
-                parameters.Add(GenerateInstance(parameterInfo.ParameterType, context));
+                // 1. Try name-based generation
+                var value = _parameterNameMatcher.TryGenerateFromName(
+                    parameterInfo.Name, parameterInfo.ParameterType, fuzzingContext);
+
+                // 2. Fallback to type-based generation
+                if (value == null)
+                {
+                    value = GenerateInstance(parameterInfo.ParameterType, context);
+                }
+
+                // 3. Store for cross-parameter dependencies (e.g., lastName needs firstName)
+                fuzzingContext.Store(parameterInfo.Name, value);
+                parameters.Add(value);
             }
 
             return parameters.ToArray();

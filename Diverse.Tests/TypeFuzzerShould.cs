@@ -19,9 +19,9 @@ namespace Diverse.Tests
 
             Check.That(instance).IsNotNull();
             Check.That(instance.Name).IsNotEmpty();
-            Check.That(instance.Age).IsInstanceOf<int>().Which.IsNotZero();
+            Check.That(instance.Age).IsStrictlyGreaterThan(17).And.IsStrictlyLessThan(98);
             Check.That(instance.Gender).IsInstanceOf<Gender>();
-            Check.That(instance.FavoriteNumbers).HasSize(5).And.Not.Contains(0);
+            Check.That(instance.FavoriteNumbers).HasSize(5);
             Check.That(instance.Birthday).IsNotEqualTo(default(DateTime));
         }
 
@@ -49,7 +49,7 @@ namespace Diverse.Tests
             Check.That(player).IsNotNull();
             Check.That(player.LastName).IsNotEmpty();
             Check.That(player.FirstName).IsNotEmpty();
-            Check.That(player.Age).IsInstanceOf<int>().Which.IsNotEqualTo(0);
+            Check.That(player.Age).IsStrictlyGreaterThan(17).And.IsStrictlyLessThan(98);
         }
 
         [Test]
@@ -62,8 +62,8 @@ namespace Diverse.Tests
             Check.That(player).IsNotNull();
             Check.That(player.LastName).IsNotEmpty();
             Check.That(player.FirstName).IsNotEmpty();
-            Check.That(player.ChessLevel).IsNotEqualTo(default(ChessLevel));
-            Check.That(player.Age).IsInstanceOf<int>().Which.IsNotEqualTo(0);
+            Check.That(player.ChessLevel).IsInstanceOf<ChessLevel>();
+            Check.That(player.Age).IsStrictlyGreaterThan(17).And.IsStrictlyLessThan(98);
         }
 
         [Test]
@@ -157,6 +157,52 @@ namespace Diverse.Tests
 
             var result = fuzzer.GenerateInstanceOf<bool>();
             Check.That(result).IsInstanceOf<bool>();
+        }
+
+        [Test]
+        public void Generate_semantically_coherent_UserProfile_with_email_age_and_password()
+        {
+            var fuzzer = new Fuzzer();
+
+            var user = fuzzer.GenerateInstanceOf<UserProfile>();
+
+            Check.That(user).IsNotNull();
+            Check.That(user.FirstName).IsNotEmpty();
+            Check.That(user.LastName).IsNotEmpty();
+            Check.That(user.Email).Contains("@");
+            Check.That(user.Password).IsNotEmpty();
+            Check.That(user.Password.Length).IsStrictlyGreaterThan(5);
+            Check.That(user.Age).IsStrictlyGreaterThan(17).And.IsStrictlyLessThan(98);
+        }
+
+        [Test]
+        public void Generate_semantically_coherent_OrderWithNamedParameters()
+        {
+            var fuzzer = new Fuzzer();
+
+            var order = fuzzer.GenerateInstanceOf<OrderWithNamedParameters>();
+
+            Check.That(order).IsNotNull();
+            Check.That(order.Description).Contains(" "); // sentence with multiple words
+            Check.That(order.CustomerEmail).Contains("@");
+            Check.That(order.Age).IsStrictlyGreaterThan(17).And.IsStrictlyLessThan(98);
+            Check.That(order.Price).IsStrictlyGreaterThan(0m).And.IsStrictlyLessThan(10000m);
+        }
+
+        [Test]
+        public void Generate_semantically_coherent_properties_via_setters()
+        {
+            var fuzzer = new Fuzzer();
+
+            var instance = fuzzer.GenerateInstanceOf<TypeWithSetterBasedNamedProperties>();
+
+            Check.That(instance).IsNotNull();
+            Check.That(instance.FirstName).IsNotEmpty();
+            Check.That(instance.LastName).IsNotEmpty();
+            Check.That(instance.Email).Contains("@");
+            Check.That(instance.Description).Contains(" ");
+            Check.That(instance.Age).IsStrictlyGreaterThan(17).And.IsStrictlyLessThan(98);
+            Check.That(instance.TotalAmount).IsStrictlyGreaterThan(0m).And.IsStrictlyLessThan(10000m);
         }
 
         [Test]
