@@ -415,6 +415,70 @@ namespace Diverse
             new ContextualizedFirstName("Heirani", Continent.Australia),
             new ContextualizedFirstName("Vanina", Continent.Australia),
             new ContextualizedFirstName("Moeata", Continent.Australia),
+
+            // -------------------------------------------------------------------
+            // Gender-neutral first names (present in both Male and Female pools)
+            // -------------------------------------------------------------------
+
+            // Africa
+            new ContextualizedFirstName("Nuru", Continent.Africa),
+            new ContextualizedFirstName("Noam", Continent.Africa),
+            new ContextualizedFirstName("Ayodele", Continent.Africa),
+            new ContextualizedFirstName("Femi", Continent.Africa),
+            new ContextualizedFirstName("Zawadi", Continent.Africa),
+            new ContextualizedFirstName("Baraka", Continent.Africa),
+            new ContextualizedFirstName("Amara", Continent.Africa),
+            new ContextualizedFirstName("Chika", Continent.Africa),
+            new ContextualizedFirstName("Obi", Continent.Africa),
+            new ContextualizedFirstName("Desta", Continent.Africa),
+            new ContextualizedFirstName("Imani", Continent.Africa),
+
+            // Antarctica (Scandinavian)
+            new ContextualizedFirstName("Bo", Continent.Antarctica),
+            new ContextualizedFirstName("Janne", Continent.Antarctica),
+            new ContextualizedFirstName("Finn", Continent.Antarctica),
+            new ContextualizedFirstName("Ebbe", Continent.Antarctica),
+
+            // Asia
+            new ContextualizedFirstName("Akira", Continent.Asia),
+            new ContextualizedFirstName("Kim", Continent.Asia),
+            new ContextualizedFirstName("Yuki", Continent.Asia),
+            new ContextualizedFirstName("Haru", Continent.Asia),
+            new ContextualizedFirstName("Ren", Continent.Asia),
+            new ContextualizedFirstName("Sora", Continent.Asia),
+            new ContextualizedFirstName("Haneul", Continent.Asia),
+            new ContextualizedFirstName("Kiran", Continent.Asia),
+            new ContextualizedFirstName("Roshan", Continent.Asia),
+            new ContextualizedFirstName("Kai", Continent.Asia),
+
+            // Europe
+            new ContextualizedFirstName("Sacha", Continent.Europe),
+            new ContextualizedFirstName("Camille", Continent.Europe),
+            new ContextualizedFirstName("Claude", Continent.Europe),
+            new ContextualizedFirstName("Dominique", Continent.Europe),
+            new ContextualizedFirstName("Robin", Continent.Europe),
+            new ContextualizedFirstName("Noa", Continent.Europe),
+            new ContextualizedFirstName("Alex", Continent.Europe),
+
+            // North America
+            new ContextualizedFirstName("Dakota", Continent.NorthAmerica),
+            new ContextualizedFirstName("Sequoia", Continent.NorthAmerica),
+
+            // South America
+            new ContextualizedFirstName("Araci", Continent.SouthAmerica),
+            new ContextualizedFirstName("Jaci", Continent.SouthAmerica),
+            new ContextualizedFirstName("Paz", Continent.SouthAmerica),
+            new ContextualizedFirstName("Guadalupe", Continent.SouthAmerica),
+            new ContextualizedFirstName("Trinidad", Continent.SouthAmerica),
+
+            // Australia & Oceania
+            new ContextualizedFirstName("Moana", Continent.Australia),
+            new ContextualizedFirstName("Manaia", Continent.Australia),
+            new ContextualizedFirstName("Aroha", Continent.Australia),
+            new ContextualizedFirstName("Rangi", Continent.Australia),
+            new ContextualizedFirstName("Mana", Continent.Australia),
+            new ContextualizedFirstName("Tai", Continent.Australia),
+            new ContextualizedFirstName("Keahi", Continent.Australia),
         };
     }
 }

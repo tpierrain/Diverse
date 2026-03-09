@@ -138,6 +138,22 @@ Diverse will help you to quickly generate diverse names or persons from various 
 
 ![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-small.jpg?raw=true)
 
+### Gender-neutral names
+
+Diverse explicitly includes **gender-neutral first names** that appear in both the Male and Female pools. When generating a `NonBinary` person, the library picks from either pool at random, naturally including these shared names.
+
+| Continent | Gender-neutral names |
+|-----------|---------------------|
+| Africa | Amara, Ayodele, Baraka, Chika, Desta, Femi, Imani, Noam, Nuru, Obi, Zawadi |
+| Antarctica (Scandinavian) | Bo, Ebbe, Finn, Janne |
+| Asia | Akira, Bao, Haneul, Haru, Kai, Kim, Kiran, Qiao, Ren, Roshan, Sora, Xing Xing, Yuki |
+| Europe | Alex, Camille, Claude, Dominique, Noa, Robin, Sacha |
+| North America | Dakota, Sequoia |
+| South America | Araci, Guadalupe, Jaci, Paz, Trinidad |
+| Australia & Oceania | Aroha, Isley, Kaawa, Keahi, Mana, Manaia, Moana, Rangi, Tai |
+
+In addition to these explicitly shared names, every name from both pools is accessible to `NonBinary` persons.
+
 Just pick the primitives you want and check by yourself ;-)
 
 ```csharp
@@ -148,7 +164,7 @@ Mrs. Zahara NGOMA (Female) zngoma@yopmail.com (married - age: 20 years)
 Ms. Signilde HAUGLAND (Female) shaugland@protonmail.com (age: 33 years) 
 Ms. Imogen WILLIAMS (Female) imogen.williams@protonmail.com (age: 41 years) 
 Mrs. Zayneb DROGBA (Female) zayneb.drogba@protonmail.com (married - age: 31 years) 
-Mr. Samuel MÜLLER (Male) smuller@kolab.com (age: 27 years) 
+Mr. Samuel Mï¿½LLER (Male) smuller@kolab.com (age: 27 years) 
 Mx. Gojko BERNARD (NonBinary) gojko.bernard@ibm.com (age: 34 years) 
 Ms. Thuong KIM (Female) tkim@kolab.com (age: 75 years) 
 Mr. Samuel CONTI (Male) samuel.conti@42skillz.com (married - age: 25 years) 

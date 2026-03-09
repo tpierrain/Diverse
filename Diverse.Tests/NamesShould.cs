@@ -23,13 +23,13 @@ namespace Diverse.Tests
         [Test]
         public void Have_357_female_names()
         {
-            Check.That(Female.FirstNames).HasSize(357);
+            Check.That(Female.FirstNames).HasSize(403);
         }
 
         [Test]
         public void Have_330_male_names()
         {
-            Check.That(Male.FirstNames).HasSize(336);
+            Check.That(Male.FirstNames).HasSize(377);
         }
 
         [Test]
