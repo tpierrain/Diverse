@@ -3,6 +3,7 @@ name: .NET Core
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
     paths-ignore:
       - 'README.md'
       - '**.jpg'
@@ -31,15 +32,15 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: Pack
       if: matrix.os == 'ubuntu-latest'
-      run: |
-        arrTag=(${GITHUB_REF//\// })
-        VERSION="${arrTag[2]}"
-        VERSION="${VERSION//v}"
-        echo "OurVersion=${VERSION//v}" >> $GITHUB_ENV
-        dotnet pack --configuration Release
+      run: dotnet pack --configuration Release
     - name: Upload Artifact
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v4
       with:
         name: nupkg
         path: Diverse/bin/Release/*.nupkg
+    - name: Upload nupkg to GitHub Release
+      if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/v')
+      run: gh release upload ${{ github.ref_name }} Diverse/bin/Release/*.nupkg
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
