@@ -70,7 +70,6 @@ namespace Diverse.Tests
         }
 
         [Test]
-        [Ignore("To be restored once v1 is sealed.")]
         public void Be_able_to_Fuzz_Diverse_Persons()
         {
             var fuzzer = new Fuzzer(722752479);
@@ -83,7 +82,16 @@ namespace Diverse.Tests
 
             Check.That(persons.Select(x => x.ToString()))
                 .ContainsExactly(
-                    "Mrs. Zahara NGOMA (Female) zngoma@yopmail.com (married - age: 20 years)", "Mx. Mohammed TESFAYE (NonBinary) mohammed.tesfaye@kolab.com (age: 24 years)", "Ms. Ella DAVIS (Female) ella.davis@protonmail.com (age: 27 years)", "Mx. Akmal KASONGO (NonBinary) akmal.kasongo@aol.com (age: 23 years)", "Mx. Shing KHATRI (NonBinary) shing.khatri@aol.com (married - age: 20 years)", "Ms. Jolanta BOTELHO (Female) jolanta.botelho@gmail.com (age: 23 years)", "Mx. Dzigbode DIOP (NonBinary) dzigbode.diop@gmail.com (age: 31 years)", "Mrs. Ishani LǏ (Female) ili@yahoo.fr (married - age: 24 years)", "Mrs. Gioconda GOMES (Female) gioconda.gomes@ibm.com (married - age: 19 years)", "Ms. Manutea FORSYTHE (Female) mforsythe@protonmail.com (age: 18 years)");
+                    "Mrs. Zahara NGOMA (Female) zngoma@yopmail.com (married - age: 20 years)\n90 quai Claude-Bernard\n93400 - Saint-Ouen\nFrance",
+                    "Mrs. Awa BADU (Female) abadu@kolab.com (married - age: 28 years)\n76 rue Tristan Tzara\n56170 - Quiberon\nFrance",
+                    "Mx. Atahualpa ARELLANO (NonBinary) aarellano@protonmail.com (age: 32 years)\n279 17th Street North West\n33140 - Miami\nUsa",
+                    "Mrs. Hei-Ran KHATRI (Female) hei-ran.khatri@aol.com (married - age: 20 years)\n310 Binjiang Ave, Hanyang District\n674162 - Lijiang\nChina",
+                    "Mr. Lukas RIZZO (Male) lukas.rizzo@microsoft.com (married - age: 31 years)\n45 rue de la Poste\n93400 - Saint-Ouen\nFrance",
+                    "Ms. Anya SOLBERG (Female) anya.solberg@ibm.com (age: 41 years)\n248 rue de la résistance\n38626 - Grenoble\nFrance",
+                    "Mx. Loc LAGHARI (NonBinary) loc.laghari@aol.com (married - age: 28 years)\n328 DongSanHuan Middle Road, Chao-Yang\n674107 - Lijiang\nChina",
+                    "Mx. Dayshaun MOORE (NonBinary) dmoore@protonmail.com (married - age: 57 years)\n281 7th Avenue\n33148 - Miami\nUsa",
+                    "Mr. Jacob BECK (Male) jbeck@42skillz.com (age: 18 years)\n72 K Street NW\n33145 - Miami\nUsa",
+                    "Ms. Chiara HENDRICKS (Female) chendricks@ibm.com (age: 25 years)\n204 avenue de Lodève\n29200 - Brest\nFrance");
         }
 
         [Test]
