@@ -14,7 +14,7 @@ namespace Diverse
 
         private static readonly string[] _domainNames = new string[]
         {
-            "kolab.com", "protonmail.com", "gmail.com", "yahoo.fr", "42skillz.com", "gmail.com", "ibm.com",
+            "kolab.com", "protonmail.com", "gmail.com", "yahoo.fr", "shodo.io", "gmail.com", "ibm.com",
             "gmail.com", "yopmail.com", "microsoft.com", "gmail.com", "aol.com"
         };
     }

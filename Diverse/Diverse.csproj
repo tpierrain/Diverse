@@ -5,13 +5,13 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>Diverse</RootNamespace>
     <Authors>Thomas PIERRAIN (use case driven)</Authors>
-    <Company>42 skillz</Company>
+    <Company>Shodo</Company>
     <Description>Diverse, the Fuzzer pico library you need to make your .NET tests more *Diverse*</Description>
     <Copyright>Copyright © Thomas PIERRAIN 2021</Copyright>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/42skillz/Diverse</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/tpierrain/Diverse</PackageProjectUrl>
     <PackageIcon>wave-icon.jpg</PackageIcon>
-    <RepositoryUrl>https://github.com/42skillz/Diverse</RepositoryUrl>
+    <RepositoryUrl>https://github.com/tpierrain/Diverse</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
     <PackageReleaseNotes></PackageReleaseNotes>

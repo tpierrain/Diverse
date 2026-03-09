@@ -1,11 +1,11 @@
-# Diverse ![.NET Core](https://github.com/42skillz/Diverse/workflows/.NET%20Core/badge.svg)
+# Diverse ![.NET Core](https://github.com/tpierrain/Diverse/workflows/.NET%20Core/badge.svg)
 
 Diverse, the Fuzzer pico library you need to make your .NET tests more *Diverse*.
 
-![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-wave.jpg?raw=true)   
+![Diverse logo](https://github.com/tpierrain/Diverse/blob/main/Diverse-icon-wave.jpg?raw=true)   
   
 # 
-![twitter icon](https://github.com/42skillz/Diverse/blob/main/Images/Twitter_icon.gif?raw=true) [use case driven on twitter](https://twitter.com/tpierrain) - (thomas@42skillz.com)
+<img src="https://github.com/tpierrain/Diverse/blob/main/Images/Bluesky_icon.png?raw=true" width="20" alt="Bluesky icon"> [use case driven on Bluesky](https://bsky.app/profile/tpierrain.bsky.social) - (thomas.pierrain@shodo.io)
 
 
 ## Diverse added-value
@@ -136,7 +136,7 @@ Indeed, Diverse will help you to make your tests more inclusive and more diverse
 
 Diverse will help you to quickly generate diverse names or persons from various genders, countries, cultures, etc.
 
-![twitter screen](https://github.com/42skillz/Diverse/blob/main/Diverse-icon-small.jpg?raw=true)
+![Diverse logo](https://github.com/tpierrain/Diverse/blob/main/Diverse-icon-small.jpg?raw=true)
 
 ### Gender-neutral names
 
@@ -167,7 +167,7 @@ Mrs. Zayneb DROGBA (Female) zayneb.drogba@protonmail.com (married - age: 31 year
 Mr. Samuel M�LLER (Male) smuller@kolab.com (age: 27 years) 
 Mx. Gojko BERNARD (NonBinary) gojko.bernard@ibm.com (age: 34 years) 
 Ms. Thuong KIM (Female) tkim@kolab.com (age: 75 years) 
-Mr. Samuel CONTI (Male) samuel.conti@42skillz.com (married - age: 25 years) 
+Mr. Samuel CONTI (Male) samuel.conti@shodo.io (married - age: 25 years) 
 Mrs. Dae BAK (Female) dae.bak@ibm.com (married - age: 32 years) 
 Mx. Okal MENSAH (NonBinary) omensah@yopmail.com (married - age: 28 years)
 
@@ -179,10 +179,10 @@ Use extensible fuzzers that randomize the values for you, but that can be replay
 
 I explained this here in that thread: 
 
-![twitter screen](https://github.com/42skillz/Diverse/blob/main/Images/DiverseThread1-550.png?raw=true)
-![twitter screen](https://github.com/42skillz/Diverse/blob/main/Images/DiverseThread2-550.png?raw=true)
+![Deterministic fuzzing thread part 1](https://github.com/tpierrain/Diverse/blob/main/Images/DiverseThread1-550.png?raw=true)
+![Deterministic fuzzing thread part 2](https://github.com/tpierrain/Diverse/blob/main/Images/DiverseThread2-550.png?raw=true)
 
-[see the thread on twitter here](https://twitter.com/tpierrain/status/1328962675074850819)
+[see the thread on Bluesky](https://bsky.app/profile/tpierrain.bsky.social)
 
 #### How to deterministically reproduce a test that has failed but only in a very specific case (picked randomly)
 

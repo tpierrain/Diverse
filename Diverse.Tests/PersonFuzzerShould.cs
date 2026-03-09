@@ -105,7 +105,7 @@ namespace Diverse.Tests
 
             Check.That(email).IsEqualTo("okal.ben-achour@yopmail.com");
             Check.That(email2).IsEqualTo("adubois@kolab.com");
-            Check.That(email3).IsEqualTo("lucca.hendricks@42skillz.com");
+            Check.That(email3).IsEqualTo("lucca.hendricks@shodo.io");
         }
 
         [Test]
