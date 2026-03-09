@@ -34,10 +34,10 @@ namespace Diverse
         public string GenerateFirstName(Gender? gender = null)
         {
             string[] firstNameCandidates;
-            if (gender == null)
+            if (gender == null || gender == Gender.NonBinary)
             {
-                var isFemale = _fuzzer.HeadsOrTails();
-                firstNameCandidates = isFemale ? Female.FirstNames : Male.FirstNames;
+                var useFemaleName = _fuzzer.HeadsOrTails();
+                firstNameCandidates = useFemaleName ? Female.FirstNames : Male.FirstNames;
             }
             else
             {
