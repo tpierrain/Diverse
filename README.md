@@ -132,7 +132,7 @@ The whole idea of a good *Fuzzer* is to be as easy to use as it is to put an har
 Thanks to ask ;-) Well... It is a matter of fact that the software industry is still not really a super inclusive place right now.
 
 ### *Karens* are in minority here ;-)
-Indeed, Diverse will help you to make your tests more inclusive and more diverse by picking other things that *Karen* of *John* as default first names for instance.
+Indeed, Diverse will help you to make your tests more inclusive and more diverse by picking other things that *Karen* or *Dylan* as default first names for instance.
 
 Diverse will help you to quickly generate diverse names or persons from various genders, countries, cultures, etc.
 
