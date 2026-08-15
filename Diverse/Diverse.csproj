@@ -15,10 +15,16 @@
     <RepositoryUrl>https://github.com/tpierrain/Diverse</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <Version>1.0.1</Version>
+    <PackageReleaseNotes>Fixes the xUnit ITestOutputHelper issue (#11):
+- New: Fuzzer.WithLogger(...) gives a single Fuzzer instance its own log sink, which takes precedence over the static Fuzzer.Log. Prefer it whenever your tests run in parallel. A derived Fuzzer inherits it.
+- Changed: the seed is now traced on the first generated value instead of at construction time, and exactly once per instance. It can now name the test involved even when the Fuzzer was built in a test class constructor.
+- Changed: the FuzzerException raised when no log sink was registered moves along, from the constructor to the first generated value.
+- Changed: a log sink that throws no longer breaks your test; the seed trace falls back on the Console with a warning.
+- Changed: the internal Fuzzer used by the NoDuplication mode no longer emits a second, confusing banner.
+Determinism is unchanged: for any given seed, the sequence of generated values is identical to 1.0.1.</PackageReleaseNotes>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

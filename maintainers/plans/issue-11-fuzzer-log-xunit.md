@@ -58,13 +58,34 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
   - [x] 🔴 T13, T14 (the `InvalidOperationException` propagated) → split into a pure `BuildSeedAndTestInformationLines()` + an `Emit()` with try/catch and Console fallback → 🟢
   - [x] 🔴 T15 (the message lacked `WithLogger`) → `FuzzerException` raised **outside** the try/catch, flag not set in that branch, and the xUnit guidance in `BuildErrorMessageForMissingLogRegistration` rewritten → 🟢
   - [x] Note: NFluent 2.8's `AndWhichMessage()` lives in the `NFluent.ApiChecks` namespace; `WhichMember(e => e.Message)` is the one available from `NFluent`
-- [ ] **Step 6 — Documentation**
-  - [ ] Rewrite the xUnit block of `BuildErrorMessageForMissingLogRegistration` (it currently advises the very pattern that causes #11)
-  - [ ] `README.md` — split the registration section per framework, document *when* the seed is traced, add a "Running your tests in parallel" subsection
-  - [ ] `CLAUDE.md` — the `Fuzzer.Log` save/restore rule for fixtures + the two-seams invariant
-- [ ] **Step 7 — Verification & release**
-  - [ ] Full suite green on both TFMs, determinism guards untouched
-  - [ ] Version bump 1.0.1 → **1.1.0** + fill `<PackageReleaseNotes>`
+- [x] **Step 6 — Documentation** _(2026-08-15)_
+  - [x] Rewrite the xUnit block of `BuildErrorMessageForMissingLogRegistration` (done in Step 5, driven by T15)
+  - [x] `README.md` — registration split per framework (NUnit / xUnit / MSTest), "When is the seed traced?", "Running your tests in parallel"
+  - [x] `CLAUDE.md` — the `Fuzzer.Log` save/restore rule for fixtures + the two-seams invariant as pattern #5
+- [x] **Step 7 — Verification & release** _(2026-08-15)_
+  - [x] Full suite green (216 tests), determinism guards untouched, Release build clean on **both** TFMs (only the 12 pre-existing CS1591 warnings on `FuzzerExtensions`/`MethodCapture` remain)
+  - [x] Version bump 1.0.1 → **1.1.0** + `<PackageReleaseNotes>` filled
+
+## Verification against real xUnit (out-of-repo, scratchpad)
+
+The stub in `Diverse.Tests` only approximates xUnit, so the fix was also checked against the real
+thing, in throwaway projects outside this repo.
+
+- [x] **The reported crash reproduces on 1.0.1 — but only with xUnit 2.x and only under
+      parallelism.** With `xunit 2.9.2` + `Diverse 1.0.1`, 12 test classes each doing
+      `Fuzzer.Log = output.WriteLine; _fuzzer = new Fuzzer();` in their constructor:
+      **3 runs out of 5 failed** (0 to 3 failures each) with
+      `System.InvalidOperationException : There is no currently active test.` at
+      `Diverse.Fuzzer.LogSeedAndTestInformations` — the exact stack trace of the issue.
+- [x] **Same repro, 5 runs against this branch: 69/69 green every time.**
+- [x] The issue's *minimal* snippet (a single test class) does **not** crash on 1.0.1, and does not
+      crash under xUnit v3 either. So the dominant root cause in the wild is **(b) the shared
+      mutable static under parallel execution**, more than the constructor timing on its own. Worth
+      saying in the issue reply: someone hitting this on xUnit v3 or on a single test class is
+      hitting something else.
+- [x] The recommended `new Fuzzer().WithLogger(output.WriteLine)` pattern verified green, and the
+      banner now names the real `[Fact]`/`[Theory]` (e.g. `--- from the test: SampleTests.Example()`)
+      instead of `(not found)`.
 
 ## Design
 

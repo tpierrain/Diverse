@@ -79,6 +79,7 @@ dotnet test Diverse.Tests/Diverse.Tests.csproj
 2. **Sub-fuzzers** always receive `IFuzz` (not `Fuzzer`) and use `_fuzzer.Random` for randomness
 3. **Data diversity**: person generation uses continent-aware name pools (first name origin determines last name pool)
 4. **Determinism contract**: never use `new Random()` for data generation inside sub-fuzzers -- always use the shared `IFuzz.Random`
+5. **Lazy seed tracing**: the seed banner is emitted on the **first randomness consumption**, exactly once per `Fuzzer` instance, never from the constructor (that is what makes Diverse usable with xUnit's `ITestOutputHelper`, see issue #11). There are exactly **two seams** calling `EnsureTheSeedHasBeenLogged()`: the `IFuzz.Random` getter and `GenerateWithoutDuplication` (the NoDuplication mode draws from another `Fuzzer` instance, so it never goes through the getter). **Any new randomness path must go through one of them**, or the seed will not be traced. Resolution order of the sink: instance logger (`WithLogger(...)`) first, then the static `Fuzzer.Log`.
 
 ### CRITICAL: Static data is immutable (determinism guarantee)
 
@@ -100,7 +101,8 @@ All static data arrays/dictionaries used for generation (`LastNames._perContinen
 
 ## Test conventions
 
-- Setup: `AllTestFixtures.cs` registers `Fuzzer.Log = TestContext.WriteLine` (mandatory)
+- Setup: `AllTestFixtures.cs` registers `Fuzzer.Log = TestContext.WriteLine` for the whole assembly (mandatory)
+- Any fixture that **mutates** `Fuzzer.Log` (e.g. `FuzzerLoggingShould`, `FuzzerWithItsOwnLoggerShould`, `FuzzerWithAFailingLogSinkShould`) **must** save and restore it in `[SetUp]`/`[TearDown]`, and must **not** be `[Parallelizable]` -- NUnit's default serial execution is what protects that static
 - Tests must be **fast** (sub-millisecond to ~400ms max)
 - Probabilistic tests use `[Repeat(200)]` to catch rare failures
 - Assertions use **NFluent** (`Check.That(x).IsEqualTo(y)`)

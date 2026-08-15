@@ -511,6 +511,25 @@
              London
             </summary>
         </member>
+        <member name="T:Diverse.ArgumentHasher">
+            <summary>
+            Hash arguments (so that we can Memoize).
+            </summary>
+        </member>
+        <member name="M:Diverse.ArgumentHasher.HashArguments(System.Object[])">
+            <summary>
+            Hash provided arguments.
+            </summary>
+            <param name="arguments">the </param>
+            <returns></returns>
+        </member>
+        <member name="M:Diverse.ArgumentHasher.GetByValueHashCode(System.Collections.IEnumerable)">
+            <summary>
+            Handle the case of collections (where we want to compare their content and not the reference of the collection).
+            </summary>
+            <param name="collection"></param>
+            <returns></returns>
+        </member>
         <member name="T:Diverse.Collections.CollectionFuzzer">
             <summary>
             Fuzz from collections.
@@ -583,7 +602,7 @@
             Note: you can instantiate another Deterministic Fuzzer by providing it the Seed you want to reuse.
             </summary>
         </member>
-        <member name="P:Diverse.Fuzzer.SideEffectFreeSafeFuzzer">
+        <member name="P:Diverse.Fuzzer.SideEffectFreeFuzzerWithDuplicationAllowed">
              <summary>
              internal Fuzzer instance to be used by the various lambdas
              related to the NoDuplication mode (i.e. when the option is
@@ -598,12 +617,12 @@
              NoDuplication set to <b>true</b> in a situation where the
              <see cref="F:Diverse.Fuzzer.MaxFailingAttemptsForNoDuplicationDefaultValue"/>
              was not enough to find another original value, the lastChance lambda
-             of the <see cref="M:Diverse.Fuzzer.GenerateWithoutDuplication``1(System.Reflection.MethodBase,System.Int32,System.Int32,System.Func{Diverse.IFuzz,``0},System.Func{System.Collections.Generic.SortedSet{System.Object},Diverse.Maybe{``0}})"/> method will be called.
+             of the <see cref="M:Diverse.Fuzzer.GenerateWithoutDuplication``1(System.Reflection.MethodBase,System.Int32,System.Int32,System.Func{Diverse.IFuzz,``0},System.Func{Diverse.IFuzz,System.Collections.Generic.SortedSet{System.Object},Diverse.Maybe{``0}})"/> method will be called.
             
              In that case, since the last chance lambda of the <see cref="M:Diverse.Fuzzer.GenerateAge"/>
              method is using the <see cref="M:Diverse.IFuzzNumbers.GenerateInteger(System.Nullable{System.Int32},System.Nullable{System.Int32})"/> method,
              we need to avoid <see cref="T:System.StackOverflowException"/> by using
-             a <see cref="P:Diverse.Fuzzer.SideEffectFreeSafeFuzzer"/> instance in that specific case
+             a <see cref="P:Diverse.Fuzzer.SideEffectFreeFuzzerWithDuplicationAllowed"/> instance in that specific case
              (in all lastChance lambdas actually).
              </summary>
         </member>
@@ -638,6 +657,7 @@
         <member name="P:Diverse.Fuzzer.Diverse#IFuzz#Random">
             <summary>
             Gets the Random instance to be used when we want to create a new extension method for the <see cref="T:Diverse.Fuzzer"/>.
+            Beware: do not use this property if you do not want duplication (use all existing methods of <see cref="T:Diverse.IFuzz"/> that can handle no duplication mode, like <see cref="M:Diverse.Fuzzer.PickOneFrom``1(System.Collections.Generic.IList{``0})"/>).
             <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
             </summary>
         </member>
@@ -659,6 +679,27 @@
             <param name="name">The name you want to specify for this <see cref="T:Diverse.Fuzzer"/> instance (useful for debuging purpose).</param>
             <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
         </member>
+        <member name="M:Diverse.Fuzzer.#ctor(System.Nullable{System.Int32},System.String,System.Nullable{System.Boolean},System.Action{System.String},System.Boolean)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.Fuzzer"/>, possibly a silent one.
+            <remarks>
+                Every parameter is required here on purpose: it keeps this constructor out of the
+                overload resolution of the public one (i.e. <c>new Fuzzer()</c> stays unambiguous).
+            </remarks>
+            </summary>
+            <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
+            <param name="name">The name you want to specify for this <see cref="T:Diverse.Fuzzer"/> instance (useful for debuging purpose).</param>
+            <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
+            <param name="instanceLogger">
+                The logger of the <see cref="T:Diverse.Fuzzer"/> instance we derive from (if any), so that a
+                derived <see cref="T:Diverse.Fuzzer"/> keeps tracing wherever its parent was tracing.
+            </param>
+            <param name="isASilentInternalFuzzer">
+                <b>true</b> for the <see cref="T:Diverse.Fuzzer"/> instances we create for our own internal
+                needs and never hand over to the end-user: those must not trace any seed, since
+                they share the one of the instance that created them (which traces it already).
+            </param>
+        </member>
         <member name="M:Diverse.Fuzzer.GenerateNoDuplicationFuzzer">
             <summary>
             Returns a <see cref="T:Diverse.IFuzz"/> instance that you can use to generate always different values from now
@@ -667,13 +708,50 @@
             </summary>
             <returns>A <see cref="T:Diverse.IFuzz"/> instance that will never return twice the same value (whatever the method called).</returns>
         </member>
+        <member name="M:Diverse.Fuzzer.WithLogger(System.Action{System.String})">
+            <summary>
+            Sets a logger dedicated to this <see cref="T:Diverse.Fuzzer"/> instance only, which takes
+            precedence over the process-wide static <see cref="P:Diverse.Fuzzer.Log"/> property.
+            <remarks>
+                This is the safe option whenever your test framework provides a per-test output sink
+                (e.g. xUnit's ITestOutputHelper) and/or whenever your tests run in parallel: the
+                static <see cref="P:Diverse.Fuzzer.Log"/> property is shared by all the tests of your process, so
+                concurrent tests registering their own sink would overwrite each other.
+            </remarks>
+            </summary>
+            <param name="logger">The logger to be used by this <see cref="T:Diverse.Fuzzer"/> instance only.</param>
+            <returns>This very same <see cref="T:Diverse.Fuzzer"/> instance (fluent style).</returns>
+        </member>
+        <member name="M:Diverse.Fuzzer.EnsureTheSeedHasBeenLogged">
+            <summary>
+            Traces the seed of this <see cref="T:Diverse.Fuzzer"/> instance, once and only once, the first
+            time it is actually asked to generate something.
+            <remarks>
+                Tracing lazily (instead of from the constructor) is what makes Diverse usable with
+                test frameworks whose output sink is only valid *during* a test (e.g. xUnit's
+                ITestOutputHelper): by the time the first value is generated, we are within the test.
+                As a bonus, the name of the test involved can now be found on the stack.
+            </remarks>
+            </summary>
+        </member>
+        <member name="M:Diverse.Fuzzer.Emit(System.Action{System.String},System.String[])">
+            <summary>
+            Publishes the seed trace, without ever letting a broken sink break the test of an end-user.
+            <remarks>
+                A log sink is an arbitrary delegate we were handed: it may throw for reasons that have
+                nothing to do with us (xUnit's ITestOutputHelper throws once the test that owns it has
+                ended, a disposed writer throws, etc.). Losing the seed would defeat the whole purpose
+                of Diverse though, hence the fallback on the Console rather than a silent swallow.
+            </remarks>
+            </summary>
+        </member>
         <member name="M:Diverse.Fuzzer.HeadsOrTails">
             <summary>
             Flips a coin.
             </summary>
             <returns><b>True</b> if Heads; <b>False</b> otherwise (i.e. Tails).</returns>
         </member>
-        <member name="M:Diverse.Fuzzer.GenerateWithoutDuplication``1(System.Reflection.MethodBase,System.Int32,System.Int32,System.Func{Diverse.IFuzz,``0},System.Func{System.Collections.Generic.SortedSet{System.Object},Diverse.Maybe{``0}})">
+        <member name="M:Diverse.Fuzzer.GenerateWithoutDuplication``1(System.Reflection.MethodBase,System.Int32,System.Int32,System.Func{Diverse.IFuzz,``0},System.Func{Diverse.IFuzz,System.Collections.Generic.SortedSet{System.Object},Diverse.Maybe{``0}})">
             <summary>
             Methods to be used when <see cref="P:Diverse.Fuzzer.NoDuplication"/> is set to <b>true</b>
             for any fuzzing method of this <see cref="T:Diverse.Fuzzer"/> instance.
@@ -839,9 +917,9 @@
         </member>
         <member name="M:Diverse.Fuzzer.GenerateStringFromPattern(System.String)">
             <summary>
-            Generates a string from a given 'diverse' format.
+            Generates a string from a given 'diverse' format (# for a single digit number, X for upper-cased letter, x for lower-cased letter). 
             </summary>
-            <param name="diverseFormat">The 'diverse' format to use.</param>
+            <param name="diverseFormat">The 'diverse' format to use (# for a single digit number, X for upper-cased letter, x for lower-cased letter).</param>
             <returns>A randomly generated string following the 'diverse' format.</returns>
         </member>
         <member name="M:Diverse.Fuzzer.GenerateGuid">
@@ -919,6 +997,14 @@
             Instantiates a <see cref="T:Diverse.FuzzerException"/>.
             </summary>
             <param name="message">The message of the <see cref="T:Diverse.FuzzerException"/>.</param>
+        </member>
+        <member name="M:Diverse.FuzzerExtensions.PickOneFrom``1(Diverse.IFuzzFromCollections,``0[])">
+            <summary>
+            Randomly pick one element from a given collection.
+            </summary>
+            <param name="fuzzer"></param>
+            <param name="candidates"></param>
+            <returns>One of the elements from the candidates collection.</returns>
         </member>
         <member name="T:Diverse.GuidFuzzer">
             <summary>
@@ -1286,10 +1372,10 @@
         </member>
         <member name="M:Diverse.IFuzzStrings.GenerateStringFromPattern(System.String)">
             <summary>
-            Generates a string from a given 'diverse' format.
+            Generates a string from a given 'diverse' format (# for a single digit number, X for upper-cased letter, x for lower-cased letter). 
             </summary>
-            <param name="diverseFormat">The 'diverse' format to use.</param>
-            <returns>A randomly generated string followin the 'diverse' format.</returns>
+            <param name="diverseFormat">The 'diverse' format to use (# for a single digit number, X for upper-cased letter, x for lower-cased letter).</param>
+            <returns>A randomly generated string following the 'diverse' format.</returns>
         </member>
         <member name="T:Diverse.IFuzzTypes">
             <summary>
@@ -1492,6 +1578,13 @@
             Gets a dictionary of all the last name per <see cref="T:Diverse.Continent"/>.
             </summary>
         </member>
+        <member name="M:Diverse.LastNames.FindAssociatedContinent(System.String)">
+            <summary>
+            Find which <see cref="T:Diverse.Continent"/> we relate any given last name.
+            </summary>
+            <param name="lastName">The last name we want to find an associated <see cref="T:Diverse.Continent"/> for.</param>
+            <returns>The <see cref="T:Diverse.Continent"/> we have associated with this last name.</returns>
+        </member>
         <member name="T:Diverse.Locations">
             <summary>
             Default locations of people in Diverse lib.
@@ -1563,6 +1656,12 @@
             Returns this instance of <see cref="T:System.String"/>.
             </summary>
             <returns>The current string./</returns>
+        </member>
+        <member name="M:Diverse.Person.ToStringShortVersion">
+            <summary>
+            Returns a short string version of this instance.
+            </summary>
+            <returns>The short string version of this instance./</returns>
         </member>
         <member name="T:Diverse.PersonFuzzer">
             <summary>
@@ -1733,10 +1832,10 @@
         </member>
         <member name="M:Diverse.Strings.StringFuzzer.GenerateStringFromPattern(System.String)">
             <summary>
-            Generates a string from a given 'diverse' format.
+            Generates a string from a given 'diverse' format (# for a single digit number, X for upper-cased letter, x for lower-cased letter). 
             </summary>
-            <param name="diverseFormat">The 'diverse' format to use.</param>
-            <returns>A randomly generated string followin the 'diverse' format.</returns>
+            <param name="diverseFormat">The 'diverse' format to use (# for a single digit number, X for upper-cased letter, x for lower-cased letter).</param>
+            <returns>A randomly generated string following the 'diverse' format.</returns>
         </member>
         <member name="T:Diverse.Types">
             <summary>
@@ -1747,6 +1846,113 @@
             <summary>
             Gets a set of <see cref="T:System.Type"/> that are covered by a Fuzzer.
             </summary>
+        </member>
+        <member name="T:Diverse.ConstructorFuzzingContext">
+            <summary>
+            Accumulates generated values during constructor parameter fuzzing,
+            enabling cross-parameter dependencies (e.g., lastName can use the firstName
+            generated just before to produce a culturally coherent last name).
+            </summary>
+        </member>
+        <member name="M:Diverse.ConstructorFuzzingContext.Store(System.String,System.Object)">
+            <summary>
+            Stores a generated value for later retrieval by other parameters.
+            </summary>
+            <param name="parameterName">The parameter or property name.</param>
+            <param name="value">The generated value.</param>
+        </member>
+        <member name="M:Diverse.ConstructorFuzzingContext.TryGet(System.String,System.Object@)">
+            <summary>
+            Tries to retrieve a previously generated value by parameter name.
+            </summary>
+            <param name="parameterName">The parameter name to look up.</param>
+            <param name="value">The previously generated value, if found.</param>
+            <returns><b>true</b> if a value was found, <b>false</b> otherwise.</returns>
+        </member>
+        <member name="T:Diverse.GenerationContext">
+            <summary>
+            Tracks the ancestry chain of types during recursive instance generation.
+            Detects cycles (self-referencing or mutual references) and adjusts collection
+            sizes to prevent geometric explosion and stack overflow.
+            </summary>
+        </member>
+        <member name="P:Diverse.GenerationContext.MaxDepthForRecursiveTypes">
+            <summary>
+            Maximum number of times a type can appear in the ancestry chain
+            before generation stops for that type (returns null/default).
+            </summary>
+        </member>
+        <member name="P:Diverse.GenerationContext.MaxCollectionSize">
+            <summary>
+            Maximum number of elements to generate in collections at the top level.
+            This is reduced for recursive types to prevent geometric explosion.
+            </summary>
+        </member>
+        <member name="M:Diverse.GenerationContext.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Instantiates a <see cref="T:Diverse.GenerationContext"/>.
+            </summary>
+            <param name="maxDepthForRecursiveTypes">
+            Maximum number of times a type can appear in the ancestry chain
+            before generation stops. Default: 2 (root + one level of children).
+            </param>
+            <param name="maxCollectionSize">
+            Maximum number of elements to generate in collections at the top level. Default: 5.
+            </param>
+        </member>
+        <member name="M:Diverse.GenerationContext.PushType(System.Type)">
+            <summary>
+            Pushes a type onto the ancestry stack before generating an instance of it.
+            Must be paired with <see cref="M:Diverse.GenerationContext.PopType"/> in a try/finally block.
+            </summary>
+            <param name="type">The type about to be generated.</param>
+        </member>
+        <member name="M:Diverse.GenerationContext.PopType">
+            <summary>
+            Pops a type from the ancestry stack after generation is complete.
+            </summary>
+        </member>
+        <member name="M:Diverse.GenerationContext.CountOccurrencesOf(System.Type)">
+            <summary>
+            Counts how many times a type already appears in the current ancestry chain.
+            </summary>
+            <param name="type">The type to count occurrences of.</param>
+            <returns>The number of occurrences of the type in the ancestry chain.</returns>
+        </member>
+        <member name="M:Diverse.GenerationContext.ShouldStopRecursingFor(System.Type)">
+            <summary>
+            Determines whether generation should stop for a given type
+            because it has already appeared too many times in the ancestry chain.
+            </summary>
+            <param name="type">The type to check.</param>
+            <returns><b>true</b> if the type has reached its maximum allowed depth, <b>false</b> otherwise.</returns>
+        </member>
+        <member name="M:Diverse.GenerationContext.GetCollectionSizeFor(System.Type)">
+            <summary>
+            Computes the number of elements to generate in a collection of the given element type.
+            Returns 0 if the element type has reached its maximum recursion depth.
+            Returns a reduced size if the element type is already in the ancestry chain
+            (to prevent geometric explosion like 5^n instances).
+            Returns the full <see cref="P:Diverse.GenerationContext.MaxCollectionSize"/> for non-recursive types.
+            </summary>
+            <param name="elementType">The type of the elements in the collection.</param>
+            <returns>The number of elements to generate.</returns>
+        </member>
+        <member name="T:Diverse.ParameterNameMatcher">
+            <summary>
+            Infers the appropriate fuzzer to use based on a parameter or property name.
+            Matches are case-insensitive and ordered by priority (most specific first).
+            Returns null when no pattern matches, letting the caller fall back to type-based generation.
+            </summary>
+        </member>
+        <member name="M:Diverse.ParameterNameMatcher.TryGenerateFromName(System.String,System.Type,Diverse.ConstructorFuzzingContext)">
+            <summary>
+            Tries to generate a value based on the parameter/property name and type.
+            </summary>
+            <param name="name">The parameter or property name (e.g., "customerEmail", "age").</param>
+            <param name="type">The CLR type of the parameter or property.</param>
+            <param name="context">The fuzzing context containing previously generated values for this constructor.</param>
+            <returns>A generated value if a pattern matched, or null if no match (caller should use type-based fallback).</returns>
         </member>
         <member name="T:Diverse.ReflectionExtensions">
             <summary>
@@ -1791,6 +1997,9 @@
         <member name="T:Diverse.TypeFuzzer">
             <summary>
             Fuzz instance of Types.
+            Uses a <see cref="T:Diverse.GenerationContext"/> to track the ancestry chain of types
+            during recursive generation, preventing stack overflow and geometric explosion
+            for self-referencing or mutually-referencing types.
             </summary>
         </member>
         <member name="M:Diverse.TypeFuzzer.#ctor(Diverse.IFuzz)">
@@ -1811,6 +2020,12 @@
             </summary>
             <typeparam name="T">Type of the <see cref="T:System.Enum"/></typeparam>
             <returns>An random value of the specified <see cref="T:System.Enum"/> type.</returns>
+        </member>
+        <member name="M:Diverse.TypeFuzzer.GenerateInstance(System.Type,Diverse.GenerationContext)">
+            <summary>
+            Core generation method. Routes the type to the appropriate generation strategy:
+            enums, collections, BCL primitives, or constructor-based generation with cycle detection.
+            </summary>
         </member>
     </members>
 </doc>

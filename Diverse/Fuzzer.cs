@@ -142,6 +142,9 @@ namespace Diverse
         ///     overload resolution of the public one (i.e. <c>new Fuzzer()</c> stays unambiguous).
         /// </remarks>
         /// </summary>
+        /// <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
+        /// <param name="name">The name you want to specify for this <see cref="Fuzzer"/> instance (useful for debuging purpose).</param>
+        /// <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
         /// <param name="instanceLogger">
         ///     The logger of the <see cref="Fuzzer"/> instance we derive from (if any), so that a
         ///     derived <see cref="Fuzzer"/> keeps tracing wherever its parent was tracing.
