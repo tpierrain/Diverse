@@ -35,6 +35,7 @@ namespace Diverse
         // For the (lazy) seed tracing
         private readonly bool _seedWasProvided;
         private readonly bool _isASilentInternalFuzzer;
+        private Action<string> _instanceLogger;
         private bool _seedHasBeenLogged;
 
         // For NoDuplication mode
@@ -66,7 +67,7 @@ namespace Diverse
         /// a <see cref="SideEffectFreeFuzzerWithDuplicationAllowed"/> instance in that specific case
         /// (in all lastChance lambdas actually).
         /// </summary>
-        private IFuzz SideEffectFreeFuzzerWithDuplicationAllowed => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, null, false, isASilentInternalFuzzer: true));
+        private IFuzz SideEffectFreeFuzzerWithDuplicationAllowed => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, null, false, _instanceLogger, isASilentInternalFuzzer: true));
 
         /// <summary>
         /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
@@ -127,7 +128,7 @@ namespace Diverse
         /// <param name="name">The name you want to specify for this <see cref="Fuzzer"/> instance (useful for debuging purpose).</param>
         /// <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
         public Fuzzer(int? seed = null, string name = null, bool? noDuplication = false)
-            : this(seed, name, noDuplication, isASilentInternalFuzzer: false)
+            : this(seed, name, noDuplication, instanceLogger: null, isASilentInternalFuzzer: false)
         {
         }
 
@@ -138,13 +139,18 @@ namespace Diverse
         ///     overload resolution of the public one (i.e. <c>new Fuzzer()</c> stays unambiguous).
         /// </remarks>
         /// </summary>
+        /// <param name="instanceLogger">
+        ///     The logger of the <see cref="Fuzzer"/> instance we derive from (if any), so that a
+        ///     derived <see cref="Fuzzer"/> keeps tracing wherever its parent was tracing.
+        /// </param>
         /// <param name="isASilentInternalFuzzer">
         ///     <b>true</b> for the <see cref="Fuzzer"/> instances we create for our own internal
         ///     needs and never hand over to the end-user: those must not trace any seed, since
         ///     they share the one of the instance that created them (which traces it already).
         /// </param>
-        private Fuzzer(int? seed, string name, bool? noDuplication, bool isASilentInternalFuzzer)
+        private Fuzzer(int? seed, string name, bool? noDuplication, Action<string> instanceLogger, bool isASilentInternalFuzzer)
         {
+            _instanceLogger = instanceLogger;
             _isASilentInternalFuzzer = isASilentInternalFuzzer;
             _seedWasProvided = seed.HasValue;
 
@@ -185,7 +191,31 @@ namespace Diverse
         /// <returns>A <see cref="IFuzz"/> instance that will never return twice the same value (whatever the method called).</returns>
         public IFuzz GenerateNoDuplicationFuzzer()
         {
-            return new Fuzzer(Seed, noDuplication: true);
+            return new Fuzzer(Seed, null, true, _instanceLogger, isASilentInternalFuzzer: false);
+        }
+
+        /// <summary>
+        /// Sets a logger dedicated to this <see cref="Fuzzer"/> instance only, which takes
+        /// precedence over the process-wide static <see cref="Log"/> property.
+        /// <remarks>
+        ///     This is the safe option whenever your test framework provides a per-test output sink
+        ///     (e.g. xUnit's ITestOutputHelper) and/or whenever your tests run in parallel: the
+        ///     static <see cref="Log"/> property is shared by all the tests of your process, so
+        ///     concurrent tests registering their own sink would overwrite each other.
+        /// </remarks>
+        /// </summary>
+        /// <param name="logger">The logger to be used by this <see cref="Fuzzer"/> instance only.</param>
+        /// <returns>This very same <see cref="Fuzzer"/> instance (fluent style).</returns>
+        public Fuzzer WithLogger(Action<string> logger)
+        {
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            _instanceLogger = logger;
+
+            return this;
         }
 
         /// <summary>
@@ -205,36 +235,37 @@ namespace Diverse
                 return;
             }
 
-            if (Log == null)
+            var logger = _instanceLogger ?? Log;
+            if (logger == null)
             {
                 throw new FuzzerException(BuildErrorMessageForMissingLogRegistration());
             }
 
             _seedHasBeenLogged = true;
 
-            LogSeedAndTestInformations(Seed, _seedWasProvided, Name);
+            LogSeedAndTestInformations(logger, Seed, _seedWasProvided, Name);
         }
 
-        private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
+        private static void LogSeedAndTestInformations(Action<string> log, int seed, bool seedWasProvided, string fuzzerName)
         {
             var testName = FindTheNameOfTheTestInvolved();
 
-            Log(
+            log(
                 $"----------------------------------------------------------------------------------------------------------------------");
             if (seedWasProvided)
             {
-                Log($"--- Fuzzer (\"{fuzzerName}\") instantiated from a provided seed ({seed})");
-                Log($"--- from the test: {testName}()");
+                log($"--- Fuzzer (\"{fuzzerName}\") instantiated from a provided seed ({seed})");
+                log($"--- from the test: {testName}()");
             }
             else
             {
-                Log($"--- Fuzzer (\"{fuzzerName}\") instantiated with the seed ({seed})");
-                Log($"--- from the test: {testName}()");
-                Log(
+                log($"--- Fuzzer (\"{fuzzerName}\") instantiated with the seed ({seed})");
+                log($"--- from the test: {testName}()");
+                log(
                     $"--- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions");
             }
 
-            Log(
+            log(
                 $"----------------------------------------------------------------------------------------------------------------------");
         }
 

@@ -50,10 +50,10 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
   - [x] `EnsureTheSeedHasBeenLogged()` as the first statement of `GenerateWithoutDuplication<T>`
   - [x] Private 4-param ctor + `_isASilentInternalFuzzer` flag for `SideEffectFreeFuzzerWithDuplicationAllowed` only (the `instanceLogger` parameter is added to that private ctor in Step 4, when a test demands it)
   - [x] 🟢 T6, T7 — full suite green, 208 tests
-- [ ] **Step 4 — Per-instance logger `WithLogger(...)`** (fixes (b))
-  - [ ] Stub `public Fuzzer WithLogger(Action<string> logger) => this;` so the tests fail on the *assertion*, not on compilation
-  - [ ] 🔴 T8, T9, T12 → implement `_instanceLogger` and the `_instanceLogger ?? Log` resolution → 🟢
-  - [ ] 🔴 T10, T11 → propagate `_instanceLogger` to both derived-fuzzer creation sites → 🟢
+- [x] **Step 4 — Per-instance logger `WithLogger(...)`** (fixes (b)) _(2026-08-15)_
+  - [x] Stub `public Fuzzer WithLogger(Action<string> logger) => this;` so the tests fail on the *assertion*, not on compilation
+  - [x] 🔴 T8, 🔴 T12 (T9 green: it pins the fallback on the static `Log`) → implement `_instanceLogger` and the `_instanceLogger ?? Log` resolution → 🟢
+  - [x] 🔴 T11 (`FuzzerException`: the derived fuzzer had no logger to fall back on) → propagate `_instanceLogger` to both derived-fuzzer creation sites → 🟢. **T10 was green on arrival** and is a property guard, not a driver: it cannot be expressed at all without `WithLogger`, so there was no pre-existing red to see.
 - [ ] **Step 5 — A throwing sink must never break a test**
   - [ ] 🔴 T13, T14 → split into a pure `BuildSeedAndTestInformationLines()` + an `Emit()` with try/catch and Console fallback → 🟢
   - [ ] 🔴 T15 → confirm the `FuzzerException` is raised **outside** the try/catch and that the flag is not set in that branch → 🟢
