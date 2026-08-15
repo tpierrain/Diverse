@@ -54,9 +54,10 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
   - [x] Stub `public Fuzzer WithLogger(Action<string> logger) => this;` so the tests fail on the *assertion*, not on compilation
   - [x] 🔴 T8, 🔴 T12 (T9 green: it pins the fallback on the static `Log`) → implement `_instanceLogger` and the `_instanceLogger ?? Log` resolution → 🟢
   - [x] 🔴 T11 (`FuzzerException`: the derived fuzzer had no logger to fall back on) → propagate `_instanceLogger` to both derived-fuzzer creation sites → 🟢. **T10 was green on arrival** and is a property guard, not a driver: it cannot be expressed at all without `WithLogger`, so there was no pre-existing red to see.
-- [ ] **Step 5 — A throwing sink must never break a test**
-  - [ ] 🔴 T13, T14 → split into a pure `BuildSeedAndTestInformationLines()` + an `Emit()` with try/catch and Console fallback → 🟢
-  - [ ] 🔴 T15 → confirm the `FuzzerException` is raised **outside** the try/catch and that the flag is not set in that branch → 🟢
+- [x] **Step 5 — A throwing sink must never break a test** _(2026-08-15)_
+  - [x] 🔴 T13, T14 (the `InvalidOperationException` propagated) → split into a pure `BuildSeedAndTestInformationLines()` + an `Emit()` with try/catch and Console fallback → 🟢
+  - [x] 🔴 T15 (the message lacked `WithLogger`) → `FuzzerException` raised **outside** the try/catch, flag not set in that branch, and the xUnit guidance in `BuildErrorMessageForMissingLogRegistration` rewritten → 🟢
+  - [x] Note: NFluent 2.8's `AndWhichMessage()` lives in the `NFluent.ApiChecks` namespace; `WhichMember(e => e.Message)` is the one available from `NFluent`
 - [ ] **Step 6 — Documentation**
   - [ ] Rewrite the xUnit block of `BuildErrorMessageForMissingLogRegistration` (it currently advises the very pattern that causes #11)
   - [ ] `README.md` — split the registration section per framework, document *when* the seed is traced, add a "Running your tests in parallel" subsection

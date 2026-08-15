@@ -33,6 +33,9 @@ namespace Diverse
         
 
         // For the (lazy) seed tracing
+        private const string SeparatorLine =
+            "----------------------------------------------------------------------------------------------------------------------";
+
         private readonly bool _seedWasProvided;
         private readonly bool _isASilentInternalFuzzer;
         private Action<string> _instanceLogger;
@@ -241,32 +244,63 @@ namespace Diverse
                 throw new FuzzerException(BuildErrorMessageForMissingLogRegistration());
             }
 
+            // Set *before* emitting: a sink that throws must not be tried again and again.
             _seedHasBeenLogged = true;
 
-            LogSeedAndTestInformations(logger, Seed, _seedWasProvided, Name);
+            Emit(logger, BuildSeedAndTestInformationLines(Seed, _seedWasProvided, Name));
         }
 
-        private static void LogSeedAndTestInformations(Action<string> log, int seed, bool seedWasProvided, string fuzzerName)
+        private static string[] BuildSeedAndTestInformationLines(int seed, bool seedWasProvided, string fuzzerName)
         {
             var testName = FindTheNameOfTheTestInvolved();
 
-            log(
-                $"----------------------------------------------------------------------------------------------------------------------");
             if (seedWasProvided)
             {
-                log($"--- Fuzzer (\"{fuzzerName}\") instantiated from a provided seed ({seed})");
-                log($"--- from the test: {testName}()");
-            }
-            else
-            {
-                log($"--- Fuzzer (\"{fuzzerName}\") instantiated with the seed ({seed})");
-                log($"--- from the test: {testName}()");
-                log(
-                    $"--- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions");
+                return new[]
+                {
+                    SeparatorLine,
+                    $"--- Fuzzer (\"{fuzzerName}\") instantiated from a provided seed ({seed})",
+                    $"--- from the test: {testName}()",
+                    SeparatorLine
+                };
             }
 
-            log(
-                $"----------------------------------------------------------------------------------------------------------------------");
+            return new[]
+            {
+                SeparatorLine,
+                $"--- Fuzzer (\"{fuzzerName}\") instantiated with the seed ({seed})",
+                $"--- from the test: {testName}()",
+                $"--- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions",
+                SeparatorLine
+            };
+        }
+
+        /// <summary>
+        /// Publishes the seed trace, without ever letting a broken sink break the test of an end-user.
+        /// <remarks>
+        ///     A log sink is an arbitrary delegate we were handed: it may throw for reasons that have
+        ///     nothing to do with us (xUnit's ITestOutputHelper throws once the test that owns it has
+        ///     ended, a disposed writer throws, etc.). Losing the seed would defeat the whole purpose
+        ///     of Diverse though, hence the fallback on the Console rather than a silent swallow.
+        /// </remarks>
+        /// </summary>
+        private static void Emit(Action<string> log, string[] lines)
+        {
+            try
+            {
+                foreach (var line in lines)
+                {
+                    log(line);
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"--- Diverse: the registered log sink threw {exception.GetType().Name} (\"{exception.Message}\"). Falling back to the Console for this Fuzzer's seed trace.");
+                foreach (var line in lines)
+                {
+                    Console.WriteLine(line);
+                }
+            }
         }
 
         private static string BuildErrorMessageForMissingLogRegistration()
@@ -295,13 +329,32 @@ namespace YourNameSpaceHere.Tests
     }
 }
 
-e.g.: with xUnit (use ITestOutputHelper):
-
-    " + $"{nameof(Fuzzer)}.{nameof(Log)} = testOutputHelper.WriteLine;" + @"
-
 e.g.: with MSTest:
 
     " + $"{nameof(Fuzzer)}.{nameof(Log)} = Console.WriteLine;" + @"
+
+Alternatively, any Fuzzer instance can be given its own logger, which takes precedence over that
+static property. This is the option to prefer whenever your test framework provides a per-test
+output sink, and whenever your tests run in parallel (since the static property is shared by
+every test of your process).
+
+e.g.: with xUnit (ITestOutputHelper is only valid during a test, hence the instance logger):
+
+using Xunit;
+using Xunit.Abstractions;
+
+namespace YourNameSpaceHere.Tests
+{
+    public class SampleTests
+    {
+        private readonly Fuzzer _fuzzer;
+
+        public SampleTests(ITestOutputHelper testOutputHelper)
+        {
+            " + $"_fuzzer = new {nameof(Fuzzer)}().{nameof(WithLogger)}(testOutputHelper.WriteLine);" + @"
+        }
+    }
+}
 
 ";
             return message;
