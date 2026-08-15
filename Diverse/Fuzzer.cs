@@ -32,6 +32,11 @@ namespace Diverse
         private readonly IFuzzFromCollections _collectionFuzzer;
         
 
+        // For the (lazy) seed tracing
+        private readonly bool _seedWasProvided;
+        private readonly bool _isASilentInternalFuzzer;
+        private bool _seedHasBeenLogged;
+
         // For NoDuplication mode
         private const int MaxFailingAttemptsForNoDuplicationDefaultValue = 100;
         private const int MaxRangeSizeAllowedForMemoizationDefaultValue = 1000000;
@@ -61,7 +66,7 @@ namespace Diverse
         /// a <see cref="SideEffectFreeFuzzerWithDuplicationAllowed"/> instance in that specific case
         /// (in all lastChance lambdas actually).
         /// </summary>
-        private IFuzz SideEffectFreeFuzzerWithDuplicationAllowed => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, noDuplication: false));
+        private IFuzz SideEffectFreeFuzzerWithDuplicationAllowed => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, null, false, isASilentInternalFuzzer: true));
 
         /// <summary>
         /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
@@ -96,7 +101,14 @@ namespace Diverse
         /// Beware: do not use this property if you do not want duplication (use all existing methods of <see cref="IFuzz"/> that can handle no duplication mode, like <see cref="PickOneFrom{T}"/>).
         /// <remarks>The use of explicit interface implementation for this property is made on purpose in order to hide this internal mechanic details from the Fuzzer end-user code.</remarks>
         /// </summary>
-        Random IFuzz.Random => _internalRandom;
+        Random IFuzz.Random
+        {
+            get
+            {
+                EnsureTheSeedHasBeenLogged();
+                return _internalRandom;
+            }
+        }
 
         /// <summary>
         /// Gives easy access to the <see cref="IFuzz.Random"/> explicit implementation.
@@ -115,8 +127,26 @@ namespace Diverse
         /// <param name="name">The name you want to specify for this <see cref="Fuzzer"/> instance (useful for debuging purpose).</param>
         /// <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
         public Fuzzer(int? seed = null, string name = null, bool? noDuplication = false)
+            : this(seed, name, noDuplication, isASilentInternalFuzzer: false)
         {
-            var seedWasProvided = seed.HasValue;
+        }
+
+        /// <summary>
+        /// Instantiates a <see cref="Fuzzer"/>, possibly a silent one.
+        /// <remarks>
+        ///     Every parameter is required here on purpose: it keeps this constructor out of the
+        ///     overload resolution of the public one (i.e. <c>new Fuzzer()</c> stays unambiguous).
+        /// </remarks>
+        /// </summary>
+        /// <param name="isASilentInternalFuzzer">
+        ///     <b>true</b> for the <see cref="Fuzzer"/> instances we create for our own internal
+        ///     needs and never hand over to the end-user: those must not trace any seed, since
+        ///     they share the one of the instance that created them (which traces it already).
+        /// </param>
+        private Fuzzer(int? seed, string name, bool? noDuplication, bool isASilentInternalFuzzer)
+        {
+            _isASilentInternalFuzzer = isASilentInternalFuzzer;
+            _seedWasProvided = seed.HasValue;
 
             seed = seed ??
                    new Random().Next(); // the seed is not specified? pick a random one for this Fuzzer instance.
@@ -130,7 +160,8 @@ namespace Diverse
             noDuplication = noDuplication ?? false;
             NoDuplication = noDuplication.Value;
 
-            LogSeedAndTestInformations(seed.Value, seedWasProvided, name);
+            // Note: the seed is *not* traced here, but lazily, the first time this Fuzzer is
+            // actually asked to generate something (see EnsureTheSeedHasBeenLogged()).
 
             // Instantiates implementation types for the various Fuzzer
             _loremFuzzer = new LoremFuzzer(this);
@@ -157,14 +188,36 @@ namespace Diverse
             return new Fuzzer(Seed, noDuplication: true);
         }
 
-        private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
+        /// <summary>
+        /// Traces the seed of this <see cref="Fuzzer"/> instance, once and only once, the first
+        /// time it is actually asked to generate something.
+        /// <remarks>
+        ///     Tracing lazily (instead of from the constructor) is what makes Diverse usable with
+        ///     test frameworks whose output sink is only valid *during* a test (e.g. xUnit's
+        ///     ITestOutputHelper): by the time the first value is generated, we are within the test.
+        ///     As a bonus, the name of the test involved can now be found on the stack.
+        /// </remarks>
+        /// </summary>
+        private void EnsureTheSeedHasBeenLogged()
         {
-            var testName = FindTheNameOfTheTestInvolved();
+            if (_seedHasBeenLogged || _isASilentInternalFuzzer)
+            {
+                return;
+            }
 
             if (Log == null)
             {
                 throw new FuzzerException(BuildErrorMessageForMissingLogRegistration());
             }
+
+            _seedHasBeenLogged = true;
+
+            LogSeedAndTestInformations(Seed, _seedWasProvided, Name);
+        }
+
+        private static void LogSeedAndTestInformations(int seed, bool seedWasProvided, string fuzzerName)
+        {
+            var testName = FindTheNameOfTheTestInvolved();
 
             Log(
                 $"----------------------------------------------------------------------------------------------------------------------");
@@ -321,6 +374,11 @@ e.g.: with MSTest:
                             Func<IFuzz, T> standardGenerationFunction,
                             Func<IFuzz, SortedSet<object>, Maybe<T>> lastChanceGenerationFunction = null)
         {
+            // The NoDuplication mode never draws from our own Random instance (it delegates to the
+            // SideEffectFreeFuzzerWithDuplicationAllowed one): this is thus the second and last
+            // place where we have to make sure our seed has been traced.
+            EnsureTheSeedHasBeenLogged();
+
             var memoizerKey = new MemoizerKey(currentMethod, argumentsHashCode);
 
             var maybe = TryGetNonAlreadyProvidedValuesWithRegularGenerationFunction<T>(memoizerKey, out var alreadyProvidedValues, standardGenerationFunction, maxFailingAttemptsBeforeLastChanceFunctionIsCalled);
