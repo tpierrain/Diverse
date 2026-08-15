@@ -66,6 +66,12 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
   - [x] Full suite green (216 tests), determinism guards untouched, Release build clean on **both** TFMs (only the 12 pre-existing CS1591 warnings on `FuzzerExtensions`/`MethodCapture` remain)
   - [x] Version bump 1.0.1 → **1.1.0** + `<PackageReleaseNotes>` filled
 
+- [x] **Step 8 — Ship** _(2026-08-15)_
+  - [x] Branch pushed: `fix/11-defer-seed-logging-and-per-instance-logger`
+  - [x] **PR open: https://github.com/tpierrain/Diverse/pull/12** — CI `build (ubuntu-latest)` **green** (1m01s)
+  - [ ] Review + merge by Thomas (**the only thing left on this chantier**)
+  - [ ] Optional, once merged: reply to `Poubone` on issue #11 with the nuance below (xUnit 2.x + parallelism is what actually reproduces), and tag `v1.1.0` to trigger the NuGet release workflow
+
 ## Verification against real xUnit (out-of-repo, scratchpad)
 
 The stub in `Diverse.Tests` only approximates xUnit, so the fix was also checked against the real
