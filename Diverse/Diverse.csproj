@@ -15,10 +15,17 @@
     <RepositoryUrl>https://github.com/tpierrain/Diverse</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Fuzzers Inclusive Diversity Diverse Deterministic tooling tests test unit acceptance extensibility Fuzzer</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <Version>1.0.1</Version>
+    <PackageReleaseNotes>Fixes the xUnit ITestOutputHelper issue (#11):
+- New: Fuzzer.WithLogger(...) gives a single Fuzzer instance its own log sink, which takes precedence over the static Fuzzer.Log. Prefer it whenever your tests run in parallel. A derived Fuzzer traces wherever its parent traces, even when the parent is given its logger after the derivation. Giving a new logger to a Fuzzer that has already traced its seed traces it again, to that new logger.
+- Changed: the seed is now traced on the first generated value instead of at construction time, and exactly once per instance (even under concurrency). The trace names the test the Fuzzer was built in, and says "first used by" instead when it was built outside of any test (a test class constructor, a fixture setup).
+- Changed: the static Fuzzer.Log is read when the Fuzzer is built, so a test overwriting it in parallel can no longer receive the seed of another test's Fuzzer.
+- Changed: the FuzzerException raised when no log sink was registered moves along, from the constructor to the first generated value.
+- Changed: a log sink that throws no longer breaks your test; Diverse writes a warning plus the part of the trace your sink did not take to the Console, and gives up silently if the Console is broken too. Beware that xUnit does not capture the Console: that fallback keeps your test green, but the seed will not show up in an xUnit report.
+- Changed: the internal Fuzzer used by the NoDuplication mode no longer emits a second, confusing banner, and a derived Fuzzer no longer claims a seed was provided when its parent picked its own (it keeps the line telling you how to reproduce the run).
+Determinism is unchanged: for any given seed, the sequence of generated values is identical to 1.0.1.</PackageReleaseNotes>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

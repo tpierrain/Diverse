@@ -107,6 +107,13 @@ namespace Diverse
                 {
                     return InstantiateViaConstructor(constructor, context);
                 }
+                catch (FuzzerException)
+                {
+                    // Never a constructor we failed to use, always something the end-user has to fix
+                    // (e.g. no log sink registered at all): swallowing it here would turn an explicit
+                    // diagnostic into a null handed back to the caller.
+                    throw;
+                }
                 catch (Exception)
                 {
                     return TryOtherConstructorsUntilOneWorks(type, context);
@@ -218,6 +225,11 @@ namespace Diverse
                 try
                 {
                     return InstantiateViaConstructor(constructorInfo, context);
+                }
+                catch (FuzzerException)
+                {
+                    // Not this constructor's fault: something the end-user has to fix (see above).
+                    throw;
                 }
                 catch (Exception)
                 {

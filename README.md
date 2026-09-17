@@ -188,9 +188,13 @@ I explained this here in that thread:
 
 ### 1. First, ensure that Diverse's logs will be traced down wherever you want. 
 
-All you have to do is to call once the Fuzzer.Log setter:
+There are two ways to do it: the static `Fuzzer.Log` property, registered once for your whole test
+project, or a logger given to a single `Fuzzer` instance via `WithLogger(...)` — which takes
+precedence over the static one.
 
-e.g.: here with NUnit :
+#### with NUnit
+
+All you have to do is to call once the Fuzzer.Log setter:
 
 ```csharp
 
@@ -207,10 +211,92 @@ e.g.: here with NUnit :
 
 ```
 
+#### with xUnit
+
+xUnit's `ITestOutputHelper` is only valid **during** a test, and it is handed over per test class.
+Registering it on the static `Fuzzer.Log` would thus make your test classes fight over it as soon as
+they run in parallel. Give it to your `Fuzzer` instance instead:
+
+```csharp
+
+    public class SampleTests
+    {
+        private readonly Fuzzer _fuzzer;
+
+        public SampleTests(ITestOutputHelper testOutputHelper)
+        {
+            _fuzzer = new Fuzzer().WithLogger(testOutputHelper.WriteLine);
+        }
+
+        [Fact]
+        public void Do_something_with_a_fuzzed_value()
+        {
+            var age = _fuzzer.GenerateAge();
+            // ...
+        }
+    }
+
+```
+
+Note that with this per-instance wiring, **every** `Fuzzer` you build needs its own logger (there is
+no static fallback to catch the ones you forget). In particular, when you reproduce a failure by
+fixing a seed (step 3 below), keep the `WithLogger(...)` call:
+
+```csharp
+
+    var fuzzer = new Fuzzer(seed: 1248680008).WithLogger(testOutputHelper.WriteLine);
+
+```
+
+#### with MSTest
+
+```csharp
+
+    [TestClass]
+    public class AllTestFixtures
+    {
+        [AssemblyInitialize]
+        public static void Init(TestContext context)
+        {
+            Fuzzer.Log = Console.WriteLine;
+        }
+    }
+
+```
+
+#### When is the seed traced?
+
+On the **first value you generate**, not when the `Fuzzer` is built, and **exactly once** per
+`Fuzzer` instance (even when several threads race on that first value). This is what allows the
+xUnit snippet above to build its `Fuzzer` in a test class constructor: by the time the first value
+is generated, we are inside the test.
+
+Giving a `Fuzzer` a **new** logger with `WithLogger(...)` traces its seed again, to that new logger:
+a `Fuzzer` that outlives a single test (a fixture field, an `IClassFixture`, an injected one) can
+thus be handed the output sink of each test in turn, and every one of them gets the seed.
+
+The trace names the test it was **built in** whenever one is on the stack at that moment, so a value
+first generated from a `Task`, an `async` continuation or a worker thread is still attributed
+correctly. When the `Fuzzer` was built outside of any test (a test class constructor, a fixture
+setup), the trace names the test that **first used** it instead, and says so.
+
+And if the sink you registered throws (a test output helper whose test has already ended, a disposed
+writer, ...), Diverse never fails your test over it: it writes a warning plus the part of the trace
+your sink did not take to the `Console`, and gives up silently if the `Console` is broken too.
+Beware that **xUnit does not capture the `Console`**: under xUnit that fallback keeps your test
+green, but you will not see the seed in the test report, so prefer a sink that stays valid (the
+per-instance wiring above).
+
+#### Running your tests in parallel
+
+`Fuzzer.Log` is a static property: it is shared by every test of your process. If your tests run in
+parallel and each of them registers its own sink, they will overwrite each other. Use
+`new Fuzzer().WithLogger(...)` instead: an instance logger belongs to that `Fuzzer` only (and is
+inherited by the fuzzers derived from it).
 
 ### 2. Consult the report of a failing test and Copy the Seed that was used for it. 
 
-Note: Diverse traces the seed used for every test ran. It will look like this:
+Note: Diverse traces the seed of every `Fuzzer` you use, once each. It will look like this:
 
 ```
  ----------------------------------------------------------------------------------------------------------------------
