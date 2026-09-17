@@ -9,9 +9,9 @@
   [Review findings](#review-findings-2026-09-17--to-triage-before-merge) below.
 - **Next step**: Thomas triages the findings (which ones block the merge, which ones ship later).
   Nothing else is waiting on him; the implementation of steps 0 to 7 is done and green.
-- **The one finding that is NOT about issue #11**: F14, a pre-existing out-of-range bug in
-  `GenerateInteger(min, max)` under NoDuplication. It predates this branch — fixing it here or in
-  its own PR is a scope call, not a defect of this work.
+- **Two findings predate this branch**: F14 (out-of-range integers under NoDuplication) and F13
+  (the seed formatted with the ambient culture). Fixing them here or in their own PR is a scope
+  call, not a defect of this work.
 - **This file is the door**: this repo has no `plans/ACTIVE.md`; resume from this STATE block.
 
 ## Context
@@ -154,7 +154,10 @@ same way by the review; the rest were established by reading the code against th
       is lost silently — while `README.md:265` and the release notes promise the opposite.
 - [ ] **F13 — the seed is formatted with the ambient culture.** Under `sv-SE`, `fi-FI`, `lt-LT`,
       `et-EE`, a negative seed prints with U+2212 MINUS SIGN and cannot be pasted back into
-      `new Fuzzer(seed: ...)`. Fix: `ToString(CultureInfo.InvariantCulture)`.
+      `new Fuzzer(seed: ...)`. Fix: `ToString(CultureInfo.InvariantCulture)`. **Pre-existing on
+      `main`**, but this diff rewrites those exact lines, so it is in reach here — a scope call,
+      like F14. Auto-generated seeds are never negative (`Random.Next()`), so only a user-supplied
+      negative seed hits it.
 - [ ] **F15 — the only concurrency test cannot fail for the race that exists, and can kill the
       host for another.** It uses **two separate** Fuzzers, each with its own sink; since both
       `_instanceLogger` and `_seedHasBeenLogged` are per-instance, the assertion holds by
