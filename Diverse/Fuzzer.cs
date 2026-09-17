@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Diverse.Address;
 using Diverse.Address.Geography;
 using Diverse.Collections;
@@ -38,8 +39,23 @@ namespace Diverse
 
         private readonly bool _seedWasProvided;
         private readonly bool _isASilentInternalFuzzer;
-        private Action<string> _instanceLogger;
-        private bool _seedHasBeenLogged;
+
+        // The Fuzzer instance we were derived from (if any). Kept as a reference (and not as a copy
+        // of its logger) so that a logger given to it *after* the derivation still reaches us.
+        private readonly Fuzzer _parentFuzzer;
+
+        // The static Log as it was when this instance was built. Resolving the static sink at
+        // emission time instead would hand our seed to whatever test overwrote it in the meantime.
+        private readonly Action<string> _staticLoggerAtConstructionTime;
+
+        // The test found on the stack when this instance was built, or null when there was none
+        // (e.g. built from a test class constructor, which is the very case of issue #11).
+        private readonly string _testNameAtConstructionTime;
+
+        private volatile Action<string> _instanceLogger;
+
+        // 0 until the banner has been emitted. An int (and not a bool) to be claimed atomically.
+        private int _seedHasBeenLogged;
 
         // For NoDuplication mode
         private const int MaxFailingAttemptsForNoDuplicationDefaultValue = 100;
@@ -70,7 +86,7 @@ namespace Diverse
         /// a <see cref="SideEffectFreeFuzzerWithDuplicationAllowed"/> instance in that specific case
         /// (in all lastChance lambdas actually).
         /// </summary>
-        private IFuzz SideEffectFreeFuzzerWithDuplicationAllowed => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, null, false, _instanceLogger, isASilentInternalFuzzer: true));
+        private IFuzz SideEffectFreeFuzzerWithDuplicationAllowed => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer = new Fuzzer(this.Seed, null, false, this, isASilentInternalFuzzer: true));
 
         /// <summary>
         /// Gets or sets the max number of attempts the Fuzzer should make in order to generate
@@ -131,34 +147,40 @@ namespace Diverse
         /// <param name="name">The name you want to specify for this <see cref="Fuzzer"/> instance (useful for debuging purpose).</param>
         /// <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
         public Fuzzer(int? seed = null, string name = null, bool? noDuplication = false)
-            : this(seed, name, noDuplication, instanceLogger: null, isASilentInternalFuzzer: false)
+            : this(seed, name, noDuplication, parentFuzzer: null, isASilentInternalFuzzer: false)
         {
         }
 
         /// <summary>
-        /// Instantiates a <see cref="Fuzzer"/>, possibly a silent one.
-        /// <remarks>
-        ///     Every parameter is required here on purpose: it keeps this constructor out of the
-        ///     overload resolution of the public one (i.e. <c>new Fuzzer()</c> stays unambiguous).
-        /// </remarks>
+        /// Instantiates a <see cref="Fuzzer"/>, possibly derived from another one, possibly a silent one.
         /// </summary>
         /// <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
         /// <param name="name">The name you want to specify for this <see cref="Fuzzer"/> instance (useful for debuging purpose).</param>
         /// <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
-        /// <param name="instanceLogger">
-        ///     The logger of the <see cref="Fuzzer"/> instance we derive from (if any), so that a
-        ///     derived <see cref="Fuzzer"/> keeps tracing wherever its parent was tracing.
+        /// <param name="parentFuzzer">
+        ///     The <see cref="Fuzzer"/> instance we are derived from (if any), so that we keep
+        ///     tracing wherever it traces, <b>including when it is given a logger after we were
+        ///     derived from it</b>.
         /// </param>
         /// <param name="isASilentInternalFuzzer">
         ///     <b>true</b> for the <see cref="Fuzzer"/> instances we create for our own internal
         ///     needs and never hand over to the end-user: those must not trace any seed, since
         ///     they share the one of the instance that created them (which traces it already).
         /// </param>
-        private Fuzzer(int? seed, string name, bool? noDuplication, Action<string> instanceLogger, bool isASilentInternalFuzzer)
+        private Fuzzer(int? seed, string name, bool? noDuplication, Fuzzer parentFuzzer, bool isASilentInternalFuzzer)
         {
-            _instanceLogger = instanceLogger;
+            _parentFuzzer = parentFuzzer;
             _isASilentInternalFuzzer = isASilentInternalFuzzer;
-            _seedWasProvided = seed.HasValue;
+            _staticLoggerAtConstructionTime = Log;
+
+            // A derived Fuzzer receives the seed of the instance it comes from: whether a *human*
+            // provided that seed is the parent's fact, and saying otherwise would both claim a
+            // seed nobody provided and drop the line telling how to reproduce the run.
+            _seedWasProvided = parentFuzzer?._seedWasProvided ?? seed.HasValue;
+
+            // Resolved now, while the test that builds us is still on the stack: by the time the
+            // first value is generated we may be on a task, a worker thread or an async continuation.
+            _testNameAtConstructionTime = isASilentInternalFuzzer ? null : FindTheNameOfTheTestInvolved();
 
             seed = seed ??
                    new Random().Next(); // the seed is not specified? pick a random one for this Fuzzer instance.
@@ -197,7 +219,7 @@ namespace Diverse
         /// <returns>A <see cref="IFuzz"/> instance that will never return twice the same value (whatever the method called).</returns>
         public IFuzz GenerateNoDuplicationFuzzer()
         {
-            return new Fuzzer(Seed, null, true, _instanceLogger, isASilentInternalFuzzer: false);
+            return new Fuzzer(Seed, null, true, this, isASilentInternalFuzzer: false);
         }
 
         /// <summary>
@@ -221,7 +243,30 @@ namespace Diverse
 
             _instanceLogger = logger;
 
+            // Re-arms the seed trace: a logger given to us *after* our first generated value (e.g. a
+            // Fuzzer outliving a test and handed the output sink of the next one) would otherwise be
+            // accepted and then never used, silently losing the seed of every test but the first.
+            Interlocked.Exchange(ref _seedHasBeenLogged, 0);
+
             return this;
+        }
+
+        /// <summary>
+        /// Finds the sink this <see cref="Fuzzer"/> instance has to trace its seed to.
+        /// <remarks>
+        ///     Resolved at emission time on purpose for everything that can still change (our own
+        ///     logger, our parent's), and at construction time for the process-wide static one:
+        ///     a test that overwrites <see cref="Log"/> while we are running must not end up
+        ///     receiving the seed of a <see cref="Fuzzer"/> belonging to another test.
+        /// </remarks>
+        /// </summary>
+        /// <returns>The sink to trace to, or <b>null</b> when no sink was ever registered.</returns>
+        private Action<string> ResolveTheLogger()
+        {
+            return _instanceLogger
+                   ?? _parentFuzzer?.ResolveTheLogger()
+                   ?? _staticLoggerAtConstructionTime
+                   ?? Log;
         }
 
         /// <summary>
@@ -236,26 +281,36 @@ namespace Diverse
         /// </summary>
         private void EnsureTheSeedHasBeenLogged()
         {
-            if (_seedHasBeenLogged || _isASilentInternalFuzzer)
+            if (_seedHasBeenLogged != 0 || _isASilentInternalFuzzer)
             {
                 return;
             }
 
-            var logger = _instanceLogger ?? Log;
+            var logger = ResolveTheLogger();
             if (logger == null)
             {
+                // A missing sink is a wiring mistake to fix (unlike a broken one, which we survive):
+                // it must keep throwing, hence a flag left untouched here.
                 throw new FuzzerException(BuildErrorMessageForMissingLogRegistration());
             }
 
-            // Set *before* emitting: a sink that throws must not be tried again and again.
-            _seedHasBeenLogged = true;
+            // Claimed *before* emitting, and atomically: a sink that throws must not be tried again
+            // and again, and threads racing on our first generated value must not each emit a banner.
+            if (Interlocked.CompareExchange(ref _seedHasBeenLogged, 1, 0) != 0)
+            {
+                return;
+            }
 
-            Emit(logger, BuildSeedAndTestInformationLines(Seed, _seedWasProvided, Name));
+            Emit(logger, BuildSeedAndTestInformationLines(Seed, _seedWasProvided, Name, _testNameAtConstructionTime));
         }
 
-        private static string[] BuildSeedAndTestInformationLines(int seed, bool seedWasProvided, string fuzzerName)
+        private static string[] BuildSeedAndTestInformationLines(int seed, bool seedWasProvided, string fuzzerName, string testNameAtConstructionTime)
         {
-            var testName = FindTheNameOfTheTestInvolved();
+            // Saying "from the test" of a Fuzzer merely *used* by that test would be a lie: it is
+            // the common shape of a Fuzzer built in a fixture and shared by several tests.
+            var testLine = testNameAtConstructionTime != null
+                ? $"--- from the test: {testNameAtConstructionTime}()"
+                : $"--- first used by the test: {FindTheNameOfTheTestInvolved() ?? TestNameWhenNoneWasFound}()";
 
             if (seedWasProvided)
             {
@@ -263,7 +318,7 @@ namespace Diverse
                 {
                     SeparatorLine,
                     $"--- Fuzzer (\"{fuzzerName}\") instantiated from a provided seed ({seed})",
-                    $"--- from the test: {testName}()",
+                    testLine,
                     SeparatorLine
                 };
             }
@@ -272,7 +327,7 @@ namespace Diverse
             {
                 SeparatorLine,
                 $"--- Fuzzer (\"{fuzzerName}\") instantiated with the seed ({seed})",
-                $"--- from the test: {testName}()",
+                testLine,
                 $"--- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions",
                 SeparatorLine
             };
@@ -289,31 +344,63 @@ namespace Diverse
         /// </summary>
         private static void Emit(Action<string> log, string[] lines)
         {
+            var deliveredLines = 0;
             try
             {
                 foreach (var line in lines)
                 {
                     log(line);
+                    deliveredLines++;
                 }
             }
             catch (Exception exception)
             {
-                Console.WriteLine($"--- Diverse: the registered log sink threw {exception.GetType().Name} (\"{exception.Message}\"). Falling back to the Console for this Fuzzer's seed trace.");
-                foreach (var line in lines)
+                FallBackOnTheConsole(exception, lines, deliveredLines);
+            }
+        }
+
+        /// <summary>
+        /// Publishes on the Console what the sink we were given did not take.
+        /// <remarks>
+        ///     Only the lines it did *not* take: replaying the whole banner would print the seed
+        ///     twice, in two different places, leaving the reader unable to tell which trace is the
+        ///     authoritative one.
+        /// </remarks>
+        /// </summary>
+        private static void FallBackOnTheConsole(Exception exception, string[] lines, int alreadyDeliveredLines)
+        {
+            try
+            {
+                Console.WriteLine($"--- Diverse: the registered log sink threw {exception.GetType().Name} (\"{exception.Message}\"). Falling back to the Console for the rest of this Fuzzer's seed trace.");
+
+                for (var index = alreadyDeliveredLines; index < lines.Length; index++)
                 {
-                    Console.WriteLine(line);
+                    Console.WriteLine(lines[index]);
                 }
+            }
+            catch (Exception)
+            {
+                // Last resort, and deliberately silent: the Console is broken too (the very teardown
+                // that invalidates a test output sink is what closes the writer the runner had
+                // redirected the Console to). Tracing a seed is a service we render, never a reason
+                // to fail the test of an end-user.
             }
         }
 
         private static string BuildErrorMessageForMissingLogRegistration()
         {
             var message =
-                @"You must register (at least once) a log handler in your Test project for the Diverse library to be able to publish all the seeds used for every test (which is a prerequisite for deterministic test runs afterward).
-The only thing you have to do is to set a value for the static " +
-                $"{nameof(Log)} property of the {nameof(Fuzzer)} type." + @"
+                @"You must register a log handler in your Test project for the Diverse library to be able to publish all the seeds used for every test (which is a prerequisite for deterministic test runs afterward).
 
-The best location for this call is within a unique AllFixturesSetup class.
+You have two ways to do it, and the right one depends on your test framework:
+
+  (a) per Fuzzer instance, with " + $"{nameof(WithLogger)}(...)" + @" -- the option to prefer whenever your
+      test framework hands you a sink that is only valid during a test (xUnit's ITestOutputHelper),
+      and whenever your tests run in parallel (see the xUnit example below);
+
+  (b) once for the whole process, with the static " +
+                $"{nameof(Log)} property of the {nameof(Fuzzer)} type" + @" -- simpler, but shared by
+      every test of your process (see the NUnit and MSTest examples below).
 
 e.g.: with NUnit:
 
@@ -334,12 +421,20 @@ namespace YourNameSpaceHere.Tests
 
 e.g.: with MSTest:
 
-    " + $"{nameof(Fuzzer)}.{nameof(Log)} = Console.WriteLine;" + @"
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-Alternatively, any Fuzzer instance can be given its own logger, which takes precedence over that
-static property. This is the option to prefer whenever your test framework provides a per-test
-output sink, and whenever your tests run in parallel (since the static property is shared by
-every test of your process).
+namespace YourNameSpaceHere.Tests
+{
+    [TestClass]
+    public class AllTestFixtures
+    {
+        [AssemblyInitialize]
+        public static void Init(TestContext context)
+        {
+            " + $"{nameof(Fuzzer)}.{nameof(Log)} = Console.WriteLine;" + @"
+        }
+    }
+}
 
 e.g.: with xUnit (ITestOutputHelper is only valid during a test, hence the instance logger):
 
@@ -359,26 +454,33 @@ namespace YourNameSpaceHere.Tests
     }
 }
 
+Beware, with (a): every Fuzzer you build needs its own logger, since there is no static sink left to
+catch the ones you forget -- including the Fuzzer you build with a fixed seed to reproduce a failure.
+
 ";
             return message;
         }
 
+        private const string TestNameWhenNoneWasFound = "(not found)";
+
+        /// <summary>
+        /// Finds the test method currently on the stack, if any.
+        /// </summary>
+        /// <returns>The name of the test involved, or <b>null</b> when no test method is on the stack.</returns>
         private static string FindTheNameOfTheTestInvolved()
         {
-            var testName = "(not found)";
             try
             {
                 var stackTrace = new StackTrace();
 
                 var testMethod = stackTrace.GetFrames().Select(sf => sf.GetMethod()).First(IsATestMethod);
 
-                testName = $"{testMethod.DeclaringType.Name}.{testMethod.Name}";
+                return $"{testMethod.DeclaringType.Name}.{testMethod.Name}";
             }
             catch
             {
+                return null;
             }
-
-            return testName;
         }
 
         private static readonly HashSet<string> TestAttributeNames = new HashSet<string>

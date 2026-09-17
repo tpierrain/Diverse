@@ -679,20 +679,17 @@
             <param name="name">The name you want to specify for this <see cref="T:Diverse.Fuzzer"/> instance (useful for debuging purpose).</param>
             <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
         </member>
-        <member name="M:Diverse.Fuzzer.#ctor(System.Nullable{System.Int32},System.String,System.Nullable{System.Boolean},System.Action{System.String},System.Boolean)">
+        <member name="M:Diverse.Fuzzer.#ctor(System.Nullable{System.Int32},System.String,System.Nullable{System.Boolean},Diverse.Fuzzer,System.Boolean)">
             <summary>
-            Instantiates a <see cref="T:Diverse.Fuzzer"/>, possibly a silent one.
-            <remarks>
-                Every parameter is required here on purpose: it keeps this constructor out of the
-                overload resolution of the public one (i.e. <c>new Fuzzer()</c> stays unambiguous).
-            </remarks>
+            Instantiates a <see cref="T:Diverse.Fuzzer"/>, possibly derived from another one, possibly a silent one.
             </summary>
             <param name="seed">The seed if you want to reuse in order to reproduce the very same conditions of another (failing) test.</param>
             <param name="name">The name you want to specify for this <see cref="T:Diverse.Fuzzer"/> instance (useful for debuging purpose).</param>
             <param name="noDuplication"><b>true</b> if you do not want the Fuzzer to provide you twice the same result for every fuzzing method type, <b>false</b> otherwise.</param>
-            <param name="instanceLogger">
-                The logger of the <see cref="T:Diverse.Fuzzer"/> instance we derive from (if any), so that a
-                derived <see cref="T:Diverse.Fuzzer"/> keeps tracing wherever its parent was tracing.
+            <param name="parentFuzzer">
+                The <see cref="T:Diverse.Fuzzer"/> instance we are derived from (if any), so that we keep
+                tracing wherever it traces, <b>including when it is given a logger after we were
+                derived from it</b>.
             </param>
             <param name="isASilentInternalFuzzer">
                 <b>true</b> for the <see cref="T:Diverse.Fuzzer"/> instances we create for our own internal
@@ -722,6 +719,18 @@
             <param name="logger">The logger to be used by this <see cref="T:Diverse.Fuzzer"/> instance only.</param>
             <returns>This very same <see cref="T:Diverse.Fuzzer"/> instance (fluent style).</returns>
         </member>
+        <member name="M:Diverse.Fuzzer.ResolveTheLogger">
+            <summary>
+            Finds the sink this <see cref="T:Diverse.Fuzzer"/> instance has to trace its seed to.
+            <remarks>
+                Resolved at emission time on purpose for everything that can still change (our own
+                logger, our parent's), and at construction time for the process-wide static one:
+                a test that overwrites <see cref="P:Diverse.Fuzzer.Log"/> while we are running must not end up
+                receiving the seed of a <see cref="T:Diverse.Fuzzer"/> belonging to another test.
+            </remarks>
+            </summary>
+            <returns>The sink to trace to, or <b>null</b> when no sink was ever registered.</returns>
+        </member>
         <member name="M:Diverse.Fuzzer.EnsureTheSeedHasBeenLogged">
             <summary>
             Traces the seed of this <see cref="T:Diverse.Fuzzer"/> instance, once and only once, the first
@@ -744,6 +753,22 @@
                 of Diverse though, hence the fallback on the Console rather than a silent swallow.
             </remarks>
             </summary>
+        </member>
+        <member name="M:Diverse.Fuzzer.FallBackOnTheConsole(System.Exception,System.String[],System.Int32)">
+            <summary>
+            Publishes on the Console what the sink we were given did not take.
+            <remarks>
+                Only the lines it did *not* take: replaying the whole banner would print the seed
+                twice, in two different places, leaving the reader unable to tell which trace is the
+                authoritative one.
+            </remarks>
+            </summary>
+        </member>
+        <member name="M:Diverse.Fuzzer.FindTheNameOfTheTestInvolved">
+            <summary>
+            Finds the test method currently on the stack, if any.
+            </summary>
+            <returns>The name of the test involved, or <b>null</b> when no test method is on the stack.</returns>
         </member>
         <member name="M:Diverse.Fuzzer.HeadsOrTails">
             <summary>

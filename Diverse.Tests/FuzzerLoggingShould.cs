@@ -10,30 +10,14 @@ namespace Diverse.Tests
     /// All about WHEN and HOW a <see cref="Fuzzer"/> traces the seed it uses.
     /// <remarks>
     ///     Every test here mutates the static <see cref="Fuzzer.Log"/> that
-    ///     <see cref="AllTestFixtures"/> registers once for the whole assembly. It must thus be
-    ///     saved and restored around each test, and this fixture must never be [Parallelizable].
+    ///     <see cref="AllTestFixtures"/> registers once for the whole assembly, hence the
+    ///     <see cref="LogMutatingFixture"/> base class that puts it back after each test. None of
+    ///     these fixtures may ever be [Parallelizable].
     /// </remarks>
     /// </summary>
     [TestFixture]
-    public class FuzzerLoggingShould
+    public class FuzzerLoggingShould : LogMutatingFixture
     {
-        private const string SeparatorLine =
-            "----------------------------------------------------------------------------------------------------------------------";
-
-        private Action<string> _previousStaticLog;
-
-        [SetUp]
-        public void SaveTheStaticLog()
-        {
-            _previousStaticLog = Fuzzer.Log;
-        }
-
-        [TearDown]
-        public void RestoreTheStaticLog()
-        {
-            Fuzzer.Log = _previousStaticLog;
-        }
-
         [Test]
         public void Not_log_anything_at_construction_time()
         {
@@ -113,11 +97,33 @@ namespace Diverse.Tests
 
             // A derived Fuzzer is handed over to the end-user: it must trace its own seed
             // (and not the one of the internal Fuzzer it uses for the NoDuplication mode).
-            Check.That(spy.Lines).ContainsExactly(
-                SeparatorLine,
-                $"--- Fuzzer (\"{((Fuzzer)derivedFuzzer).Name}\") instantiated from a provided seed (42)",
-                $"--- from the test: {nameof(FuzzerLoggingShould)}.{nameof(Log_the_banner_of_a_derived_NoDuplication_Fuzzer_only_once_it_is_used)}()",
-                SeparatorLine);
+            // Its name is generated, so it is pinned by its shape: reading it back from the object
+            // under test would make this half of the assertion unfailable.
+            Check.That(spy.Lines).HasSize(4);
+            Check.That(spy.Lines[0]).IsEqualTo(SeparatorLine);
+            Check.That(spy.Lines[1]).Matches(@"^--- Fuzzer \(""fuzzer\d+""\) instantiated from a provided seed \(42\)$");
+            Check.That(spy.Lines[2]).IsEqualTo(
+                $"--- from the test: {nameof(FuzzerLoggingShould)}.{nameof(Log_the_banner_of_a_derived_NoDuplication_Fuzzer_only_once_it_is_used)}()");
+            Check.That(spy.Lines[3]).IsEqualTo(SeparatorLine);
+        }
+
+        [Test]
+        public void Keep_the_reproduction_hint_for_a_derived_Fuzzer_when_its_parent_generated_its_own_seed()
+        {
+            var spy = new LogSpy();
+            Fuzzer.Log = spy.Sink;
+            var parentFuzzer = new Fuzzer(name: "parent"); // no seed provided: the Fuzzer picked one
+
+            var derivedFuzzer = parentFuzzer.GenerateNoDuplicationFuzzer();
+            derivedFuzzer.GenerateInteger(1, 5);
+
+            // A derived Fuzzer must not claim a seed was provided (nobody provided one), and must
+            // keep the one line that tells how to reproduce the run -- all the more so since a
+            // parent that is never drawn from traces nothing at all.
+            Check.That(spy.Lines).HasSize(5);
+            Check.That(spy.Lines[1]).Matches(@"^--- Fuzzer \(""fuzzer\d+""\) instantiated with the seed \(-?\d+\)$");
+            Check.That(spy.Lines[3]).IsEqualTo(
+                "--- Note: you can instantiate another Fuzzer with that very same seed in order to reproduce the exact test conditions");
         }
 
         [Test]
@@ -136,10 +142,32 @@ namespace Diverse.Tests
 
             fuzzer.GenerateInteger();
 
+            // Nobody can say this Fuzzer was instantiated *from* this test: it was not. What is
+            // true, and useful, is that this test is the one that first used it.
             Check.That(spy.Lines).ContainsExactly(
                 SeparatorLine,
                 "--- Fuzzer (\"fuzzer1\") instantiated from a provided seed (42)",
-                $"--- from the test: {nameof(FuzzerLoggingShould)}.{nameof(Resolve_the_name_of_the_test_even_when_the_Fuzzer_was_built_outside_of_the_test_method)}()",
+                $"--- first used by the test: {nameof(FuzzerLoggingShould)}.{nameof(Resolve_the_name_of_the_test_even_when_the_Fuzzer_was_built_outside_of_the_test_method)}()",
+                SeparatorLine);
+        }
+
+        [Test]
+        public void Name_the_test_it_was_built_in_even_when_its_first_value_is_generated_from_another_thread()
+        {
+            var spy = new LogSpy();
+            Fuzzer.Log = spy.Sink;
+            var fuzzer = new Fuzzer(seed: 42, name: "fuzzer1"); // built on the stack of this test
+
+            // An async test resuming after an await, a Parallel.ForEach, a SUT fuzzing from a
+            // worker thread: the first generated value very often happens off the test's own stack.
+            var threadWithoutAnyTestMethodOnItsStack = new Thread(() => fuzzer.GenerateInteger());
+            threadWithoutAnyTestMethodOnItsStack.Start();
+            threadWithoutAnyTestMethodOnItsStack.Join();
+
+            Check.That(spy.Lines).ContainsExactly(
+                SeparatorLine,
+                "--- Fuzzer (\"fuzzer1\") instantiated from a provided seed (42)",
+                $"--- from the test: {nameof(FuzzerLoggingShould)}.{nameof(Name_the_test_it_was_built_in_even_when_its_first_value_is_generated_from_another_thread)}()",
                 SeparatorLine);
         }
 
