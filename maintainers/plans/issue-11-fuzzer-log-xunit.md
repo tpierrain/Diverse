@@ -4,7 +4,7 @@
 
 - **Where it stands**: PR [#12](https://github.com/tpierrain/Diverse/pull/12) is open, CI green,
   216 tests passing, branch `fix/11-defer-seed-logging-and-per-instance-logger` in sync with origin.
-- **Do NOT merge as is.** A deep review on **2026-09-17** found **16 defects**, 6 of them
+- **Do NOT merge as is.** A deep review on **2026-09-17** found **18 defects**, 6 of them
   reproduced locally against the built 1.1.0 assembly. They are listed, with their evidence, in
   [Review findings](#review-findings-2026-09-17--to-triage-before-merge) below.
 - **Next step**: Thomas triages the findings (which ones block the merge, which ones ship later).
@@ -83,7 +83,7 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
 - [x] **Step 8 — Ship** _(2026-08-15)_
   - [x] Branch pushed: `fix/11-defer-seed-logging-and-per-instance-logger`
   - [x] **PR open: https://github.com/tpierrain/Diverse/pull/12** — CI `build (ubuntu-latest)` **green** (1m01s)
-  - [x] Deep review run on 2026-09-17 → **16 findings, merge held** (see below)
+  - [x] Deep review run on 2026-09-17 → **18 findings, merge held** (see below)
   - [ ] Triage of the findings by Thomas (**the only thing waiting on him**)
   - [ ] Fix whatever the triage keeps, then review + merge
   - [ ] Once merged: reply to `Poubone` on issue #11 with the nuance below (xUnit 2.x + parallelism is what actually reproduces), and tag `v1.1.0` to trigger the NuGet release workflow
@@ -91,9 +91,10 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
 ## Review findings (2026-09-17) — to triage before merge
 
 Reviewed `main...HEAD` (5 commits, 11 files). **F1, F4, F5, F6 and F14 were reproduced locally**
-by compiling a console app against the built branch assembly (probe kept out of the repo); the
-others were established by reading the code against the promises made in `README.md` and
-`<PackageReleaseNotes>`.
+by compiling a console app against the built branch assembly, and **F18 by compiling the variant it
+declares impossible** (probes kept out of the repo). F3, F8, F9, F11, F12, F17 were reproduced the
+same way by the review; the rest were established by reading the code against the promises made in
+`README.md` and `<PackageReleaseNotes>`.
 
 ### Regressions this branch introduces
 
@@ -154,9 +155,26 @@ others were established by reading the code against the promises made in `README
 - [ ] **F13 — the seed is formatted with the ambient culture.** Under `sv-SE`, `fi-FI`, `lt-LT`,
       `et-EE`, a negative seed prints with U+2212 MINUS SIGN and cannot be pasted back into
       `new Fuzzer(seed: ...)`. Fix: `ToString(CultureInfo.InvariantCulture)`.
-- [ ] **F15 — the concurrency test runs generation in raw foreground threads with no `try/catch`.**
-      Any regression in logger resolution throws on an unguarded thread and **kills the test host**,
-      losing the verdicts of all 216 tests instead of reporting one red.
+- [ ] **F15 — the only concurrency test cannot fail for the race that exists, and can kill the
+      host for another.** It uses **two separate** Fuzzers, each with its own sink; since both
+      `_instanceLogger` and `_seedHasBeenLogged` are per-instance, the assertion holds by
+      construction and no interleaving can make it red. The real hazard (two threads on **one**
+      Fuzzer, measured at 1.6%) has no test at all. On top of that it runs generation in raw
+      foreground threads with no `try/catch`, so a regression in logger resolution throws on an
+      unguarded thread and **kills the test host**, losing the verdicts of all 216 tests instead of
+      reporting one red. `[Repeat(20)]` is also the lowest in the suite, against `CLAUDE.md:107`
+      which states `[Repeat(200)]` for probabilistic tests.
+- [ ] **F17 — a project that never registers a sink can now go entirely undetected.** With
+      `Fuzzer.Log = null`, `new Fuzzer(42).GenerateStringFromPattern("FR-2024")` returns its value
+      with no banner and no exception: the call reaches neither seam. This is **distinct** from the
+      accepted "no banner on draw-free paths" (there, nothing is reproducible anyway): what is lost
+      here is the detection of the **wiring mistake itself**, which `main` caught on the very first
+      `new Fuzzer()`. Worth considering: validate the sink once at construction *without* emitting.
+- [ ] **F18 — the private constructor's stated rationale is not a C# rule.** Its XML remark
+      (`Fuzzer.cs:141`) claims the 5 required parameters keep it out of the public ctor's overload
+      resolution. **Verified false**: the variant with the last two parameters optional compiles
+      with 0 errors. The plan repeated the claim and is corrected above. Cost: an awkward signature
+      and `null, false` at every internal call site, upheld for nothing.
 
 ### Pre-existing, found in a callee of the touched code
 
@@ -170,11 +188,12 @@ others were established by reading the code against the promises made in `README
 
 ### Cleanup, no behaviour attached
 
-- [ ] `CLAUDE.md` contradicts itself: the diff adds a mandatory `[SetUp]`/`[TearDown]` rule while
-      the test conventions still say "no `[SetUp]` fields".
-- [ ] The private constructor's XML remark claims its 5 required parameters keep it out of the
-      public overload resolution — factually wrong, the forbidden variant compiles.
-- [ ] `SeparatorLine` duplicated 4 times, the banner assertion 11 times.
+- [ ] `CLAUDE.md` contradicts itself: the diff adds a mandatory `[SetUp]`/`[TearDown]` rule at
+      line 105 while line 109 still says "no `[SetUp]` fields" — and the three new fixtures each
+      declare a `_previousStaticLog` field, i.e. they obey the first and break the second. Line 109
+      needs the carve-out.
+- [ ] `SeparatorLine` duplicated 4 times, the banner assertion 11 times. (The banner wording and
+      the 118-char separator are byte-identical to `main`: no regression there, just duplication.)
 - [ ] The derived-fuzzer tests build their expected name from the object under test, which makes
       that half of the assertion unfailable.
 - [ ] `Diverse/Diverse/Diverse.xml` is a tracked Release-only build artifact that drifts silently
@@ -243,8 +262,15 @@ private Fuzzer(int? seed, string name, bool? noDuplication,
                Action<string> instanceLogger, bool isASilentInternalFuzzer) { ... }
 ```
 
-The public signature stays byte-for-byte identical (no binary break). The private ctor takes 5
-**required** parameters, so `new Fuzzer()` / `new Fuzzer(42)` stay unambiguous inside the assembly.
+The public signature stays byte-for-byte identical (no binary break).
+
+> ⚠️ **Correction (2026-09-17).** This section used to claim that the private ctor's 5 **required**
+> parameters are what keep `new Fuzzer()` / `new Fuzzer(42)` unambiguous inside the assembly. That
+> is not a C# rule, and the claim is also carried in the XML remark on the private ctor
+> (`Fuzzer.cs:141`). **Verified by compiling the "forbidden" variant**: making the last two
+> parameters optional produces **0 errors** — the candidate with fewer declared parameters wins the
+> tie-break, so the public ctor is selected regardless. The awkward `null, false` spelled out at
+> every internal call site satisfies a constraint that does not exist. See F18 below.
 
 > A public ctor overload `Fuzzer(Action<string> logger, int? seed = null, ...)` was rejected: it
 > makes `new Fuzzer()`, `new Fuzzer(null)`, `new Fuzzer(seed: 42)` and `new Fuzzer(name: "x")`
