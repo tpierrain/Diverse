@@ -79,7 +79,11 @@ dotnet test Diverse.Tests/Diverse.Tests.csproj
 2. **Sub-fuzzers** always receive `IFuzz` (not `Fuzzer`) and use `_fuzzer.Random` for randomness
 3. **Data diversity**: person generation uses continent-aware name pools (first name origin determines last name pool)
 4. **Determinism contract**: never use `new Random()` for data generation inside sub-fuzzers -- always use the shared `IFuzz.Random`
-5. **Lazy seed tracing**: the seed banner is emitted on the **first randomness consumption**, exactly once per `Fuzzer` instance, never from the constructor (that is what makes Diverse usable with xUnit's `ITestOutputHelper`, see issue #11). There are exactly **two seams** calling `EnsureTheSeedHasBeenLogged()`: the `IFuzz.Random` getter and `GenerateWithoutDuplication` (the NoDuplication mode draws from another `Fuzzer` instance, so it never goes through the getter). **Any new randomness path must go through one of them**, or the seed will not be traced. Resolution order of the sink: instance logger (`WithLogger(...)`) first, then the static `Fuzzer.Log`.
+5. **Lazy seed tracing**: the seed banner is emitted on the **first randomness consumption**, exactly once per `Fuzzer` instance, never from the constructor (that is what makes Diverse usable with xUnit's `ITestOutputHelper`, see issue #11). There are exactly **two seams** calling `EnsureTheSeedHasBeenLogged()`: the `IFuzz.Random` getter and `GenerateWithoutDuplication` (the NoDuplication mode draws from another `Fuzzer` instance, so it never goes through the getter). **Any new randomness path must go through one of them**, or the seed will not be traced. Three invariants hold it together, each paid for by a bug:
+   - **What can still change is resolved late, what a parallel test can steal is captured early.** `ResolveTheLogger()` walks the instance logger, then the parent `Fuzzer`'s (a **reference**, never a copy of its logger: a `WithLogger(...)` call landing after the derivation must still reach the child), then the static `Fuzzer.Log` **as it was at construction time**, then the current static one. Reading the static late would hand our seed to whatever test overwrote it meanwhile.
+   - **The test name is resolved in the constructor**, while the test that builds the `Fuzzer` is still on the stack; the walk is retried at emission only when it found nothing, and the banner then says *"first used by the test"* rather than *"from the test"*. Deferring the whole walk loses the name for every value first generated off the test's stack (a `Task`, an `async` continuation, `Parallel.ForEach`).
+   - **Emission is claimed with `Interlocked.CompareExchange`** on `_seedHasBeenLogged`, and `WithLogger(...)` re-arms it. Threads racing on a shared `Fuzzer`'s first value emitted a duplicated banner in 1.6% of runs with a plain `bool`.
+   Never let a `FuzzerException` (the missing-sink diagnostic) be swallowed by a catch-all on a generation path: `TypeFuzzer` rethrows it explicitly before its two `catch (Exception)`, or `GenerateInstanceOf<T>()` returns `null` and the user never learns what is wrong.
 
 ### CRITICAL: Static data is immutable (determinism guarantee)
 
@@ -106,7 +110,9 @@ All static data arrays/dictionaries used for generation (`LastNames._perContinen
 - Tests must be **fast** (sub-millisecond to ~400ms max)
 - Probabilistic tests use `[Repeat(200)]` to catch rare failures
 - Assertions use **NFluent** (`Check.That(x).IsEqualTo(y)`)
-- Each test creates its own `Fuzzer` instance (no shared state, no `[SetUp]` fields)
+- Each test creates its own `Fuzzer` instance (no shared state, no `[SetUp]` fields) -- **the one carve-out** is the save/restore of the static `Fuzzer.Log` above, which needs a field to remember what to restore
+- A test that generates from a **raw `Thread`** must bring back whatever that thread threw (`Utils/Concurrently.cs`): an exception escaping a thread body tears the whole test host down and loses the verdict of every other test, instead of failing one test
+- A banner expectation is never re-read from the object under test (e.g. `((Fuzzer)derived).Name`): that half of the assertion could never fail. Pin the generated parts by their shape instead (`Matches(@"^--- Fuzzer \(""fuzzer\d+""\)...")`)
 
 ## File organization
 

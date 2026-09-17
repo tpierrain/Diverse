@@ -238,6 +238,16 @@ they run in parallel. Give it to your `Fuzzer` instance instead:
 
 ```
 
+Note that with this per-instance wiring, **every** `Fuzzer` you build needs its own logger (there is
+no static fallback to catch the ones you forget). In particular, when you reproduce a failure by
+fixing a seed (step 3 below), keep the `WithLogger(...)` call:
+
+```csharp
+
+    var fuzzer = new Fuzzer(seed: 1248680008).WithLogger(testOutputHelper.WriteLine);
+
+```
+
 #### with MSTest
 
 ```csharp
@@ -257,12 +267,25 @@ they run in parallel. Give it to your `Fuzzer` instance instead:
 #### When is the seed traced?
 
 On the **first value you generate**, not when the `Fuzzer` is built, and **exactly once** per
-`Fuzzer` instance. This is what allows the xUnit snippet above to build its `Fuzzer` in a test class
-constructor: by the time the first value is generated, we are inside the test — which is also why
-the trace can name the test involved.
+`Fuzzer` instance (even when several threads race on that first value). This is what allows the
+xUnit snippet above to build its `Fuzzer` in a test class constructor: by the time the first value
+is generated, we are inside the test.
+
+Giving a `Fuzzer` a **new** logger with `WithLogger(...)` traces its seed again, to that new logger:
+a `Fuzzer` that outlives a single test (a fixture field, an `IClassFixture`, an injected one) can
+thus be handed the output sink of each test in turn, and every one of them gets the seed.
+
+The trace names the test it was **built in** whenever one is on the stack at that moment, so a value
+first generated from a `Task`, an `async` continuation or a worker thread is still attributed
+correctly. When the `Fuzzer` was built outside of any test (a test class constructor, a fixture
+setup), the trace names the test that **first used** it instead, and says so.
 
 And if the sink you registered throws (a test output helper whose test has already ended, a disposed
-writer, ...), Diverse falls back on the `Console` with a warning rather than failing your test.
+writer, ...), Diverse never fails your test over it: it writes a warning plus the part of the trace
+your sink did not take to the `Console`, and gives up silently if the `Console` is broken too.
+Beware that **xUnit does not capture the `Console`**: under xUnit that fallback keeps your test
+green, but you will not see the seed in the test report, so prefer a sink that stays valid (the
+per-instance wiring above).
 
 #### Running your tests in parallel
 
@@ -273,7 +296,7 @@ inherited by the fuzzers derived from it).
 
 ### 2. Consult the report of a failing test and Copy the Seed that was used for it. 
 
-Note: Diverse traces the seed used for every test ran. It will look like this:
+Note: Diverse traces the seed of every `Fuzzer` you use, once each. It will look like this:
 
 ```
  ----------------------------------------------------------------------------------------------------------------------
