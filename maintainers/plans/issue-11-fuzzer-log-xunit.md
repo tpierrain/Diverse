@@ -113,6 +113,9 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
   - [x] Re-verified by probe against the rebuilt assembly: F1 throws, F2/F4/F5 behave, F6 keeps its
         hint, F3 survives a dead Console, F11 stops repeating, F12 **0 duplicated banners in 2000
         runs** (was 32)
+  - [x] PR description brought up to date with this round _(2026-09-17)_: it described the August
+        work and still promised a whole-banner Console replay, an unconditional logger inheritance
+        and 216 tests. It now carries the review round and what was left open.
   - [ ] Review + merge by Thomas (**the only thing waiting on him**)
   - [ ] Once merged: reply to `Poubone` on issue #11 with the nuance below (xUnit 2.x + parallelism is what actually reproduces), and tag `v1.1.0` to trigger the NuGet release workflow
   - [ ] Its own PR, afterwards: **F13 + F14**, the two pre-existing defects
