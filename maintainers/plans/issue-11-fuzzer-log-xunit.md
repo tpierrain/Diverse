@@ -1,5 +1,19 @@
 # Fix issue #11 — `Fuzzer.Log` static + xUnit `ITestOutputHelper`
 
+## 📍 STATE
+
+- **Where it stands**: PR [#12](https://github.com/tpierrain/Diverse/pull/12) is open, CI green,
+  216 tests passing, branch `fix/11-defer-seed-logging-and-per-instance-logger` in sync with origin.
+- **Do NOT merge as is.** A deep review on **2026-09-17** found **16 defects**, 6 of them
+  reproduced locally against the built 1.1.0 assembly. They are listed, with their evidence, in
+  [Review findings](#review-findings-2026-09-17--to-triage-before-merge) below.
+- **Next step**: Thomas triages the findings (which ones block the merge, which ones ship later).
+  Nothing else is waiting on him; the implementation of steps 0 to 7 is done and green.
+- **The one finding that is NOT about issue #11**: F14, a pre-existing out-of-range bug in
+  `GenerateInteger(min, max)` under NoDuplication. It predates this branch — fixing it here or in
+  its own PR is a scope call, not a defect of this work.
+- **This file is the door**: this repo has no `plans/ACTIVE.md`; resume from this STATE block.
+
 ## Context
 
 [Issue #11](https://github.com/tpierrain/Diverse/issues/11) reports that following the README
@@ -69,8 +83,110 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
 - [x] **Step 8 — Ship** _(2026-08-15)_
   - [x] Branch pushed: `fix/11-defer-seed-logging-and-per-instance-logger`
   - [x] **PR open: https://github.com/tpierrain/Diverse/pull/12** — CI `build (ubuntu-latest)` **green** (1m01s)
-  - [ ] Review + merge by Thomas (**the only thing left on this chantier**)
-  - [ ] Optional, once merged: reply to `Poubone` on issue #11 with the nuance below (xUnit 2.x + parallelism is what actually reproduces), and tag `v1.1.0` to trigger the NuGet release workflow
+  - [x] Deep review run on 2026-09-17 → **16 findings, merge held** (see below)
+  - [ ] Triage of the findings by Thomas (**the only thing waiting on him**)
+  - [ ] Fix whatever the triage keeps, then review + merge
+  - [ ] Once merged: reply to `Poubone` on issue #11 with the nuance below (xUnit 2.x + parallelism is what actually reproduces), and tag `v1.1.0` to trigger the NuGet release workflow
+
+## Review findings (2026-09-17) — to triage before merge
+
+Reviewed `main...HEAD` (5 commits, 11 files). **F1, F4, F5, F6 and F14 were reproduced locally**
+by compiling a console app against the built branch assembly (probe kept out of the repo); the
+others were established by reading the code against the promises made in `README.md` and
+`<PackageReleaseNotes>`.
+
+### Regressions this branch introduces
+
+- [ ] **F1 — a missing log sink now fails SILENTLY on `GenerateInstanceOf<T>()`.** Moving the
+      `FuzzerException` out of the constructor drops it inside `TypeFuzzer`'s pre-existing
+      catch-all (`TypeFuzzer.cs:110` and `:222`), so `Fuzzer.Log = null;
+      new Fuzzer(42).GenerateInstanceOf<Poco>()` **returns null** instead of telling the user to
+      register a sink. Reproduced. On `main` it threw with the full guidance.
+- [ ] **F2 — the static `Fuzzer.Log` is now resolved at first draw, not at construction.** For
+      users staying on the documented static pattern under parallel xUnit, class A's banner is
+      emitted with whatever sink class B installed in the meantime: the crash is replaced by seeds
+      landing in the wrong test's output.
+- [ ] **F3 — the `Console` fallback is itself unguarded.** If `Console.Out` is dead too (the same
+      runner teardown invalidates both), the exception escapes the `IFuzz.Random` getter and fails
+      the user's test, against the release note that promises the opposite.
+- [ ] **F4 — `WithLogger(...)` after `GenerateNoDuplicationFuzzer()` never reaches the child.** The
+      logger is snapshotted at derive time; the child then throws `FuzzerException` asking for a
+      sink the user registered one line earlier, and `IFuzz` exposes no `WithLogger` to repair it.
+      Reproduced. `README.md:271` and the release notes state the inheritance unconditionally.
+- [ ] **F5 — `WithLogger(...)` after the first draw is a permanent silent no-op** (the banner has
+      already fired) and still returns `this` as if it had worked. Reproduced: static sink 4 lines,
+      late instance sink 0. The shape that loses the trace is exactly the per-test
+      `_fuzzer.WithLogger(output)` an xUnit user will write for a fixture-scoped Fuzzer.
+- [ ] **F6 — a derived NoDuplication fuzzer lies about its seed and drops the reproduction hint.**
+      Reproduced on a seedless parent: the banner reads *"instantiated from a provided seed"* and
+      the *"you can instantiate another Fuzzer with that very same seed"* line is gone — and with
+      lazy tracing, a parent that is never drawn from emits nothing at all, so that hint can vanish
+      from a whole run. Two tests pin the truncated 4-line shape as expected.
+- [ ] **F8 — reading `IFuzz.Random` now has a side effect.** The documented extension seam emits
+      the one-shot banner, so a debugger auto-evaluating properties (the default in Visual Studio
+      and Rider) destroys the seed trace of the very test being stepped through — and can throw.
+- [ ] **F9 — the test name is resolved at first draw, so it is lost off the test's own stack.**
+      `async` tests after an `await`, `Task.Run`, `Parallel.ForEach` all banner `(not found)()`,
+      where `main` resolved them from the constructor's stack. `FuzzerWithItsOwnLoggerShould.cs:94`
+      freezes `(not found)` as expected.
+- [ ] **F10 — a Fuzzer shared by several tests attributes its seed to whichever test drew first**,
+      and the others get no seed line at all, against `README.md:276` ("the seed used for every
+      test ran").
+
+### Weaknesses of the new code (not regressions)
+
+- [ ] **F7 — the docs and the error message now disagree with each other.** The new xUnit section
+      wires the logger per instance only, which makes README step 3 (`new Fuzzer(seed: 1248680008)`
+      to reproduce a failure) throw; and `BuildErrorMessageForMissingLogRegistration` still opens
+      by recommending the static `Log` that causes issue #11, with `WithLogger` buried 25 lines
+      below. Its MSTest snippet also contradicts `README.md:243-255`.
+- [ ] **F11 — a partially failing sink gets its lines replayed.** `Emit` re-prints the whole banner
+      to the Console, so already-delivered lines appear twice, in two places, one copy truncated.
+      Untested: the stub throws on its first call.
+- [ ] **F12 — `_seedHasBeenLogged` and `_instanceLogger` need no lock, but do need `volatile`.** The
+      double banner is knowingly accepted (measured at 1.6% over 2000 runs); the unconsidered half
+      is `_instanceLogger` published without a barrier, which can read null on a thread-pool thread
+      and throw at a user who did register a logger. `volatile` costs nothing on the hot path.
+- [ ] **F16 — the Console fallback is invisible to the very audience it was added for.** xUnit
+      deliberately does not capture `Console.Out` into a test's report (Test Explorer shows nothing
+      at all), so when an xUnit user's `ITestOutputHelper` throws, the seed is not lost loudly, it
+      is lost silently — while `README.md:265` and the release notes promise the opposite.
+- [ ] **F13 — the seed is formatted with the ambient culture.** Under `sv-SE`, `fi-FI`, `lt-LT`,
+      `et-EE`, a negative seed prints with U+2212 MINUS SIGN and cannot be pasted back into
+      `new Fuzzer(seed: ...)`. Fix: `ToString(CultureInfo.InvariantCulture)`.
+- [ ] **F15 — the concurrency test runs generation in raw foreground threads with no `try/catch`.**
+      Any regression in logger resolution throws on an unguarded thread and **kills the test host**,
+      losing the verdicts of all 216 tests instead of reporting one red.
+
+### Pre-existing, found in a callee of the touched code
+
+- [ ] **F14 — `GenerateInteger(min, max)` returns out-of-range values in NoDuplication mode.**
+      `Fuzzer.cs:547` passes `maxValue` where `Enumerable.Range` expects a **count**. Reproduced:
+      `GenerateInteger(10, 15)` returned `24, 17, 20`; `GenerateInteger(-5, -1)` threw
+      `ArgumentOutOfRangeException` on the 6th draw. The sibling `LastChanceToFindAge` (line 748)
+      gets it right with `maxAge - minAge`. Existing coverage misses it because its test uses
+      `min = 0`, where count and bound coincide. **Predates this branch** — fixing it here is a
+      scope call.
+
+### Cleanup, no behaviour attached
+
+- [ ] `CLAUDE.md` contradicts itself: the diff adds a mandatory `[SetUp]`/`[TearDown]` rule while
+      the test conventions still say "no `[SetUp]` fields".
+- [ ] The private constructor's XML remark claims its 5 required parameters keep it out of the
+      public overload resolution — factually wrong, the forbidden variant compiles.
+- [ ] `SeparatorLine` duplicated 4 times, the banner assertion 11 times.
+- [ ] The derived-fuzzer tests build their expected name from the object under test, which makes
+      that half of the assertion unfailable.
+- [ ] `Diverse/Diverse/Diverse.xml` is a tracked Release-only build artifact that drifts silently
+      (227 of its 239 changed lines here are catch-up from earlier commits).
+
+### Deliberately NOT findings
+
+Three candidates were dropped because this plan pre-decides them: no banner on paths that draw no
+randomness, the `FuzzerException` re-throwing on every draw, and keeping `WithLogger` off `IFuzz`.
+The review also confirmed what the branch gets right: the core fix works (out-of-repo xUnit 2.9.2
+repro, 3 of 5 runs failing on 1.0.1, 69/69 green here), the new check in the `Random` getter costs
+nothing (NoDuplication is 2.4x faster), and determinism is genuinely unchanged.
 
 ## Verification against real xUnit (out-of-repo, scratchpad)
 
