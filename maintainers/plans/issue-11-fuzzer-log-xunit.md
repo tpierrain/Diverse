@@ -2,9 +2,9 @@
 
 ## 📍 STATE
 
-- **Where it stands**: PR [#12](https://github.com/tpierrain/Diverse/pull/12) is open, **225 tests
-  passing**, Release clean on both TFMs. The **18 review findings of 2026-09-17 are fixed, bar 4**
-  (see below), each fix driven by a test seen red first.
+- **Where it stands**: PR [#12](https://github.com/tpierrain/Diverse/pull/12) is open, **CI green on
+  the fixes** (commit `8ccbeca`), **225 tests passing**, Release clean on both TFMs. The **18 review
+  findings of 2026-09-17 are fixed, bar 4** (see below), each fix driven by a test seen red first.
 - **Next step**: Thomas reviews and merges. Nothing else is in flight.
 - **What was deliberately NOT fixed here**, and why:
   - **F13 and F14 predate this branch** (culture-sensitive seed formatting; out-of-range integers
