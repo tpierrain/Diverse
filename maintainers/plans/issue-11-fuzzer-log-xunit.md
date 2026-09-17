@@ -2,16 +2,19 @@
 
 ## 📍 STATE
 
-- **Where it stands**: PR [#12](https://github.com/tpierrain/Diverse/pull/12) is open, CI green,
-  216 tests passing, branch `fix/11-defer-seed-logging-and-per-instance-logger` in sync with origin.
-- **Do NOT merge as is.** A deep review on **2026-09-17** found **18 defects**, 6 of them
-  reproduced locally against the built 1.1.0 assembly. They are listed, with their evidence, in
-  [Review findings](#review-findings-2026-09-17--to-triage-before-merge) below.
-- **Next step**: Thomas triages the findings (which ones block the merge, which ones ship later).
-  Nothing else is waiting on him; the implementation of steps 0 to 7 is done and green.
-- **Two findings predate this branch**: F14 (out-of-range integers under NoDuplication) and F13
-  (the seed formatted with the ambient culture). Fixing them here or in their own PR is a scope
-  call, not a defect of this work.
+- **Where it stands**: PR [#12](https://github.com/tpierrain/Diverse/pull/12) is open, **225 tests
+  passing**, Release clean on both TFMs. The **18 review findings of 2026-09-17 are fixed, bar 4**
+  (see below), each fix driven by a test seen red first.
+- **Next step**: Thomas reviews and merges. Nothing else is in flight.
+- **What was deliberately NOT fixed here**, and why:
+  - **F13 and F14 predate this branch** (culture-sensitive seed formatting; out-of-range integers
+    under NoDuplication). Thomas's call, 2026-09-17: **their own PR**, not this one.
+  - **F8 is half-fixed**: reading `IFuzz.Random` still consumes the one-shot banner, but the banner
+    it emits is now correct (the test name is resolved in the constructor). Closing it entirely
+    would mean scattering the seam across the 25 `Generate*` methods, which this plan forbids.
+  - **F17 stays open by construction**: a wiring check in the constructor would break the very
+    pattern the README recommends (`new Fuzzer().WithLogger(...)` hands the logger over *after*
+    construction). F1's fix restores the loud failure on every path that draws randomness.
 - **This file is the door**: this repo has no `plans/ACTIVE.md`; resume from this STATE block.
 
 ## Context
@@ -84,9 +87,35 @@ a throwing sink falls back to `Console` with a warning; a **null** `Fuzzer.Log` 
   - [x] Branch pushed: `fix/11-defer-seed-logging-and-per-instance-logger`
   - [x] **PR open: https://github.com/tpierrain/Diverse/pull/12** — CI `build (ubuntu-latest)` **green** (1m01s)
   - [x] Deep review run on 2026-09-17 → **18 findings, merge held** (see below)
-  - [ ] Triage of the findings by Thomas (**the only thing waiting on him**)
-  - [ ] Fix whatever the triage keeps, then review + merge
+  - [x] Triage: Thomas's call on 2026-09-17, *"oui, corrige"* → fix everything but the two
+        pre-existing defects (F13, F14), which get their own PR
+
+- [x] **Step 9 — Fix the review findings** _(2026-09-17)_
+  - [x] 🔴 **9 tests written first and seen red on their own assertion** (one per defect, plus the
+        rewritten concurrency test), then implemented → 🟢 **225 tests green**
+  - [x] **Emission mechanics** (F2, F4, F5, F12): a `_parentFuzzer` **reference** instead of a copy
+        of its logger, the static `Log` captured at construction, `WithLogger(...)` re-arming the
+        trace, and the emission claimed with `Interlocked.CompareExchange`
+  - [x] **Banner content** (F6, F9, F10): the test name resolved in the constructor (retried at
+        emission when there was none), the wording `--- first used by the test:` for a `Fuzzer`
+        built outside any test, and `_seedWasProvided` inherited from the parent
+  - [x] **Robustness** (F1, F3, F11): `TypeFuzzer` rethrows `FuzzerException` before its two
+        catch-alls, the Console fallback guarded by its own try/catch, and only the **undelivered**
+        lines replayed
+  - [x] **Documentation** (F7, F16, F18): the error message leads with the two wiring options and
+        its MSTest snippet now matches the README; the README says every `Fuzzer` needs its own
+        logger under the per-instance wiring, and that **xUnit does not capture the Console**;
+        the false C# rationale on the private ctor is gone
+  - [x] **Test hygiene** (F15 + cleanup): `Utils/Concurrently.cs` brings back what a thread threw,
+        a `LogMutatingFixture` base collapses the triplicated scaffolding, the tautological name
+        expectations are pinned by shape, and the concurrency test now races **one** `Fuzzer`
+        (`[Repeat(200)]`)
+  - [x] Re-verified by probe against the rebuilt assembly: F1 throws, F2/F4/F5 behave, F6 keeps its
+        hint, F3 survives a dead Console, F11 stops repeating, F12 **0 duplicated banners in 2000
+        runs** (was 32)
+  - [ ] Review + merge by Thomas (**the only thing waiting on him**)
   - [ ] Once merged: reply to `Poubone` on issue #11 with the nuance below (xUnit 2.x + parallelism is what actually reproduces), and tag `v1.1.0` to trigger the NuGet release workflow
+  - [ ] Its own PR, afterwards: **F13 + F14**, the two pre-existing defects
 
 ## Review findings (2026-09-17) — to triage before merge
 
@@ -98,27 +127,27 @@ same way by the review; the rest were established by reading the code against th
 
 ### Regressions this branch introduces
 
-- [ ] **F1 — a missing log sink now fails SILENTLY on `GenerateInstanceOf<T>()`.** Moving the
+- [x] **F1 — a missing log sink now fails SILENTLY on `GenerateInstanceOf<T>()`.** Moving the
       `FuzzerException` out of the constructor drops it inside `TypeFuzzer`'s pre-existing
       catch-all (`TypeFuzzer.cs:110` and `:222`), so `Fuzzer.Log = null;
       new Fuzzer(42).GenerateInstanceOf<Poco>()` **returns null** instead of telling the user to
       register a sink. Reproduced. On `main` it threw with the full guidance.
-- [ ] **F2 — the static `Fuzzer.Log` is now resolved at first draw, not at construction.** For
+- [x] **F2 — the static `Fuzzer.Log` is now resolved at first draw, not at construction.** For
       users staying on the documented static pattern under parallel xUnit, class A's banner is
       emitted with whatever sink class B installed in the meantime: the crash is replaced by seeds
       landing in the wrong test's output.
-- [ ] **F3 — the `Console` fallback is itself unguarded.** If `Console.Out` is dead too (the same
+- [x] **F3 — the `Console` fallback is itself unguarded.** If `Console.Out` is dead too (the same
       runner teardown invalidates both), the exception escapes the `IFuzz.Random` getter and fails
       the user's test, against the release note that promises the opposite.
-- [ ] **F4 — `WithLogger(...)` after `GenerateNoDuplicationFuzzer()` never reaches the child.** The
+- [x] **F4 — `WithLogger(...)` after `GenerateNoDuplicationFuzzer()` never reaches the child.** The
       logger is snapshotted at derive time; the child then throws `FuzzerException` asking for a
       sink the user registered one line earlier, and `IFuzz` exposes no `WithLogger` to repair it.
       Reproduced. `README.md:271` and the release notes state the inheritance unconditionally.
-- [ ] **F5 — `WithLogger(...)` after the first draw is a permanent silent no-op** (the banner has
+- [x] **F5 — `WithLogger(...)` after the first draw is a permanent silent no-op** (the banner has
       already fired) and still returns `this` as if it had worked. Reproduced: static sink 4 lines,
       late instance sink 0. The shape that loses the trace is exactly the per-test
       `_fuzzer.WithLogger(output)` an xUnit user will write for a fixture-scoped Fuzzer.
-- [ ] **F6 — a derived NoDuplication fuzzer lies about its seed and drops the reproduction hint.**
+- [x] **F6 — a derived NoDuplication fuzzer lies about its seed and drops the reproduction hint.**
       Reproduced on a seedless parent: the banner reads *"instantiated from a provided seed"* and
       the *"you can instantiate another Fuzzer with that very same seed"* line is gone — and with
       lazy tracing, a parent that is never drawn from emits nothing at all, so that hint can vanish
@@ -126,29 +155,35 @@ same way by the review; the rest were established by reading the code against th
 - [ ] **F8 — reading `IFuzz.Random` now has a side effect.** The documented extension seam emits
       the one-shot banner, so a debugger auto-evaluating properties (the default in Visual Studio
       and Rider) destroys the seed trace of the very test being stepped through — and can throw.
-- [ ] **F9 — the test name is resolved at first draw, so it is lost off the test's own stack.**
+      → **Half-fixed, knowingly.** The banner is no longer *wrong* when it fires early (the test
+      name comes from the constructor now, so a debugger read still names the right test), but the
+      read does still consume it. Closing it completely means either scattering the seam across the
+      25 `Generate*` methods (which this plan forbids: a new method would forget it) or handing the
+      sub-fuzzers a `Random` through another door, i.e. touching all 9 of them. Left open on
+      purpose, with its cost written down rather than discovered again.
+- [x] **F9 — the test name is resolved at first draw, so it is lost off the test's own stack.**
       `async` tests after an `await`, `Task.Run`, `Parallel.ForEach` all banner `(not found)()`,
       where `main` resolved them from the constructor's stack. `FuzzerWithItsOwnLoggerShould.cs:94`
       freezes `(not found)` as expected.
-- [ ] **F10 — a Fuzzer shared by several tests attributes its seed to whichever test drew first**,
+- [x] **F10 — a Fuzzer shared by several tests attributes its seed to whichever test drew first**,
       and the others get no seed line at all, against `README.md:276` ("the seed used for every
       test ran").
 
 ### Weaknesses of the new code (not regressions)
 
-- [ ] **F7 — the docs and the error message now disagree with each other.** The new xUnit section
+- [x] **F7 — the docs and the error message now disagree with each other.** The new xUnit section
       wires the logger per instance only, which makes README step 3 (`new Fuzzer(seed: 1248680008)`
       to reproduce a failure) throw; and `BuildErrorMessageForMissingLogRegistration` still opens
       by recommending the static `Log` that causes issue #11, with `WithLogger` buried 25 lines
       below. Its MSTest snippet also contradicts `README.md:243-255`.
-- [ ] **F11 — a partially failing sink gets its lines replayed.** `Emit` re-prints the whole banner
+- [x] **F11 — a partially failing sink gets its lines replayed.** `Emit` re-prints the whole banner
       to the Console, so already-delivered lines appear twice, in two places, one copy truncated.
       Untested: the stub throws on its first call.
-- [ ] **F12 — `_seedHasBeenLogged` and `_instanceLogger` need no lock, but do need `volatile`.** The
+- [x] **F12 — `_seedHasBeenLogged` and `_instanceLogger` need no lock, but do need `volatile`.** The
       double banner is knowingly accepted (measured at 1.6% over 2000 runs); the unconsidered half
       is `_instanceLogger` published without a barrier, which can read null on a thread-pool thread
       and throw at a user who did register a logger. `volatile` costs nothing on the hot path.
-- [ ] **F16 — the Console fallback is invisible to the very audience it was added for.** xUnit
+- [x] **F16 — the Console fallback is invisible to the very audience it was added for.** xUnit
       deliberately does not capture `Console.Out` into a test's report (Test Explorer shows nothing
       at all), so when an xUnit user's `ITestOutputHelper` throws, the seed is not lost loudly, it
       is lost silently — while `README.md:265` and the release notes promise the opposite.
@@ -158,7 +193,7 @@ same way by the review; the rest were established by reading the code against th
       `main`**, but this diff rewrites those exact lines, so it is in reach here — a scope call,
       like F14. Auto-generated seeds are never negative (`Random.Next()`), so only a user-supplied
       negative seed hits it.
-- [ ] **F15 — the only concurrency test cannot fail for the race that exists, and can kill the
+- [x] **F15 — the only concurrency test cannot fail for the race that exists, and can kill the
       host for another.** It uses **two separate** Fuzzers, each with its own sink; since both
       `_instanceLogger` and `_seedHasBeenLogged` are per-instance, the assertion holds by
       construction and no interleaving can make it red. The real hazard (two threads on **one**
@@ -173,7 +208,12 @@ same way by the review; the rest were established by reading the code against th
       accepted "no banner on draw-free paths" (there, nothing is reproducible anyway): what is lost
       here is the detection of the **wiring mistake itself**, which `main` caught on the very first
       `new Fuzzer()`. Worth considering: validate the sink once at construction *without* emitting.
-- [ ] **F18 — the private constructor's stated rationale is not a C# rule.** Its XML remark
+      → **Cannot be closed without breaking the recommended pattern**, verified: the whole point of
+      `new Fuzzer().WithLogger(output.WriteLine)` is that the logger arrives **after** the
+      constructor, so a constructor-time check would throw at every xUnit user following the
+      README. F1's fix restores the loud failure on every path that draws randomness, which leaves
+      only the draw-free calls silent. Deliberate residual.
+- [x] **F18 — the private constructor's stated rationale is not a C# rule.** Its XML remark
       (`Fuzzer.cs:141`) claims the 5 required parameters keep it out of the public ctor's overload
       resolution. **Verified false**: the variant with the last two parameters optional compiles
       with 0 errors. The plan repeated the claim and is corrected above. Cost: an awkward signature
@@ -191,16 +231,18 @@ same way by the review; the rest were established by reading the code against th
 
 ### Cleanup, no behaviour attached
 
-- [ ] `CLAUDE.md` contradicts itself: the diff adds a mandatory `[SetUp]`/`[TearDown]` rule at
-      line 105 while line 109 still says "no `[SetUp]` fields" — and the three new fixtures each
-      declare a `_previousStaticLog` field, i.e. they obey the first and break the second. Line 109
-      needs the carve-out.
-- [ ] `SeparatorLine` duplicated 4 times, the banner assertion 11 times. (The banner wording and
-      the 118-char separator are byte-identical to `main`: no regression there, just duplication.)
-- [ ] The derived-fuzzer tests build their expected name from the object under test, which makes
-      that half of the assertion unfailable.
-- [ ] `Diverse/Diverse/Diverse.xml` is a tracked Release-only build artifact that drifts silently
-      (227 of its 239 changed lines here are catch-up from earlier commits).
+- [x] `CLAUDE.md` contradicted itself: a mandatory `[SetUp]`/`[TearDown]` rule three lines above a
+      "no `[SetUp]` fields" one, with the three new fixtures obeying the first and breaking the
+      second. → The carve-out is now explicit, and two rules the review paid for were added
+      beside it (bring back what a thread threw; never re-read an expectation from the object
+      under test).
+- [x] `SeparatorLine` duplicated 4 times and the save/restore triplicated. → `LogMutatingFixture`
+      in `Diverse.Tests/Utils/`, which the three fixtures now derive from.
+- [x] The derived-fuzzer tests built their expected name from the object under test, which made
+      that half of the assertion unfailable. → Pinned by shape instead
+      (`Matches(@"^--- Fuzzer \(""fuzzer\d+""\)...")`).
+- [ ] `Diverse/Diverse/Diverse.xml` is a tracked Release-only build artifact that drifts silently.
+      **Left tracked**: untracking it is a repo-wide call for Thomas, not a fix for this PR.
 
 ### Deliberately NOT findings
 
@@ -253,16 +295,19 @@ future method would forget it.
 ### New state and constructors (`Diverse/Fuzzer.cs`)
 
 ```csharp
-private readonly bool _seedWasProvided;          // was a ctor local, now needed at first-use time
+private readonly bool _seedWasProvided;                 // was a ctor local, now needed at first-use time
 private readonly bool _isASilentInternalFuzzer;
-private Action<string> _instanceLogger;          // null => fall back to the static Log
-private bool _seedHasBeenLogged;
+private readonly Fuzzer _parentFuzzer;                  // a reference, NOT a copy of its logger (F4)
+private readonly Action<string> _staticLoggerAtConstructionTime;   // the static Log as it was (F2)
+private readonly string _testNameAtConstructionTime;    // null when no test was on the stack (F9)
+private volatile Action<string> _instanceLogger;        // null => walk the resolution order below
+private int _seedHasBeenLogged;                         // an int, to be claimed atomically (F12)
 
 public Fuzzer(int? seed = null, string name = null, bool? noDuplication = false)
-    : this(seed, name, noDuplication, instanceLogger: null, isASilentInternalFuzzer: false) { }
+    : this(seed, name, noDuplication, parentFuzzer: null, isASilentInternalFuzzer: false) { }
 
 private Fuzzer(int? seed, string name, bool? noDuplication,
-               Action<string> instanceLogger, bool isASilentInternalFuzzer) { ... }
+               Fuzzer parentFuzzer, bool isASilentInternalFuzzer) { ... }
 ```
 
 The public signature stays byte-for-byte identical (no binary break).
@@ -304,44 +349,73 @@ point (CLAUDE.md), adding a member breaks every implementer.
 ```csharp
 private void EnsureTheSeedHasBeenLogged()
 {
-    if (_seedHasBeenLogged || _isASilentInternalFuzzer) { return; }
+    if (_seedHasBeenLogged != 0 || _isASilentInternalFuzzer) { return; }
 
-    var logger = _instanceLogger ?? Log;
+    var logger = ResolveTheLogger();
     if (logger == null)
     {
         throw new FuzzerException(BuildErrorMessageForMissingLogRegistration());
     }
 
-    _seedHasBeenLogged = true;   // set BEFORE emitting: a throwing sink must not be retried forever
-    Emit(logger, BuildSeedAndTestInformationLines());
+    // Claimed BEFORE emitting, and atomically: a throwing sink must not be retried forever, and
+    // threads racing on the first generated value must not each emit a banner.
+    if (Interlocked.CompareExchange(ref _seedHasBeenLogged, 1, 0) != 0) { return; }
+
+    Emit(logger, BuildSeedAndTestInformationLines(Seed, _seedWasProvided, Name,
+                                                  _testNameAtConstructionTime));
 }
+
+private Action<string> ResolveTheLogger()
+    => _instanceLogger                       // ours, whenever it is set (even after a first draw)
+       ?? _parentFuzzer?.ResolveTheLogger()  // our parent's, however late it was given to it
+       ?? _staticLoggerAtConstructionTime    // the static one AS IT WAS when we were built
+       ?? Log;                               // and only then, the current static one
 ```
 
-`Emit` builds the whole banner first, then `try { foreach (var line in lines) logger(line); }
-catch (Exception exception) { ... }` — catching `Exception`, not just `InvalidOperationException`
-(sinks are arbitrary user delegates: `ObjectDisposedException`, stale-helper NREs…). The fallback
-writes one warning line naming the exception type and message, then the **complete** banner to
-`Console.WriteLine` (available on netstandard2.0).
+**Late for what can still change, early for what a parallel test can steal.** Reading the static
+`Log` at emission time is what let a test overwriting it receive the seed of another test's
+`Fuzzer` (F2); keeping a *reference* to the parent instead of a copy of its logger is what makes a
+`WithLogger(...)` call landing after the derivation still reach the child (F4).
+
+`Emit` builds the whole banner first, then `try { foreach (var line in lines) { logger(line);
+delivered++; } } catch (Exception exception) { FallBackOnTheConsole(exception, lines, delivered); }`
+— catching `Exception`, not just `InvalidOperationException` (sinks are arbitrary user delegates:
+`ObjectDisposedException`, stale-helper NREs…). The fallback writes one warning line naming the
+exception type and message, then **only the lines the sink did not take** (F11), and is **itself
+wrapped in a try/catch that swallows** (F3): the very teardown that kills a test output helper is
+what closes the writer the runner redirected the Console to, and tracing a seed is never a reason
+to fail an end-user's test.
 
 The `FuzzerException` is thrown **outside** the try/catch, and `_seedHasBeenLogged` is not set in
 that branch, so a missing registration keeps throwing on every subsequent call — matching today's
-"every `new Fuzzer()` throws" behaviour.
+"every `new Fuzzer()` throws" behaviour. ⚠️ And it must never be swallowed by a catch-all on a
+generation path: `TypeFuzzer` rethrows it explicitly before its two `catch (Exception)`, or
+`GenerateInstanceOf<T>()` hands back a silent `null` instead (F1).
 
-**No thread-safety primitive**: `_seedHasBeenLogged` stays a plain `bool`. Sharing one `Fuzzer`
-across threads is already unsound (`System.Random` is not thread-safe), CLAUDE.md forbids
-introducing concurrency primitives, and the getter is hot (`GeneratePassword` hits it ~10 times
-per call). Worst case in a pathological race: the banner prints twice.
+**One atomic claim, no lock.** `_seedHasBeenLogged` is an `int` claimed with
+`Interlocked.CompareExchange`: the plain `bool` check-then-set duplicated the banner in **1.6% of
+2000 runs** with 8 threads racing (measured), which is not the "pathological" case this section
+used to assume. The cost is one interlocked operation on the **first** draw only — every later call
+returns on a plain read. `_instanceLogger` is `volatile` for the same reason: written by
+`WithLogger(...)` on one thread, read on another. Sharing one `Fuzzer` across threads stays unsound
+for *generation* (`System.Random` is not thread-safe); that is no reason for the **tracing** to
+misbehave on top.
 
 ### Derived fuzzers
 
 ```csharp
 private IFuzz SideEffectFreeFuzzerWithDuplicationAllowed
     => _sideEffectFreeFuzzer ?? (_sideEffectFreeFuzzer =
-        new Fuzzer(Seed, null, false, _instanceLogger, isASilentInternalFuzzer: true));
+        new Fuzzer(Seed, null, false, this, isASilentInternalFuzzer: true));
 
 public IFuzz GenerateNoDuplicationFuzzer()
-    => new Fuzzer(Seed, null, true, _instanceLogger, isASilentInternalFuzzer: false);
+    => new Fuzzer(Seed, null, true, this, isASilentInternalFuzzer: false);
 ```
+
+A derived `Fuzzer` receives `this` rather than a snapshot of its logger, and inherits
+`_seedWasProvided` from it: whether a **human** provided the seed is the parent's fact, so a child
+of a seedless parent must not claim a provided seed, nor lose the line saying how to reproduce the
+run (F6) — all the more so since a parent that is never drawn from now traces nothing at all.
 
 `SideEffectFreeFuzzerWithDuplicationAllowed` is private, same-seeded, and only ever created
 *after* its owner's banner has fired → silencing it loses zero information.
